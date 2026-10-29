@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "document_id": "doc_atlas_fixture",
+      "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+      "source_url": "repo://datasets/fixtures/atlas-narrative.pdf",
+      "title": "Atlas Sensor Note",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-10-29",
+      "sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/atlas-narrative.pdf"
+    },
+    {
+      "document_id": "doc_retrieval_table_fixture",
+      "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+      "source_url": "repo://datasets/fixtures/retrieval-table.pdf",
+      "title": "Retrieval Baseline Fixture",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-10-29",
+      "sha256": "38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/retrieval-table.pdf"
+    }
+  ]
+}

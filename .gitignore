@@ -1,0 +1,44 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Packaging output
+build/
+dist/
+*.egg-info/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# EvidenceRAG generated or private material
+artifacts/
+reports/generated/
+data/raw/
+data/private/
+indexes/
+models/
+*.bin
+*.ckpt
+*.onnx
+*.pt
+*.pth
+*.safetensors
+
+# Local tool output
+.cache/
+tmp/

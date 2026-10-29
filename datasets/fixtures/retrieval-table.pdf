@@ -1,0 +1,161 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/Contents 9 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/PageMode /UseNone /Pages 8 0 R /Type /Catalog
+>>
+endobj
+7 0 obj
+<<
+/Author (EvidenceRAG contributors) /CreationDate (D:20000101000000+00'00') /Creator (EvidenceRAG deterministic fixture generator) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (Retrieval Baseline Fixture) /Trapped /False
+>>
+endobj
+8 0 obj
+<<
+/Count 1 /Kids [ 5 0 R ] /Type /Pages
+>>
+endobj
+9 0 obj
+<<
+/Length 2155
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+BT /F2 20 Tf 24 TL ET
+BT 1 0 0 1 54 724 Tm (Retrieval Baseline Fixture) Tj T* ET
+0 0 0 rg
+BT /F1 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 688 Tm (Table 1 contains synthetic values created only for schema testing.) Tj T* ET
+.862745 .917647 .956863 rg
+n 72 598 460 34 re B*
+.090196 .196078 .301961 rg
+BT /F2 10 Tf 12 TL ET
+BT 1 0 0 1 134.225 610 Tm (Method) Tj T* ET
+n 232 598 m 232 632 l S
+.090196 .196078 .301961 rg
+BT /F2 10 Tf 12 TL ET
+BT 1 0 0 1 259.49 610 Tm (Precision) Tj T* ET
+n 332 598 m 332 632 l S
+.090196 .196078 .301961 rg
+BT /F2 10 Tf 12 TL ET
+BT 1 0 0 1 367.27 610 Tm (Recall) Tj T* ET
+n 432 598 m 432 632 l S
+.090196 .196078 .301961 rg
+BT /F2 10 Tf 12 TL ET
+BT 1 0 0 1 476.165 610 Tm (F1) Tj T* ET
+1 1 1 rg
+n 72 564 460 34 re B*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 136.44 576 Tm (Lexical) Tj T* ET
+n 232 564 m 232 598 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 272.27 576 Tm (0.78) Tj T* ET
+n 332 564 m 332 598 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 372.27 576 Tm (0.72) Tj T* ET
+n 432 564 m 432 598 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 472.27 576 Tm (0.75) Tj T* ET
+1 1 1 rg
+n 72 530 460 34 re B*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 137.55 542 Tm (Dense) Tj T* ET
+n 232 530 m 232 564 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 272.27 542 Tm (0.82) Tj T* ET
+n 332 530 m 332 564 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 372.27 542 Tm (0.80) Tj T* ET
+n 432 530 m 432 564 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 472.27 542 Tm (0.81) Tj T* ET
+1 1 1 rg
+n 72 496 460 34 re B*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 137.555 508 Tm (Hybrid) Tj T* ET
+n 232 496 m 232 530 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 272.27 508 Tm (0.88) Tj T* ET
+n 332 496 m 332 530 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 372.27 508 Tm (0.84) Tj T* ET
+n 432 496 m 432 530 l S
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 472.27 508 Tm (0.86) Tj T* ET
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 72 472 Tm (Table 1. Synthetic retrieval metrics.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 1) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000061 00000 n 
+0000000112 00000 n 
+0000000219 00000 n 
+0000000331 00000 n 
+0000000446 00000 n 
+0000000639 00000 n 
+0000000707 00000 n 
+0000001035 00000 n 
+0000001094 00000 n 
+trailer
+<<
+/ID 
+[<c3453a3197a3f5b6e33580981c0bc61e><c3453a3197a3f5b6e33580981c0bc61e>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 7 0 R
+/Root 6 0 R
+/Size 10
+>>
+startxref
+3300
+%%EOF

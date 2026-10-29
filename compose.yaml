@@ -1,0 +1,15 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        VCS_REF: ${VCS_REF:-local}
+    image: evidencerag:${IMAGE_TAG:-local}
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "8000:8000"
