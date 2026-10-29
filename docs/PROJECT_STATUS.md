@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 0.1 — Repository Foundation and Core CI
+Current phase: Phase 0.2 complete; Phase 0.3 next in the same Phase 0 pull request
 
 ## Implemented and verified
 
@@ -13,12 +13,16 @@ Current phase: Phase 0.1 — Repository Foundation and Core CI
   and `uv.lock`.
 - Local and CI quality gates cover Ruff linting/formatting, strict mypy, and pytest.
 - Foundation architecture and decision boundaries are documented.
+- FastAPI application factory exposes verified `/health` and `/ready` semantics.
+- Typed evidence models enforce immutable document provenance, zero-based page indexes,
+  normalized region bounds, honest anchor precision, stable serialization, and opaque
+  asset references.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Owner review and merge decision for Phase 0.1.
+- Phase 0.3 evaluation contract and safe repository-owned PDF fixtures.
 
 ## Pending pull requests / links
 
@@ -33,7 +37,10 @@ Verification evidence is updated in this file only after commands have actually 
 - `uv run ruff check .` — passed.
 - `uv run ruff format --check .` — passed; 2 Python files already formatted.
 - `uv run mypy src tests` — passed; no issues in 2 source files.
-- `uv run pytest` — passed; 2 tests passed in 0.11 seconds.
+- `uv run pytest` — passed after Phase 0.2; 18 tests passed in 0.46 seconds.
+- `uv run uvicorn evidence_rag.api:create_app --factory --port 8765` — started
+  successfully; live `/health` and `/ready` requests both returned HTTP 200 with the
+  documented JSON, then the server shut down cleanly.
 - Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
   and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
   temporary directory was removed afterward.
@@ -47,7 +54,7 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- No API, evidence model, ingestion, retrieval, evaluation dataset, or runtime exists.
+- No ingestion, retrieval, evaluation dataset, database, or answer-generation runtime exists.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
   exercised in Phase 0.1.
 - The project has no selected license.
@@ -61,6 +68,6 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Review, pass CI, and merge Phase 0.1 (approximately 15–30 minutes of owner review).
-2. Phase 0.2: add the FastAPI health slice and typed evidence contract (2–4 focused hours).
-3. Phase 0.3: add versioned evaluation schemas and safe fixtures (2–4 focused hours).
+1. Phase 0.3: add versioned evaluation schemas and safe fixtures (2–4 focused hours).
+2. Phase 0.4: add container and CI hardening (2–3 focused hours).
+3. Review and merge the complete Phase 0 PR after every gate passes.

@@ -2,23 +2,23 @@
 
 ## Current implemented architecture
 
-Phase 0.1 is deliberately small:
+Phase 0.2 remains deliberately small:
 
 ```text
-pyproject.toml + uv.lock
-          |
-          v
-src/evidence_rag/__init__.py ----> tests/test_package.py
-          |                               |
-          +-------------------------------+
-                          |
-                          v
-            Ruff + mypy + pytest in CI
+FastAPI /health + /ready
+           |
+    application factory ---- injectable settings
+
+EvidenceUnit ---- document hash/version + page + honest anchor precision
+     |
+normalized bbox + parser/representation versions + opaque asset reference
+
+All boundaries ---- Ruff + mypy + pytest in CI
 ```
 
-The only runtime behavior is importing `evidence_rag` and reading its version. There are
-no network calls, databases, filesystems, model loads, API routes, or document-processing
-operations behind that import.
+The package exposes operational HTTP endpoints and validates evidence objects. There are
+no database calls, document reads, model loads, retrieval operations, or external network
+calls behind package import or application creation.
 
 ## Planned direction, not implemented
 
@@ -37,9 +37,9 @@ The central invariant is **evidence before answers**. A retrieved item must reta
 document/version identity and honest page or region precision. Later answers may cite
 only real evidence identifiers; a page link alone is not proof that a claim is supported.
 
-FastAPI is the planned boundary for local HTTP endpoints, Pydantic is the planned typed
-contract layer, SQLite is the planned initial metadata store, and local files are the
-planned artifact store. None is installed or implemented in Phase 0.1.
+FastAPI and Pydantic now implement the local HTTP and contract boundaries. SQLite is the
+planned initial metadata store, and local files are the planned artifact store; neither is
+implemented yet.
 
 ## Deferred components
 
