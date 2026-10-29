@@ -43,8 +43,6 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## Pending pull requests / links
 
-- [Issue #3: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/issues/3)
-  tracks all four subphases.
 - [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
   contains commit `0e2eb11`; Python 3.11, Python 3.14, and Container CI passed.
 
