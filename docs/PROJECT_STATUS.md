@@ -18,11 +18,12 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Phase 0.1 pull request review and CI verification.
+- Owner review and merge decision for Phase 0.1.
 
 ## Pending pull requests / links
 
-- To be recorded after the Phase 0.1 pull request is opened.
+- [PR #2: Phase 0.1 — establish Python foundation and core CI](https://github.com/ompatelz/EvidenceRAG/pull/2)
+  is open and intentionally unmerged.
 
 ## Last test commands and outcomes
 
@@ -38,7 +39,7 @@ Verification evidence is updated in this file only after commands have actually 
   temporary directory was removed afterward.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
-results remain pending until the pull request is opened.
+passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Experiment registry / latest valid metrics
 
