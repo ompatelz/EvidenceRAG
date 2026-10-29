@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 1.1 in progress on `codex/phase-1-ingestion`
+Current phase: Phase 1.1 complete; awaiting owner review on the Phase 1 draft PR
 
 ## Implemented and verified
 
@@ -38,15 +38,15 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Complete Phase 1.1 quality, Compose, and container gates.
-- Push the first subphase commit and open the single Phase 1 pull request as a draft.
-- Confirm the first Phase 1 CI run and stop for owner review.
+- Owner review of the Subphase 1.1 implementation and teaching handoff.
+- Phase 1.2 is intentionally not started until the owner says `continue Phase 1`.
 
 ## Pending pull requests / links
 
 - [Issue #3: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/issues/3)
   tracks all four subphases.
-- The single Phase 1 draft PR will be opened after the Subphase 1.1 commit is pushed.
+- [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
+  contains commit `0e2eb11`; Python 3.11, Python 3.14, and Container CI passed.
 
 ## Last test commands and outcomes
 
@@ -91,6 +91,8 @@ Verification evidence is updated in this file only after commands have actually 
 - `docker build --build-arg VCS_REF=phase-1.1-local -t evidencerag:phase-1 .` passed.
 - Temporary Phase 1 candidate container reached healthy, ran as UID 10001, accepted the
   owned Atlas fixture, returned `received`, created exactly one manifest, and was removed.
+- GitHub Actions for PR #4 — Python 3.11 passed in 16 seconds, Python 3.14 passed in
+  18 seconds, and Container passed in 24 seconds.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -119,6 +121,7 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Finish and verify the complete Phase 1.1 gate.
-2. Commit, push, open the Phase 1 draft PR, and confirm CI.
-3. Stop for owner review; begin Phase 1.2 only after `continue Phase 1`.
+1. Review Subphase 1.1 and the draft Phase 1 PR.
+2. Say `continue Phase 1` only when ready to authorize Subphase 1.2.
+3. On continuation, inspect the existing branch, both Phase 1.1 commits, PR CI, and review
+   feedback before the parser research gate.
