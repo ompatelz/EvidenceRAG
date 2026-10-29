@@ -14,11 +14,17 @@ EvidenceUnit ---- document hash/version + page + honest anchor precision
 normalized bbox + parser/representation versions + opaque asset reference
 
 All boundaries ---- Ruff + mypy + pytest in CI
+
+Evaluation JSONL ---- typed validator ---- document manifest ---- hashed owned PDFs
 ```
 
 The package exposes operational HTTP endpoints and validates evidence objects. There are
 no database calls, document reads, model loads, retrieval operations, or external network
 calls behind package import or application creation.
+
+The offline evaluation boundary validates data before any retriever exists. Every item
+resolves to a manifest document version and every committed fixture hash is checked against
+its bytes. The evaluation plane does not call the API or claim measured performance yet.
 
 ## Planned direction, not implemented
 

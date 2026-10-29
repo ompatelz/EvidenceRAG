@@ -41,3 +41,4 @@ models/
 
 # Local tool output
 .cache/
+tmp/

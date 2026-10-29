@@ -34,9 +34,16 @@ Implemented in Phase 0.2:
 - honest region, page, and unavailable anchor precision;
 - opaque client-safe asset references and contract tests.
 
+Implemented in Phase 0.3:
+
+- versioned JSONL evaluation-item and document-manifest contracts;
+- validation for answerability, provenance, document versions, anchors, and split leakage;
+- two deterministic, repository-owned CC0 PDF fixtures;
+- four human-verifiable contract rows, explicitly not benchmark results;
+- documented metric definitions, data card, and frozen-test policy.
+
 Planned for later reviewed phases:
 
-- evaluation schemas and repository-owned PDF fixtures;
 - evidence-preserving PDF ingestion;
 - BM25, dense, hybrid, and reranked retrieval baselines;
 - grounded answers, citation validation, and calibrated abstention;
@@ -89,6 +96,15 @@ uv run uvicorn evidence_rag.api:create_app --factory
 Then request `http://127.0.0.1:8000/health` or `/ready`. Readiness currently means only
 that required local configuration is valid; it does not imply a database, index, parser,
 or model is available.
+
+Validate all committed evaluation data and deterministic fixtures:
+
+```bash
+uv run python scripts/generate_fixtures.py --check
+uv run python -m evidence_rag.eval.validate \
+  --manifest datasets/manifests/fixtures.json \
+  datasets/eval/fixture_items.jsonl
+```
 
 `uv` installs the project in editable mode and resolves exact transitive versions from
 the committed lockfile. CI also verifies that `uv.lock` still matches `pyproject.toml`.

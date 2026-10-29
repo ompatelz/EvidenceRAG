@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 0.2 complete; Phase 0.3 next in the same Phase 0 pull request
+Current phase: Phase 0.3 complete; Phase 0.4 next in the same Phase 0 pull request
 
 ## Implemented and verified
 
@@ -17,12 +17,16 @@ Current phase: Phase 0.2 complete; Phase 0.3 next in the same Phase 0 pull reque
 - Typed evidence models enforce immutable document provenance, zero-based page indexes,
   normalized region bounds, honest anchor precision, stable serialization, and opaque
   asset references.
+- Versioned evaluation and manifest contracts reject inconsistent answerability, anchors,
+  provenance, hashes, unknown versions, duplicates, malformed JSONL, and split conflicts.
+- Two repository-owned CC0 PDFs regenerate byte-for-byte; both pages were rendered and
+  visually inspected, and extracted text matches the intended narrative, diagram, and table.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Phase 0.3 evaluation contract and safe repository-owned PDF fixtures.
+- Phase 0.4 container, CI, and clean-room hardening.
 
 ## Pending pull requests / links
 
@@ -41,6 +45,10 @@ Verification evidence is updated in this file only after commands have actually 
 - `uv run uvicorn evidence_rag.api:create_app --factory --port 8765` — started
   successfully; live `/health` and `/ready` requests both returned HTTP 200 with the
   documented JSON, then the server shut down cleanly.
+- `uv run python scripts/generate_fixtures.py --check` — passed; both committed PDFs are
+  byte-for-byte deterministic.
+- Evaluation CLI — passed for the committed manifest and JSONL file.
+- `uv run pytest` — passed after Phase 0.3; 30 tests passed in 0.57 seconds.
 - Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
   and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
   temporary directory was removed afterward.
@@ -54,7 +62,8 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- No ingestion, retrieval, evaluation dataset, database, or answer-generation runtime exists.
+- No ingestion, retrieval, database, or answer-generation runtime exists. The evaluation
+  rows are schema fixtures, not a representative benchmark.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
   exercised in Phase 0.1.
 - The project has no selected license.
@@ -68,6 +77,6 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Phase 0.3: add versioned evaluation schemas and safe fixtures (2–4 focused hours).
-2. Phase 0.4: add container and CI hardening (2–3 focused hours).
+1. Phase 0.4: add container and CI hardening (2–3 focused hours).
+2. Perform the complete Phase 0 clean-room gate and evidence table.
 3. Review and merge the complete Phase 0 PR after every gate passes.

@@ -1,0 +1,150 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/Contents 9 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/PageMode /UseNone /Pages 8 0 R /Type /Catalog
+>>
+endobj
+7 0 obj
+<<
+/Author (EvidenceRAG contributors) /CreationDate (D:20000101000000+00'00') /Creator (EvidenceRAG deterministic fixture generator) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (Atlas Sensor Note) /Trapped /False
+>>
+endobj
+8 0 obj
+<<
+/Count 1 /Kids [ 5 0 R ] /Type /Pages
+>>
+endobj
+9 0 obj
+<<
+/Length 1709
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+BT /F2 20 Tf 24 TL ET
+BT 1 0 0 1 54 724 Tm (Atlas Sensor Note) Tj T* ET
+0 0 0 rg
+BT /F1 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 688 Tm (The Atlas sensor samples at 20 hertz during calibration.) Tj T* ET
+BT 1 0 0 1 54 670 Tm (Each sample passes through a filter before archival.) Tj T* ET
+.917647 .94902 .972549 rg
+n
+76 542 m
+174 542 l
+177.3168 542 180 544.6832 180 548 c
+180 584 l
+180 587.3168 177.3168 590 174 590 c
+76 590 l
+72.6832 590 70 587.3168 70 584 c
+70 548 l
+70 544.6832 72.6832 542 76 542 c
+h
+B*
+.090196 .196078 .301961 rg
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 106.355 560 Tm (Sensor) Tj T* ET
+.917647 .94902 .972549 rg
+n
+256 542 m
+354 542 l
+357.3168 542 360 544.6832 360 548 c
+360 584 l
+360 587.3168 357.3168 590 354 590 c
+256 590 l
+252.6832 590 250 587.3168 250 584 c
+250 548 l
+250 544.6832 252.6832 542 256 542 c
+h
+B*
+.090196 .196078 .301961 rg
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 291.5525 560 Tm (Filter) Tj T* ET
+.917647 .94902 .972549 rg
+n
+436 542 m
+534 542 l
+537.3168 542 540 544.6832 540 548 c
+540 584 l
+540 587.3168 537.3168 590 534 590 c
+436 590 l
+432.6832 590 430 587.3168 430 584 c
+430 548 l
+430 544.6832 432.6832 542 436 542 c
+h
+B*
+.090196 .196078 .301961 rg
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 464.826 560 Tm (Archive) Tj T* ET
+.333333 .478431 .584314 RG
+2 w
+n 180 566 m 242 566 l S
+n 234 572 m 242 566 l S
+n 234 560 m 242 566 l S
+n 360 566 m 422 566 l S
+n 414 572 m 422 566 l S
+n 414 560 m 422 566 l S
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 70 518 Tm (Figure 1. Calibration data flow: Sensor -> Filter -> Archive.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 1) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000061 00000 n 
+0000000112 00000 n 
+0000000219 00000 n 
+0000000331 00000 n 
+0000000446 00000 n 
+0000000639 00000 n 
+0000000707 00000 n 
+0000001026 00000 n 
+0000001085 00000 n 
+trailer
+<<
+/ID 
+[<2574f83c77bffc9529343a0667a2a0ae><2574f83c77bffc9529343a0667a2a0ae>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 7 0 R
+/Root 6 0 R
+/Size 10
+>>
+startxref
+2845
+%%EOF
