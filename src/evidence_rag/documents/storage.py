@@ -113,13 +113,23 @@ class LocalArtifactStore:
         documents_root = self._safe_path("documents")
         if not documents_root.is_dir():
             return None
-        for manifest_path in documents_root.glob("doc_*/versions/*/manifest.json"):
+        candidates = list(documents_root.glob("doc_*/versions/*/manifest.json"))
+        candidates.extend(documents_root.glob("doc_*/versions/*/intake.json"))
+        visited: set[tuple[str, str]] = set()
+        for manifest_path in candidates:
             try:
                 manifest = self._read_manifest(manifest_path)
             except (OSError, ValidationError, json.JSONDecodeError):
                 continue
+            identity = manifest.document_id, manifest.document_sha256
+            if identity in visited:
+                continue
+            visited.add(identity)
             if manifest.document_sha256 == document_sha256:
-                return manifest
+                try:
+                    return self.get_manifest_or_recover(*identity)
+                except ArtifactNotFoundError:
+                    continue
         return None
 
     def get_manifest(self, document_id: str, document_sha256: str) -> IngestionManifest:
@@ -132,12 +142,45 @@ class LocalArtifactStore:
         except (OSError, ValidationError, json.JSONDecodeError) as exc:
             raise ArtifactNotFoundError from exc
 
+    def get_manifest_or_recover(self, document_id: str, document_sha256: str) -> IngestionManifest:
+        """Recover a missing mutable manifest from its immutable intake snapshot."""
+        try:
+            return self.get_manifest(document_id, document_sha256)
+        except ArtifactNotFoundError:
+            pass
+        version_dir = self._version_path(document_id, document_sha256)
+        source = version_dir / "source.pdf"
+        try:
+            intake = self._read_manifest(version_dir / "intake.json")
+        except (OSError, ValidationError, json.JSONDecodeError) as exc:
+            raise ArtifactNotFoundError from exc
+        if (
+            intake.state is not IngestionState.RECEIVED
+            or intake.document_id != document_id
+            or intake.document_sha256 != document_sha256
+            or not source.is_file()
+        ):
+            raise ArtifactNotFoundError
+        self._atomic_write_model(version_dir / "manifest.json", intake)
+        return intake
+
     def source_path(self, manifest: IngestionManifest) -> Path:
         """Resolve the private source path for an already-validated manifest."""
         path = self._version_path(manifest.document_id, manifest.document_sha256) / "source.pdf"
         if not path.is_file():
             raise ArtifactNotFoundError
         return path
+
+    def validate_source_integrity(self, manifest: IngestionManifest) -> None:
+        """Recheck immutable source size and hash before a new ingestion attempt."""
+        path = self.source_path(manifest)
+        try:
+            if path.stat().st_size != manifest.size_bytes:
+                raise StorageError("source artifact size no longer matches its manifest")
+            if self._file_sha256(path) != manifest.document_sha256:
+                raise StorageError("source artifact hash no longer matches its manifest")
+        except OSError as exc:
+            raise StorageError("source artifact could not be validated") from exc
 
     def update_manifest(self, manifest: IngestionManifest) -> None:
         """Atomically replace the lifecycle record for one existing version."""
@@ -226,6 +269,17 @@ class LocalArtifactStore:
             raise ArtifactNotFoundError
         return path
 
+    def remove_derived_artifacts(self, document_id: str, document_sha256: str) -> None:
+        """Remove only regenerable evidence, previews, and abandoned rendering stages."""
+        version_dir = self._version_path(document_id, document_sha256)
+        if not (version_dir / "source.pdf").is_file():
+            raise ArtifactNotFoundError
+        (version_dir / "evidence.json").unlink(missing_ok=True)
+        shutil.rmtree(version_dir / "pages", ignore_errors=True)
+        for staging in version_dir.glob(".render-*"):
+            if staging.is_dir():
+                shutil.rmtree(staging, ignore_errors=True)
+
     def _publish(self, staging_path: Path, manifest: IngestionManifest) -> IngestionManifest:
         version_dir = self._version_path(manifest.document_id, manifest.document_sha256)
         try:
@@ -238,6 +292,7 @@ class LocalArtifactStore:
 
         try:
             self._replace(staging_path, version_dir / "source.pdf")
+            self._atomic_write_model(version_dir / "intake.json", manifest)
             self._atomic_write_model(version_dir / "manifest.json", manifest)
             return manifest
         except Exception as exc:

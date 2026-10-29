@@ -2,7 +2,7 @@
 
 ## Current implemented architecture
 
-Phase 1.3 extends the verified Phase 0 boundary with intake, parsing, and visual anchors:
+Phase 1 connects the verified Phase 0 boundary to one reliable ingestion lifecycle:
 
 ```text
 FastAPI /health + /ready
@@ -38,6 +38,10 @@ multipart upload ---- raw body limit ---- spooled UploadFile
        atomic pages/ manifest + opaque page asset IDs
                                       |
         rotation-aware evidence-to-pixel anchor resolution
+                                      |
+               complete evidence + complete page set
+                                      |
+                      atomic `ready` manifest
 ```
 
 The package exposes operational HTTP endpoints and validates evidence objects. There are
@@ -84,8 +88,22 @@ bytes, never private paths.
 Evidence boxes are normalized in unrotated crop-box-relative source space. Rotation is
 applied before scaling by actual pixmap dimensions. Region anchors return source,
 display, and containing pixel boxes. Page anchors return only the preview. Unavailable
-anchors return neither. Rendering does not create a `ready` state; Phase 1.4 owns the final
-orchestration and lifecycle transition.
+anchors return neither.
+
+The lifecycle orchestrator owns `received -> validating -> parsing -> rendering ->
+persisting -> ready`, with explicit `partial` and `failed` terminals. It validates every
+transition and writes `ready` only after complete, version-consistent evidence and page
+artifacts are committed. A retry or re-index removes all derived artifacts first and
+rebuilds them from the immutable, hash-validated source; derived files are never appended.
+The immutable received-state `intake.json` snapshot permits recovery of a missing mutable
+manifest when the source is still present.
+
+Each attempt records a server-generated request ID, count, safe failure stage/code, and
+validation/parsing/rendering/persistence/total timings. Structured logs omit filenames,
+source text, private paths, and raw exception messages. A process-local lock serializes
+attempts for the supported single-process deployment. It is not a distributed lock and
+does not make work durable across process failure; a later explicit retry restarts an
+interrupted attempt from the source.
 
 ## Planned direction, not implemented
 
@@ -117,7 +135,8 @@ The following are deferred until a reviewed phase or measured need justifies the
 - BM25, embedding models, Qdrant, and rerankers;
 - external or local LLM integrations;
 - a frontend or evidence inspector;
-- Redis, PostgreSQL, durable distributed queues, and object storage;
+- Redis, PostgreSQL, durable distributed queues, and object storage (until measured
+  latency, concurrency, or restart-durability requirements justify them);
 - heavy visual-document models;
 - cloud deployment, multi-tenancy, and microservices.
 
@@ -149,3 +168,7 @@ selection, coordinate conventions, extraction boundary, licensing caveat, and ro
 
 See [ADR-0005](decisions/ADR-0005-page-previews-and-anchor-transforms.md) for rendering
 profile, crop/rotation transforms, atomic page publication, asset security, and rollback.
+
+See [ADR-0006](decisions/ADR-0006-reliable-synchronous-ingestion-lifecycle.md) for the
+state machine, ready commit boundary, retry/re-index policy, recovery, telemetry privacy,
+and explicit conditions for moving to durable jobs.

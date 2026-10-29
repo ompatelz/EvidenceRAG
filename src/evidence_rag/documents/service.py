@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import BinaryIO
 
+from evidence_rag.documents.errors import IntakeError
 from evidence_rag.documents.identity import sanitize_filename
 from evidence_rag.documents.models import (
     DocumentIntakeResponse,
@@ -34,16 +35,6 @@ from evidence_rag.documents.storage import (
     UploadTooLargeError,
 )
 from evidence_rag.evidence import AnchorPrecision
-
-
-class IntakeError(RuntimeError):
-    """Safe, client-facing intake failure."""
-
-    def __init__(self, code: str, message: str, status_code: int) -> None:
-        super().__init__(message)
-        self.code = code
-        self.message = message
-        self.status_code = status_code
 
 
 class DocumentIntakeService:
@@ -111,7 +102,11 @@ class DocumentParsingService:
         except ArtifactNotFoundError as exc:
             raise IntakeError("document_not_found", "Document version not found.", 404) from exc
 
-        if manifest.state in {IngestionState.PARSED, IngestionState.PARTIAL}:
+        if manifest.state in {
+            IngestionState.PARSED,
+            IngestionState.PARTIAL,
+            IngestionState.READY,
+        }:
             try:
                 artifact = self.store.get_evidence(document_id, document_sha256)
             except ArtifactNotFoundError as exc:
@@ -270,7 +265,11 @@ class DocumentRenderingService:
 
     def render(self, document_id: str, document_sha256: str) -> DocumentRenderResponse:
         manifest = self._manifest(document_id, document_sha256)
-        if manifest.state not in {IngestionState.PARSED, IngestionState.PARTIAL}:
+        if manifest.state not in {
+            IngestionState.PARSED,
+            IngestionState.PARTIAL,
+            IngestionState.READY,
+        }:
             raise IntakeError(
                 "document_not_parsed",
                 "Document evidence must be parsed before page previews are rendered.",

@@ -2,7 +2,8 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 1.3 complete and CI-verified; awaiting owner review on the Phase 1 draft PR
+Current phase: Phase 1.4 local acceptance gate passed; principal commit and PR CI are in
+progress
 
 ## Implemented and verified
 
@@ -52,18 +53,34 @@ Current phase: Phase 1.3 complete and CI-verified; awaiting owner review on the 
 - Rendering lookups are scoped by generated document ID, exact hash/version, evidence ID,
   and zero-based page index. Cross-document, stale-version, invalid-page, and missing-file
   requests fail safely without exposing paths.
+- Phase 1.4 connects intake, source-integrity validation, parsing, evidence creation,
+  rendering, and artifact persistence through an explicit validated state machine.
+- `ready` is now a final commit marker written only after complete version-matching evidence
+  and page artifacts are committed. Failures and partial output never claim readiness.
+- One-shot ingestion, detailed status, retry, and re-index APIs use server-generated request
+  IDs, attempt counts, stage timings, safe error codes, and content-safe JSON logs.
+- Retry and re-index regenerate complete derived artifacts from immutable source bytes;
+  stale evidence/pages are removed, and stable evidence IDs are replaced rather than
+  appended. Ready versions with missing/corrupt artifacts are detected and rebuilt.
+- An immutable intake snapshot permits recovery of a missing mutable manifest when the
+  original source remains present and hash-valid.
+- The focused lifecycle suite injects parser, renderer, evidence, and final-manifest
+  failures and checks interruption recovery, cleanup, duplicate/version semantics, rotated
+  and blank PDFs, log privacy, and evidence/page identity consistency.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Owner review of the Subphase 1.3 implementation and teaching handoff.
+- Create and push the exact Phase 1.4 principal commit, verify all four PR jobs, update the
+  final remote evidence, and convert PR #4 from draft to ready for owner review.
 
 ## Pending pull requests / links
 
 - [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
-  remains the single Phase 1 PR. Subphase 1.3 principal commit `07a7da5` passed Python 3.11,
-  Python 3.14, and Container CI and remains draft and unmerged for review.
+  remains the single Phase 1 PR. The current remote head `2324a81` passed Python 3.11,
+  Python 3.14, and Container CI for the final Subphase 1.3 documentation repair. The PR
+  remains draft and unmerged while Subphase 1.4 is verified.
 
 ## Last test commands and outcomes
 
@@ -143,6 +160,23 @@ Verification evidence is updated in this file only after commands have actually 
   container was removed after verification.
 - GitHub Actions for PR #4 head `07a7da5` — Python 3.11 passed in 21 seconds, Python 3.14
   passed in 23 seconds, and Container passed in 19 seconds.
+- Phase 1.4 focused lifecycle suite — 16 tests passed in 2.85 seconds. It covers successful
+  owned-fixture ingestion, duplicates, changed versions, re-index, retry, parser/renderer/
+  evidence/final-manifest failures, cleanup, manifest recovery, missing ready assets,
+  corrupt/blank/rotated PDFs, interrupted work, log privacy, and invalid transitions.
+- Complete Phase 1.4 Python gate — `uv sync`, lock check, Ruff lint/format, strict mypy,
+  and all 92 tests passed in 7.96 seconds. Deterministic fixture regeneration and committed
+  evaluation-data validation also passed.
+- Manual 96-DPI inspection passed for the owned Atlas narrative/diagram, owned structured
+  table, and a temporary 90° rotated fixture. Every reported region enclosed its visible
+  source; the table box excluded its caption; rotation metadata and display dimensions
+  agreed. No anchors were downgraded in these three PDFs. Detailed bounded timings and
+  unsupported vector-diagram behavior are recorded in `docs/phase1_gate.md`.
+- `docker compose config --quiet` passed and `evidencerag:phase-1` built successfully with
+  `VCS_REF=phase-1.4-local`. A temporary container became healthy, ran as UID 10001,
+  ingested the owned table fixture through the one-shot endpoint, returned `ready` on the
+  first attempt with five evidence units, one preview, and all five timing stages, then was
+  removed.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -153,9 +187,11 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- Parsing and preview APIs exist, but no polished viewer, retrieval, database, automatic
-  orchestration/retry, atomic ready transition, or answer-generation runtime exists. The
-  evaluation rows are schema fixtures, not a representative benchmark.
+- No polished viewer, retrieval, database, durable background jobs, or answer-generation
+  runtime exists. The evaluation rows are schema fixtures, not a representative benchmark.
+- Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
+  multiple processes nor automatically resumes after a restart; interrupted work requires
+  an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.
 - Table detection is page-local. Complex reading order, multi-page tables, vector diagrams,
   equations, unusual malformed page boxes, and rotated/cropped production documents are not
   yet validated broadly.
@@ -177,9 +213,12 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
   states, licensing constraints, and rollback.
 - ADR-0005 defines the fixed rendering profile, crop/rotation transforms, containing-pixel
   rounding, atomic page publication, page asset security, manual verification, and rollback.
+- ADR-0006 defines the synchronous state machine, atomic ready boundary, whole-artifact
+  retry/re-index policy, immutable intake recovery, safe telemetry, and durable-job triggers.
 
 ## Next 3 tasks
 
-1. Finish the Phase 1.3 quality gate and verify the existing draft PR CI.
-2. Review the Subphase 1.3 teaching handoff and overlay evidence.
-3. Say `continue Phase 1` only when ready to authorize Subphase 1.4.
+1. Complete the Phase 1.4 full local, container, manual-inspection, and CI gates.
+2. Review and merge Phase 1 PR #4 only after owner approval.
+3. Begin Phase 2 — evaluation seed and search baselines only after Phase 1 is merged and
+   explicitly authorized.

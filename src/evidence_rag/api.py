@@ -1,6 +1,8 @@
-"""FastAPI application factory, operational endpoints, and safe PDF intake."""
+"""FastAPI application factory and synchronous evidence-preserving ingestion."""
 
+from collections.abc import Awaitable, Callable
 from typing import Annotated, Literal
+from uuid import uuid4
 
 from fastapi import FastAPI, File, Request, Response, UploadFile, status
 from pydantic import BaseModel, ConfigDict
@@ -10,6 +12,9 @@ from starlette.responses import FileResponse, JSONResponse
 from evidence_rag import __version__
 from evidence_rag.config import AppSettings
 from evidence_rag.documents import (
+    DocumentIngestionResponse,
+    DocumentIngestionService,
+    DocumentIngestionStatusResponse,
     DocumentIntakeResponse,
     DocumentIntakeService,
     DocumentMetadataResponse,
@@ -20,12 +25,16 @@ from evidence_rag.documents import (
     DocumentStatusResponse,
     EvidenceAnchorResponse,
     EvidenceArtifact,
+    IngestionMode,
+    IngestionState,
     IntakeError,
     LocalArtifactStore,
     PagePreviewManifest,
     PyMuPDFPageRenderer,
     PyMuPDFParser,
 )
+
+CallNext = Callable[[Request], Awaitable[Response]]
 
 
 class HealthResponse(BaseModel):
@@ -60,31 +69,37 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         chunk_bytes=resolved_settings.upload_chunk_bytes,
     )
     intake_service = DocumentIntakeService(artifact_store)
-    parsing_service = DocumentParsingService(
-        artifact_store,
-        PyMuPDFParser(
-            max_pages=resolved_settings.max_pdf_pages,
-            max_units=resolved_settings.max_evidence_units,
-        ),
+    parser = PyMuPDFParser(
+        max_pages=resolved_settings.max_pdf_pages,
+        max_units=resolved_settings.max_evidence_units,
     )
-    rendering_service = DocumentRenderingService(
-        artifact_store,
-        PyMuPDFPageRenderer(
-            dpi=resolved_settings.render_dpi,
-            max_pages=resolved_settings.max_pdf_pages,
-            max_page_pixels=resolved_settings.max_render_pixels_per_page,
-            max_total_pixels=resolved_settings.max_render_pixels_total,
-        ),
+    renderer = PyMuPDFPageRenderer(
+        dpi=resolved_settings.render_dpi,
+        max_pages=resolved_settings.max_pdf_pages,
+        max_page_pixels=resolved_settings.max_render_pixels_per_page,
+        max_total_pixels=resolved_settings.max_render_pixels_total,
     )
+    parsing_service = DocumentParsingService(artifact_store, parser)
+    rendering_service = DocumentRenderingService(artifact_store, renderer)
+    ingestion_service = DocumentIngestionService(artifact_store, parser, renderer)
     app.state.intake_service = intake_service
     app.state.parsing_service = parsing_service
     app.state.rendering_service = rendering_service
+    app.state.ingestion_service = ingestion_service
     app.add_middleware(
         RequestBodyLimitMiddleware,
         max_body_size=(
             resolved_settings.max_upload_bytes + resolved_settings.multipart_overhead_bytes
         ),
     )
+
+    @app.middleware("http")
+    async def request_id_middleware(request: Request, call_next: CallNext) -> Response:
+        """Assign one generated trace ID without trusting caller input."""
+        request.state.request_id = f"req_{uuid4().hex}"
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = request.state.request_id
+        return response
 
     @app.exception_handler(IntakeError)
     async def intake_error_handler(_request: Request, exc: IntakeError) -> JSONResponse:
@@ -136,6 +151,34 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
             response.status_code = status.HTTP_200_OK
         return result
 
+    @app.post(
+        "/api/v1/ingestions",
+        response_model=DocumentIngestionResponse,
+        status_code=status.HTTP_201_CREATED,
+        tags=["documents"],
+    )
+    def ingest_uploaded_document(
+        request: Request,
+        response: Response,
+        file: Annotated[UploadFile, File(description="PDF document to ingest synchronously")],
+    ) -> DocumentIngestionResponse:
+        """Accept and fully ingest one bounded PDF in the current request."""
+        try:
+            accepted = intake_service.accept(file.file, file.filename)
+        finally:
+            file.file.close()
+        result = ingestion_service.ingest(
+            accepted.document_id,
+            accepted.document_sha256,
+            request_id=request.state.request_id,
+            duplicate=accepted.duplicate,
+        )
+        if accepted.duplicate:
+            response.status_code = status.HTTP_200_OK
+        if result.state in {IngestionState.PARTIAL, IngestionState.FAILED}:
+            response.status_code = status.HTTP_422_UNPROCESSABLE_CONTENT
+        return result
+
     @app.get(
         "/api/v1/documents/{document_id}/versions/{document_sha256}",
         response_model=DocumentMetadataResponse,
@@ -153,6 +196,62 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
     def document_status(document_id: str, document_sha256: str) -> DocumentStatusResponse:
         """Return the truthful lifecycle state for one version."""
         return intake_service.status(document_id, document_sha256)
+
+    @app.get(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/ingestion",
+        response_model=DocumentIngestionStatusResponse,
+        tags=["documents"],
+    )
+    def ingestion_status(document_id: str, document_sha256: str) -> DocumentIngestionStatusResponse:
+        """Return stage, attempts, timings, counts, and safe failure details."""
+        return ingestion_service.status(document_id, document_sha256)
+
+    @app.post(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/ingest",
+        response_model=DocumentIngestionResponse,
+        tags=["documents"],
+    )
+    def ingest_existing_version(
+        request: Request, document_id: str, document_sha256: str
+    ) -> DocumentIngestionResponse:
+        """Complete a received version without re-uploading its source bytes."""
+        return ingestion_service.ingest(
+            document_id,
+            document_sha256,
+            request_id=request.state.request_id,
+        )
+
+    @app.post(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/retry",
+        response_model=DocumentIngestionResponse,
+        tags=["documents"],
+    )
+    def retry_ingestion(
+        request: Request, document_id: str, document_sha256: str
+    ) -> DocumentIngestionResponse:
+        """Retry a failed, partial, or interrupted synchronous attempt."""
+        return ingestion_service.ingest(
+            document_id,
+            document_sha256,
+            request_id=request.state.request_id,
+            mode=IngestionMode.RETRY,
+        )
+
+    @app.post(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/reindex",
+        response_model=DocumentIngestionResponse,
+        tags=["documents"],
+    )
+    def reindex_document(
+        request: Request, document_id: str, document_sha256: str
+    ) -> DocumentIngestionResponse:
+        """Regenerate derived artifacts for one immutable source version."""
+        return ingestion_service.ingest(
+            document_id,
+            document_sha256,
+            request_id=request.state.request_id,
+            mode=IngestionMode.REINDEX,
+        )
 
     @app.post(
         "/api/v1/documents/{document_id}/versions/{document_sha256}/parse",

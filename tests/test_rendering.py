@@ -13,6 +13,7 @@ from pydantic import ValidationError
 
 from evidence_rag.api import create_app
 from evidence_rag.config import AppSettings
+from evidence_rag.documents.errors import IntakeError
 from evidence_rag.documents.models import (
     IngestionManifest,
     PagePreviewManifest,
@@ -33,7 +34,6 @@ from evidence_rag.documents.rendering import (
 from evidence_rag.documents.service import (
     DocumentParsingService,
     DocumentRenderingService,
-    IntakeError,
 )
 from evidence_rag.documents.storage import LocalArtifactStore
 from evidence_rag.evidence import AnchorPrecision, NormalizedBoundingBox

@@ -1,5 +1,7 @@
 """Typed contracts for safe PDF intake and version manifests."""
 
+from __future__ import annotations
+
 from datetime import datetime
 from enum import StrEnum
 from typing import Annotated, Literal, Self
@@ -29,10 +31,33 @@ class IngestionState(StrEnum):
     """Lifecycle states implemented by intake and explicit parsing."""
 
     RECEIVED = "received"
+    VALIDATING = "validating"
     PARSING = "parsing"
     PARSED = "parsed"
+    RENDERING = "rendering"
+    PERSISTING = "persisting"
+    READY = "ready"
     PARTIAL = "partial"
     FAILED = "failed"
+
+
+class IngestionStage(StrEnum):
+    """Measured synchronous stages retained in the version manifest."""
+
+    VALIDATION = "validation"
+    PARSING = "parsing"
+    RENDERING = "rendering"
+    PERSISTENCE = "persistence"
+    TOTAL = "total"
+
+
+class StageTiming(BaseModel):
+    """One safe wall-clock duration without source content or paths."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    stage: IngestionStage
+    duration_ms: float = Field(ge=0.0)
 
 
 class ParserMetadata(BaseModel):
@@ -72,24 +97,69 @@ class IngestionManifest(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
     parser: ParserMetadata | None = None
+    renderer: RendererMetadata | None = None
     evidence_count: int = Field(default=0, ge=0)
+    page_count: int = Field(default=0, ge=0)
+    attempt_count: int = Field(default=0, ge=0)
+    last_request_id: StableIdentifier | None = None
+    stage_timings: list[StageTiming] = Field(default_factory=list)
     failure_reason: SafeFilename | None = None
+    failure_stage: IngestionStage | None = None
+    ready_at: datetime | None = None
 
     @model_validator(mode="after")
     def validate_version_identity(self) -> Self:
         """Keep version labels content-addressed and unambiguous."""
         if self.document_version != f"sha256:{self.document_sha256}":
             raise ValueError("document_version must equal sha256:<document_sha256>")
-        if self.state is IngestionState.RECEIVED:
-            if self.parser is not None or self.evidence_count or self.failure_reason is not None:
-                raise ValueError("received state must not claim parser results")
-        elif self.parser is None:
-            raise ValueError("post-intake states require parser metadata")
+        if self.state is IngestionState.RECEIVED and (
+            self.parser is not None
+            or self.renderer is not None
+            or self.evidence_count
+            or self.page_count
+            or self.failure_reason is not None
+            or self.failure_stage is not None
+            or self.ready_at is not None
+        ):
+            raise ValueError("received state must not claim parser results")
+        if (
+            self.state
+            in {
+                IngestionState.PARSING,
+                IngestionState.PARSED,
+                IngestionState.RENDERING,
+                IngestionState.PERSISTING,
+                IngestionState.READY,
+                IngestionState.PARTIAL,
+            }
+            and self.parser is None
+        ):
+            raise ValueError("parsing and later states require parser metadata")
+        if (
+            self.state
+            in {
+                IngestionState.RENDERING,
+                IngestionState.PERSISTING,
+                IngestionState.READY,
+            }
+            and self.renderer is None
+        ):
+            raise ValueError("rendering and later states require renderer metadata")
         if self.state in {IngestionState.PARTIAL, IngestionState.FAILED}:
             if self.failure_reason is None:
                 raise ValueError("partial and failed states require a failure reason")
         elif self.failure_reason is not None:
             raise ValueError("non-failure states must not include a failure reason")
+        if (
+            self.state not in {IngestionState.PARTIAL, IngestionState.FAILED}
+            and self.failure_stage is not None
+        ):
+            raise ValueError("only partial and failed states may name a failure stage")
+        if self.state is IngestionState.READY:
+            if self.evidence_count == 0 or self.page_count == 0 or self.ready_at is None:
+                raise ValueError("ready requires committed evidence, pages, and ready_at")
+        elif self.ready_at is not None:
+            raise ValueError("only ready state may include ready_at")
         return self
 
 
@@ -282,7 +352,7 @@ class DocumentIntakeResponse(BaseModel):
     @classmethod
     def from_manifest(
         cls, manifest: IngestionManifest, *, duplicate: bool
-    ) -> "DocumentIntakeResponse":
+    ) -> DocumentIntakeResponse:
         """Project a private storage manifest into the public intake contract."""
         return cls(
             document_id=manifest.document_id,
@@ -310,7 +380,7 @@ class DocumentMetadataResponse(BaseModel):
     created_at: datetime
 
     @classmethod
-    def from_manifest(cls, manifest: IngestionManifest) -> "DocumentMetadataResponse":
+    def from_manifest(cls, manifest: IngestionManifest) -> DocumentMetadataResponse:
         return cls(
             document_id=manifest.document_id,
             document_version=manifest.document_version,
@@ -332,9 +402,51 @@ class DocumentStatusResponse(BaseModel):
     state: IngestionState
 
     @classmethod
-    def from_manifest(cls, manifest: IngestionManifest) -> "DocumentStatusResponse":
+    def from_manifest(cls, manifest: IngestionManifest) -> DocumentStatusResponse:
         return cls(
             document_id=manifest.document_id,
             document_version=manifest.document_version,
             state=manifest.state,
         )
+
+
+class DocumentIngestionStatusResponse(BaseModel):
+    """Detailed, client-safe lifecycle status for one immutable version."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    document_id: StableIdentifier
+    document_version: DocumentVersion
+    document_sha256: Sha256Hex
+    state: IngestionState
+    attempt_count: int = Field(ge=0)
+    last_request_id: StableIdentifier | None = None
+    evidence_count: int = Field(ge=0)
+    page_count: int = Field(ge=0)
+    failure_reason: SafeFilename | None = None
+    failure_stage: IngestionStage | None = None
+    stage_timings: list[StageTiming]
+    ready_at: datetime | None = None
+
+    @classmethod
+    def from_manifest(cls, manifest: IngestionManifest) -> DocumentIngestionStatusResponse:
+        return cls(
+            document_id=manifest.document_id,
+            document_version=manifest.document_version,
+            document_sha256=manifest.document_sha256,
+            state=manifest.state,
+            attempt_count=manifest.attempt_count,
+            last_request_id=manifest.last_request_id,
+            evidence_count=manifest.evidence_count,
+            page_count=manifest.page_count,
+            failure_reason=manifest.failure_reason,
+            failure_stage=manifest.failure_stage,
+            stage_timings=manifest.stage_timings,
+            ready_at=manifest.ready_at,
+        )
+
+
+class DocumentIngestionResponse(DocumentIngestionStatusResponse):
+    """Result of one bounded synchronous ingestion request."""
+
+    duplicate: bool = False

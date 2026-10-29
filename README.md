@@ -4,10 +4,10 @@ EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository is in **Phase 1.3**. It includes the verified Phase 0 foundation, safe PDF
-intake, provenance-preserving extraction, and versioned page previews with honest evidence
-anchors. It does **not** yet provide an atomic end-to-end ready state, retrieve evidence,
-generate answers, or report benchmark results.
+This repository is in **Phase 1 final verification**. It includes the verified Phase 0
+foundation and a bounded synchronous workflow from safe PDF intake through an atomic
+`ready` state, with provenance-preserving evidence and inspectable page anchors. It does
+**not** retrieve evidence, generate answers, or report benchmark results.
 
 ## Why this project exists
 
@@ -79,6 +79,19 @@ Implemented in Phase 1.3:
 - page and unavailable precision that never invent region boxes;
 - pixel-based and manually inspected overlay verification on the owned table fixture.
 
+Implemented in Phase 1.4:
+
+- an explicit validated lifecycle from `received` through `validating`, `parsing`,
+  `rendering`, and `persisting` to the terminal `ready`, `partial`, or `failed` states;
+- synchronous upload-and-ingest, status, retry, and re-index APIs with server-generated
+  request IDs, stage timings, attempt counts, and content-safe structured logs;
+- atomic readiness only after version-matching evidence and complete page assets exist;
+- recovery from an immutable intake snapshot, source-integrity checks, and automatic
+  rebuild when a ready artifact is missing or inconsistent;
+- full replacement of derived artifacts on retry/re-index, preventing stale pages or
+  duplicate evidence from surviving a successful attempt;
+- a bounded owned-fixture end-to-end CI job and failure-injection lifecycle tests.
+
 Planned for later reviewed phases:
 
 - BM25, dense, hybrid, and reranked retrieval baselines;
@@ -87,10 +100,11 @@ Planned for later reviewed phases:
 
 ## Non-goals for this phase
 
-Phase 1.3 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
-diagram understanding, multi-page table linking, automatic orchestration/retry, a polished
-viewer, Qdrant, LLM SDKs, Redis, PostgreSQL, model downloads, and deployment. It makes no
-claims about retrieval quality, answer accuracy, latency, or production readiness.
+Phase 1 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
+diagram understanding, multi-page table linking, a polished viewer, Qdrant, LLM SDKs,
+Redis, PostgreSQL, distributed jobs, model downloads, and deployment. It makes no claims
+about retrieval quality, answer accuracy, broad document understanding, latency, or
+production readiness.
 
 ## Requirements
 
@@ -138,15 +152,21 @@ Upload an owned PDF fixture:
 
 ```bash
 curl -F "file=@datasets/fixtures/atlas-narrative.pdf;type=application/pdf" \
-  http://127.0.0.1:8000/api/v1/documents
+  http://127.0.0.1:8000/api/v1/ingestions
 ```
 
-The response contains opaque document/version/asset identifiers and the `received` state,
-never a filesystem path. Use those identifiers with:
+This one-shot endpoint synchronously returns `ready`, `partial`, or `failed`. The response
+contains opaque document/version/asset identifiers and never a filesystem path. The older
+`POST /api/v1/documents` intake-only endpoint remains available and returns `received`.
+Use the identifiers with:
 
 ```text
 GET /api/v1/documents/{document_id}/versions/{document_sha256}
 GET /api/v1/documents/{document_id}/versions/{document_sha256}/status
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/ingestion
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/ingest
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/retry
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/reindex
 POST /api/v1/documents/{document_id}/versions/{document_sha256}/parse
 GET /api/v1/documents/{document_id}/versions/{document_sha256}/evidence
 POST /api/v1/documents/{document_id}/versions/{document_sha256}/render
@@ -166,11 +186,13 @@ Non-secret intake settings use the `EVIDENCERAG_` prefix:
 - `EVIDENCERAG_MAX_RENDER_PIXELS_PER_PAGE` (default 20,000,000)
 - `EVIDENCERAG_MAX_RENDER_PIXELS_TOTAL` (default 100,000,000)
 
-The default deployment remains a local, single-user MVP. The upload limit is enforced once
-over the raw multipart request and again over streamed PDF bytes. Intake checks the PDF
-header and a bounded EOF trailer only. The explicit parse endpoint performs structural
-opening and extraction, and the explicit render endpoint creates previews only after parse;
-none of these operations silently claims end-to-end readiness.
+The default deployment remains a local, single-process, single-user MVP. The upload limit
+is enforced once over the raw multipart request and again over streamed PDF bytes. Intake
+checks the PDF header and a bounded EOF trailer; orchestration then revalidates the source,
+structurally parses it, renders all bounded previews, commits complete derived artifacts,
+and only then marks the version ready. An in-process lock serializes attempts and is not a
+distributed concurrency guarantee. See ADR-0006 for the measured conditions that would
+justify a durable job system.
 
 Validate all committed evaluation data and deterministic fixtures:
 
