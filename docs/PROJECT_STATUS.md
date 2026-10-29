@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 1.2 complete locally; awaiting CI and owner review on the Phase 1 draft PR
+Current phase: Phase 1.2 complete and CI-verified; awaiting owner review on the Phase 1 draft PR
 
 ## Implemented and verified
 
@@ -49,14 +49,13 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- GitHub Actions on the existing draft PR after the Phase 1.2 push.
 - Owner review of the Subphase 1.2 implementation and teaching handoff.
 
 ## Pending pull requests / links
 
 - [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
-  remains the single Phase 1 PR. Subphase 1.1 CI passed; the Phase 1.2 head will be recorded
-  after its commit and push.
+  remains the single Phase 1 PR. Subphase 1.2 principal commit `31a38d3` passed Python 3.11,
+  Python 3.14, and Container CI and remains unmerged for review.
 
 ## Last test commands and outcomes
 
@@ -116,6 +115,8 @@ Verification evidence is updated in this file only after commands have actually 
   candidate image built with pinned PyMuPDF, reached healthy as UID 10001, accepted the
   owned table fixture, changed from `received` to `parsed`, persisted five evidence units
   including one structured table, and was removed after verification.
+- GitHub Actions for PR #4 head `31a38d3` — Python 3.11 passed in 17 seconds, Python 3.14
+  passed in 16 seconds, and Container passed in 17 seconds.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
