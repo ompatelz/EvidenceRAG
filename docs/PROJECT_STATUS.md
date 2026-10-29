@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 0 complete; awaiting owner review and merge
+Current phase: Phase 1.1 in progress on `codex/phase-1-ingestion`
 
 ## Implemented and verified
 
@@ -25,17 +25,28 @@ Current phase: Phase 0 complete; awaiting owner review and merge
   a verified HTTP health check. Compose adds a read-only filesystem and no-new-privileges.
 - CI now validates Python quality, deterministic fixtures, evaluation data, Compose, the
   container build, container health, and the runtime UID without publishing or deploying.
+- Phase 0 PR #2 was merged into `main` at `c2aec908f2d24397a7ba014e19fbe486eafb60df`;
+  all three final Phase 0 CI jobs passed and local `main` was fast-forwarded to that commit.
+- Phase 1.1 implements bounded multipart PDF intake, streamed SHA-256, logical document and
+  immutable content-version identity, safe local artifact allocation, atomic manifests,
+  idempotent duplicates, changed versions, cleanup, and safe metadata/status responses.
+- The focused Phase 1.1 suite covers owned-fixture upload, empty/corrupt/wrong-signature
+  files, unusual/traversal filenames, limits, duplicates, changed versions, interrupted and
+  failed writes, manifest validation/atomicity, confinement, and path-safe responses.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Owner review and merge decision for the complete Phase 0 pull request.
+- Complete Phase 1.1 quality, Compose, and container gates.
+- Push the first subphase commit and open the single Phase 1 pull request as a draft.
+- Confirm the first Phase 1 CI run and stop for owner review.
 
 ## Pending pull requests / links
 
-- [PR #2: Phase 0.1 — establish Python foundation and core CI](https://github.com/ompatelz/EvidenceRAG/pull/2)
-  is open and intentionally unmerged.
+- [Issue #3: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/issues/3)
+  tracks all four subphases.
+- The single Phase 1 draft PR will be opened after the Subphase 1.1 commit is pushed.
 
 ## Last test commands and outcomes
 
@@ -66,6 +77,20 @@ Verification evidence is updated in this file only after commands have actually 
 - Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
   and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
   temporary directory was removed afterward.
+- Phase 1 baseline after synchronizing merged `main`: complete quality gate passed; 30
+  tests passed in 0.57 seconds.
+- Phase 1.1 focused tests: 14 passed in 0.86 seconds.
+- Focused Ruff check passed. Strict mypy initially found one incompatible test-stream
+  override; the annotation was corrected before the full gate.
+- Complete Phase 1.1 Python gate — `uv sync`, Ruff lint/format, strict mypy, and pytest
+  passed on the exact pre-commit tree; 44 tests passed in 0.85 seconds. A separate
+  `uv lock --check` passed after dependency resolution.
+- Deterministic fixture regeneration and committed evaluation-data validation passed.
+- `docker compose config --quiet` passed with a named artifact volume preserving the
+  read-only root filesystem boundary.
+- `docker build --build-arg VCS_REF=phase-1.1-local -t evidencerag:phase-1 .` passed.
+- Temporary Phase 1 candidate container reached healthy, ran as UID 10001, accepted the
+  owned Atlas fixture, returned `received`, created exactly one manifest, and was removed.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -76,8 +101,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- No ingestion, retrieval, database, or answer-generation runtime exists. The evaluation
-  rows are schema fixtures, not a representative benchmark.
+- Intake exists, but no PDF page parsing, page-count validation, extraction, rendering,
+  retrieval, database, or answer-generation runtime exists. The evaluation rows are schema
+  fixtures, not a representative benchmark.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
   exercised in Phase 0.1.
 - The project has no selected license.
@@ -86,11 +112,13 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Decisions changed since master context
 
-- None. ADR-0001 narrows the master context to the smallest Phase 0.1 foundation and
-  defers all runtime dependencies.
+- ADR-0003 selects filename-derived logical document identity, exact-byte SHA-256 versions,
+  global local-store deduplication, atomic file/manifest publication, and an honest
+  `received` intake state. Parser integration remains deferred to the Phase 1.2 research
+  gate.
 
 ## Next 3 tasks
 
-1. Review the complete Phase 0 PR and its architecture/evaluation decisions.
-2. Merge only with owner approval after the final docs-only CI run remains green.
-3. Synchronize `main`, then begin Phase 1 evidence-preserving PDF ingestion.
+1. Finish and verify the complete Phase 1.1 gate.
+2. Commit, push, open the Phase 1 draft PR, and confirm CI.
+3. Stop for owner review; begin Phase 1.2 only after `continue Phase 1`.

@@ -9,7 +9,12 @@ services:
     read_only: true
     tmpfs:
       - /tmp:size=16m,mode=1777
+    volumes:
+      - evidence-artifacts:/app/artifacts
     security_opt:
       - no-new-privileges:true
     ports:
       - "8000:8000"
+
+volumes:
+  evidence-artifacts:

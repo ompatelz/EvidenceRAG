@@ -1,13 +1,24 @@
 """Small, injectable application configuration boundary."""
 
-from pydantic import BaseModel, ConfigDict
+from pathlib import Path
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class AppSettings(BaseModel):
-    """Configuration required to construct the Phase 0 application."""
+class AppSettings(BaseSettings):
+    """Configuration required to construct the local application."""
 
-    model_config = ConfigDict(frozen=True, extra="forbid")
+    model_config = SettingsConfigDict(
+        frozen=True,
+        extra="forbid",
+        env_prefix="EVIDENCERAG_",
+    )
 
     app_name: str = "EvidenceRAG"
     environment: str = "local"
     ready: bool = True
+    artifact_root: Path = Path("artifacts")
+    max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1, le=1024 * 1024 * 1024)
+    upload_chunk_bytes: int = Field(default=64 * 1024, ge=4096, le=1024 * 1024)
+    multipart_overhead_bytes: int = Field(default=1024 * 1024, ge=64 * 1024)

@@ -2,7 +2,7 @@
 
 ## Current implemented architecture
 
-Phase 0.2 remains deliberately small:
+Phase 1.1 extends the verified Phase 0 boundary with safe intake:
 
 ```text
 FastAPI /health + /ready
@@ -16,6 +16,16 @@ normalized bbox + parser/representation versions + opaque asset reference
 All boundaries ---- Ruff + mypy + pytest in CI
 
 Evaluation JSONL ---- typed validator ---- document manifest ---- hashed owned PDFs
+
+multipart upload ---- raw body limit ---- spooled UploadFile
+                                      |
+                    chunked write + streamed SHA-256
+                                      |
+              bounded PDF markers + safe logical identity
+                                      |
+              confined version directory + atomic manifest
+                                      |
+            received metadata/status with opaque asset ID
 ```
 
 The package exposes operational HTTP endpoints and validates evidence objects. There are
@@ -29,6 +39,22 @@ its bytes. The evaluation plane does not call the API or claim measured performa
 The container boundary installs the locked runtime package in a builder stage, copies only
 the resulting environment into a small Python runtime, and runs the API as an unprivileged
 user. CI builds but does not publish this candidate artifact.
+
+The intake boundary never uses the supplied filename as a path. A sanitized canonical
+filename determines a local logical document ID; exact bytes determine the immutable
+`sha256:<digest>` version. Artifact directories contain generated allowlisted identifiers.
+The source PDF and JSON manifest are each published with same-filesystem atomic replacement,
+and a manifest failure removes the unpublished version directory.
+
+Global content idempotency is deliberate: bytes already accepted return the existing
+document/version even if a later upload uses another filename. Changed bytes under the
+same canonical filename create another version beneath the same logical document. This is
+a local single-user policy, not tenant-aware deduplication.
+
+The only successful lifecycle state in this slice is `received`: bytes and the manifest
+are durable, but parsing has not occurred. No accepted version is called parsed or ready.
+Plainly truncated files are rejected by bounded header/trailer checks, but full PDF
+structural validation, page limits, parsing, and extraction are deferred to Phase 1.2.
 
 ## Planned direction, not implemented
 
@@ -47,15 +73,15 @@ The central invariant is **evidence before answers**. A retrieved item must reta
 document/version identity and honest page or region precision. Later answers may cite
 only real evidence identifiers; a page link alone is not proof that a claim is supported.
 
-FastAPI and Pydantic now implement the local HTTP and contract boundaries. SQLite is the
-planned initial metadata store, and local files are the planned artifact store; neither is
-implemented yet.
+FastAPI and Pydantic implement the local HTTP and contract boundaries. Local files now
+implement the first artifact store. SQLite remains a planned metadata option and is not
+needed for the immutable intake manifest scan at this scale.
 
 ## Deferred components
 
 The following are deferred until a reviewed phase or measured need justifies them:
 
-- Docling or another PDF parser;
+- Docling, PyMuPDF, or another PDF parser/renderer;
 - BM25, embedding models, Qdrant, and rerankers;
 - external or local LLM integrations;
 - a frontend or evidence inspector;
@@ -82,3 +108,6 @@ documented in the README.
 
 See [ADR-0001](decisions/ADR-0001-foundation.md) for the decision, alternatives, and
 conditions that would justify change.
+
+See [ADR-0003](decisions/ADR-0003-pdf-intake-identity-and-storage.md) for intake identity,
+duplicate, validation, atomicity, and storage decisions.

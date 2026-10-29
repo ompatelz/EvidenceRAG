@@ -4,9 +4,10 @@ EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository is in **Phase 0**. It now includes the foundation plus a minimal FastAPI
-operational slice and typed evidence-provenance contract. It does **not** yet parse PDFs,
-retrieve evidence, generate answers, or report benchmark results.
+This repository is in **Phase 1.1**. It includes the verified Phase 0 foundation and a
+safe intake slice that accepts bounded PDFs into versioned local artifacts. It does
+**not** yet parse PDF page content, render previews, retrieve evidence, generate answers,
+or report benchmark results.
 
 ## Why this project exists
 
@@ -49,6 +50,15 @@ Implemented in Phase 0.4:
 - CI validation for deterministic fixtures, evaluation data, Compose, and image builds;
 - commit-SHA traceability without image publication or deployment.
 
+Implemented in Phase 1.1:
+
+- bounded multipart PDF upload with both raw-request and exact streamed file limits;
+- filename sanitization, path-independent generated IDs, and confined local storage;
+- streamed SHA-256, logical-document IDs, and immutable content-version labels;
+- idempotent duplicate handling and changed-content versioning;
+- atomic source/manifest publication with partial-artifact cleanup;
+- client-safe metadata/status responses whose initial state is honestly `received`.
+
 Planned for later reviewed phases:
 
 - evidence-preserving PDF ingestion;
@@ -58,8 +68,9 @@ Planned for later reviewed phases:
 
 ## Non-goals for this phase
 
-Phase 0 deliberately excludes PDF parsers, Docling, Qdrant, LLM SDKs, frontends, Redis,
-PostgreSQL, model downloads, and deployment. It also makes no
+Phase 1.1 deliberately excludes PDF parsers, OCR, page-count validation, extraction,
+rendering, Qdrant, LLM SDKs, frontends, Redis, PostgreSQL, model downloads, and deployment.
+It also makes no
 claims about retrieval quality, answer accuracy, latency, or production readiness.
 
 ## Requirements
@@ -104,6 +115,31 @@ Then request `http://127.0.0.1:8000/health` or `/ready`. Readiness currently mea
 that required local configuration is valid; it does not imply a database, index, parser,
 or model is available.
 
+Upload an owned PDF fixture:
+
+```bash
+curl -F "file=@datasets/fixtures/atlas-narrative.pdf;type=application/pdf" \
+  http://127.0.0.1:8000/api/v1/documents
+```
+
+The response contains opaque document/version/asset identifiers and the `received` state,
+never a filesystem path. Use those identifiers with:
+
+```text
+GET /api/v1/documents/{document_id}/versions/{document_sha256}
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/status
+```
+
+Non-secret intake settings use the `EVIDENCERAG_` prefix:
+
+- `EVIDENCERAG_ARTIFACT_ROOT` (default `artifacts`)
+- `EVIDENCERAG_MAX_UPLOAD_BYTES` (default 10 MiB)
+- `EVIDENCERAG_UPLOAD_CHUNK_BYTES` (default 64 KiB)
+
+The default deployment remains a local, single-user MVP. The upload limit is enforced once
+over the raw multipart request and again over streamed PDF bytes. Intake checks the PDF
+header and a bounded EOF trailer only; complete structural parsing begins in Phase 1.2.
+
 Validate all committed evaluation data and deterministic fixtures:
 
 ```bash
@@ -136,6 +172,7 @@ tests/                        Executable package-contract tests
 docs/PROJECT_STATUS.md        Verified state and next work
 docs/architecture.md          Current boundary and planned direction
 docs/decisions/               Architecture decision records
+src/evidence_rag/documents/   Intake, identity, manifests, and local artifacts
 .github/workflows/ci.yml      Reproducible automated quality gate
 ```
 
