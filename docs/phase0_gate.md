@@ -21,9 +21,9 @@ the final pull-request head has passed every local and CI item below.
 | Non-root runtime | container reports UID 10001 | Passed locally |
 | Container health | Docker health status plus live endpoint requests | Passed locally |
 | Runtime exclusions | no datasets, tests, Git directory, `.env`, or model artifacts | Passed locally |
-| Secret/generated-file hygiene | ignore rules, explicit Docker copies, credential scan | Pending final scan |
-| Linux/Python CI | Python 3.11 and 3.14 jobs | Pending final head |
-| Container CI | Compose, build, health, and UID job | Pending final head |
+| Secret/generated-file hygiene | ignore rules, explicit Docker copies, credential and tracked-path scans | Passed |
+| Linux/Python CI | Python 3.11 and 3.14 jobs | Passed |
+| Container CI | Compose, build, health, and UID job | Passed |
 | Deployment boundary | no registry push, credentials, or deployment steps | Verified by workflow review |
 
 ## Scope conclusion
@@ -31,3 +31,7 @@ the final pull-request head has passed every local and CI item below.
 Phase 0 establishes contracts and reproducibility only. It does not implement ingestion,
 retrieval, vector search, answer generation, model calls, a database, or a frontend. The
 fixture rows are not benchmark results.
+
+All Phase 0 acceptance rows are verified. Phase 0 is genuinely complete within its stated
+scope; portfolio readiness still requires later ingestion, retrieval, grounding, and
+measured evaluation phases.

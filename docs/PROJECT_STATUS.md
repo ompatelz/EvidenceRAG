@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 0.4 implemented; final clean-room and CI verification in progress
+Current phase: Phase 0 complete; awaiting owner review and merge
 
 ## Implemented and verified
 
@@ -30,7 +30,7 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Final Phase 0 CI verification and owner review.
+- Owner review and merge decision for the complete Phase 0 pull request.
 
 ## Pending pull requests / links
 
@@ -58,6 +58,11 @@ Verification evidence is updated in this file only after commands have actually 
 - Candidate image build — passed using pinned Python and uv base-image digests.
 - Candidate container — reached `healthy`; `/health` and `/ready` returned HTTP 200,
   runtime UID was 10001, and datasets, tests, Git history, and `.env` were absent.
+- Clean-room Git archive of commit `972c8042380f11cb890a10dba4ba6af2609520ec` — fresh
+  install, complete Python gate, deterministic fixtures, data validation, Compose, pinned
+  image build, container health, and UID 10001 all passed; 30 tests passed in 1.69 seconds.
+- GitHub Actions — Python 3.11, Python 3.14, and Container jobs passed on the complete
+  Phase 0 implementation.
 - Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
   and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
   temporary directory was removed afterward.
@@ -86,6 +91,6 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Complete the final clean-room verification from the committed tree.
-2. Confirm every GitHub Actions job passes on the complete Phase 0 head.
-3. Review and merge the complete Phase 0 PR only with owner approval.
+1. Review the complete Phase 0 PR and its architecture/evaluation decisions.
+2. Merge only with owner approval after the final docs-only CI run remains green.
+3. Synchronize `main`, then begin Phase 1 evidence-preserving PDF ingestion.
