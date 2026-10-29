@@ -4,9 +4,10 @@ EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository is in **Phase 0**. It now includes the foundation plus a minimal FastAPI
-operational slice and typed evidence-provenance contract. It does **not** yet parse PDFs,
-retrieve evidence, generate answers, or report benchmark results.
+This repository has completed the **Phase 1 acceptance gate**. It includes the verified Phase 0
+foundation and a bounded synchronous workflow from safe PDF intake through an atomic
+`ready` state, with provenance-preserving evidence and inspectable page anchors. It does
+**not** retrieve evidence, generate answers, or report benchmark results.
 
 ## Why this project exists
 
@@ -49,18 +50,61 @@ Implemented in Phase 0.4:
 - CI validation for deterministic fixtures, evaluation data, Compose, and image builds;
 - commit-SHA traceability without image publication or deployment.
 
+Implemented in Phase 1.1:
+
+- bounded multipart PDF upload with both raw-request and exact streamed file limits;
+- filename sanitization, path-independent generated IDs, and confined local storage;
+- streamed SHA-256, logical-document IDs, and immutable content-version labels;
+- idempotent duplicate handling and changed-content versioning;
+- atomic source/manifest publication with partial-artifact cleanup;
+- client-safe metadata/status responses whose initial state is honestly `received`.
+
+Implemented in Phase 1.2:
+
+- pinned PyMuPDF extraction behind a narrow parser boundary;
+- deterministic page text, conservative headings, captions, captioned embedded figures,
+  and page-local structured tables;
+- zero-based pages and reading order with parser-native and normalized source regions;
+- versioned persisted evidence artifacts and explicit parser/representation metadata;
+- truthful `parsing`, `parsed`, `partial`, and `failed` lifecycle states;
+- configurable page/evidence limits and source-safe parser diagnostics.
+
+Implemented in Phase 1.3:
+
+- bounded RGB PNG rendering of the visible crop box at a fixed versioned profile;
+- atomic publication of complete version-scoped page sets and their manifest;
+- opaque page asset IDs, PNG hashes, safe immutable-cache headers, and scoped preview access;
+- preserved media box, crop box, source dimensions, rotation, DPI, and pixel dimensions;
+- rotation-aware source-normalized to display-normalized and pixel transforms;
+- page and unavailable precision that never invent region boxes;
+- pixel-based and manually inspected overlay verification on the owned table fixture.
+
+Implemented in Phase 1.4:
+
+- an explicit validated lifecycle from `received` through `validating`, `parsing`,
+  `rendering`, and `persisting` to the terminal `ready`, `partial`, or `failed` states;
+- synchronous upload-and-ingest, status, retry, and re-index APIs with server-generated
+  request IDs, stage timings, attempt counts, and content-safe structured logs;
+- atomic readiness only after version-matching evidence and complete page assets exist;
+- recovery from an immutable intake snapshot, source-integrity checks, and automatic
+  rebuild when a ready artifact is missing or inconsistent;
+- full replacement of derived artifacts on retry/re-index, preventing stale pages or
+  duplicate evidence from surviving a successful attempt;
+- a bounded owned-fixture end-to-end CI job and failure-injection lifecycle tests.
+
 Planned for later reviewed phases:
 
-- evidence-preserving PDF ingestion;
 - BM25, dense, hybrid, and reranked retrieval baselines;
 - grounded answers, citation validation, and calibrated abstention;
 - a visual retrieval path only if experiments justify its compute and complexity.
 
 ## Non-goals for this phase
 
-Phase 0 deliberately excludes PDF parsers, Docling, Qdrant, LLM SDKs, frontends, Redis,
-PostgreSQL, model downloads, and deployment. It also makes no
-claims about retrieval quality, answer accuracy, latency, or production readiness.
+Phase 1 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
+diagram understanding, multi-page table linking, a polished viewer, Qdrant, LLM SDKs,
+Redis, PostgreSQL, distributed jobs, model downloads, and deployment. It makes no claims
+about retrieval quality, answer accuracy, broad document understanding, latency, or
+production readiness.
 
 ## Requirements
 
@@ -101,8 +145,54 @@ uv run uvicorn evidence_rag.api:create_app --factory
 ```
 
 Then request `http://127.0.0.1:8000/health` or `/ready`. Readiness currently means only
-that required local configuration is valid; it does not imply a database, index, parser,
-or model is available.
+that required local configuration is valid; it does not imply a database, index, completed
+document parse, or model is available.
+
+Upload an owned PDF fixture:
+
+```bash
+curl -F "file=@datasets/fixtures/atlas-narrative.pdf;type=application/pdf" \
+  http://127.0.0.1:8000/api/v1/ingestions
+```
+
+This one-shot endpoint synchronously returns `ready`, `partial`, or `failed`. The response
+contains opaque document/version/asset identifiers and never a filesystem path. The older
+`POST /api/v1/documents` intake-only endpoint remains available and returns `received`.
+Use the identifiers with:
+
+```text
+GET /api/v1/documents/{document_id}/versions/{document_sha256}
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/status
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/ingestion
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/ingest
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/retry
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/reindex
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/parse
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/evidence
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/render
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/pages
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/pages/{page_index}/preview
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/evidence/{evidence_id}/anchor
+```
+
+Non-secret intake settings use the `EVIDENCERAG_` prefix:
+
+- `EVIDENCERAG_ARTIFACT_ROOT` (default `artifacts`)
+- `EVIDENCERAG_MAX_UPLOAD_BYTES` (default 10 MiB)
+- `EVIDENCERAG_UPLOAD_CHUNK_BYTES` (default 64 KiB)
+- `EVIDENCERAG_MAX_PDF_PAGES` (default 200)
+- `EVIDENCERAG_MAX_EVIDENCE_UNITS` (default 10,000)
+- `EVIDENCERAG_RENDER_DPI` (default 144)
+- `EVIDENCERAG_MAX_RENDER_PIXELS_PER_PAGE` (default 20,000,000)
+- `EVIDENCERAG_MAX_RENDER_PIXELS_TOTAL` (default 100,000,000)
+
+The default deployment remains a local, single-process, single-user MVP. The upload limit
+is enforced once over the raw multipart request and again over streamed PDF bytes. Intake
+checks the PDF header and a bounded EOF trailer; orchestration then revalidates the source,
+structurally parses it, renders all bounded previews, commits complete derived artifacts,
+and only then marks the version ready. An in-process lock serializes attempts and is not a
+distributed concurrency guarantee. See ADR-0006 for the measured conditions that would
+justify a durable job system.
 
 Validate all committed evaluation data and deterministic fixtures:
 
@@ -122,8 +212,9 @@ docker run --rm -p 8000:8000 evidencerag:local
 ```
 
 The runtime image is non-root and intentionally excludes datasets, PDFs, tests, source
-control metadata, secrets, indexes, and model weights. Phase 0 builds a candidate image but
-does not publish or deploy it.
+control metadata, secrets, indexes, and model weights. CI builds a candidate image but does
+not publish or deploy it. PyMuPDF licensing and the repository's own license must be resolved
+before any build is distributed.
 
 `uv` installs the project in editable mode and resolves exact transitive versions from
 the committed lockfile. CI also verifies that `uv.lock` still matches `pyproject.toml`.
@@ -136,6 +227,7 @@ tests/                        Executable package-contract tests
 docs/PROJECT_STATUS.md        Verified state and next work
 docs/architecture.md          Current boundary and planned direction
 docs/decisions/               Architecture decision records
+src/evidence_rag/documents/   Intake, parsing, rendering, manifests, and local artifacts
 .github/workflows/ci.yml      Reproducible automated quality gate
 ```
 

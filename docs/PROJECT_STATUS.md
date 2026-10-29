@@ -2,7 +2,8 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 0 complete; awaiting owner review and merge
+Current phase: Phase 1 complete and acceptance-gate verified; PR #4 is awaiting owner
+review and remains unmerged
 
 ## Implemented and verified
 
@@ -25,17 +26,60 @@ Current phase: Phase 0 complete; awaiting owner review and merge
   a verified HTTP health check. Compose adds a read-only filesystem and no-new-privileges.
 - CI now validates Python quality, deterministic fixtures, evaluation data, Compose, the
   container build, container health, and the runtime UID without publishing or deploying.
+- Phase 0 PR #2 was merged into `main` at `c2aec908f2d24397a7ba014e19fbe486eafb60df`;
+  all three final Phase 0 CI jobs passed and local `main` was fast-forwarded to that commit.
+- Phase 1.1 implements bounded multipart PDF intake, streamed SHA-256, logical document and
+  immutable content-version identity, safe local artifact allocation, atomic manifests,
+  idempotent duplicates, changed versions, cleanup, and safe metadata/status responses.
+- The focused Phase 1.1 suite covers owned-fixture upload, empty/corrupt/wrong-signature
+  files, unusual/traversal filenames, limits, duplicates, changed versions, interrupted and
+  failed writes, manifest validation/atomicity, confinement, and path-safe responses.
+- Phase 1.2 pins PyMuPDF `1.28.2` after a measured Docling/PyMuPDF feasibility gate and
+  records the dependency, licensing, and replacement conditions in ADR-0004.
+- Explicit parsing extracts deterministic text, conservative headings, captions, captioned
+  embedded figures, and page-local structured tables into versioned evidence artifacts.
+- Evidence retains zero-based page/read order, stable IDs, parser/representation versions,
+  unrotated top-left PDF-point boxes, page geometry/rotation, and normalized top-left boxes.
+- Lifecycle records now distinguish `received`, `parsing`, `parsed`, `partial`, and `failed`;
+  bounded parser issues never expose source content or private paths.
+- Tests cover deterministic fixture extraction, API persistence, parser metadata, tables,
+  captions, source and normalized geometry, rotated pages, page ordering, page-only fallback,
+  blank pages, malformed PDFs, partial extraction, unexpected exceptions, and page limits.
+- Phase 1.3 adds bounded fixed-profile PNG rendering, atomic page-set publication, opaque
+  page asset IDs, source/crop/media/pixel metadata, and manifest-backed preview responses.
+- Anchor resolution maps unrotated source-normalized boxes through page rotation into
+  display-normalized and containing pixel boxes. Page and unavailable precision return no
+  invented region.
+- Rendering lookups are scoped by generated document ID, exact hash/version, evidence ID,
+  and zero-based page index. Cross-document, stale-version, invalid-page, and missing-file
+  requests fail safely without exposing paths.
+- Phase 1.4 connects intake, source-integrity validation, parsing, evidence creation,
+  rendering, and artifact persistence through an explicit validated state machine.
+- `ready` is now a final commit marker written only after complete version-matching evidence
+  and page artifacts are committed. Failures and partial output never claim readiness.
+- One-shot ingestion, detailed status, retry, and re-index APIs use server-generated request
+  IDs, attempt counts, stage timings, safe error codes, and content-safe JSON logs.
+- Retry and re-index regenerate complete derived artifacts from immutable source bytes;
+  stale evidence/pages are removed, and stable evidence IDs are replaced rather than
+  appended. Ready versions with missing/corrupt artifacts are detected and rebuilt.
+- An immutable intake snapshot permits recovery of a missing mutable manifest when the
+  original source remains present and hash-valid.
+- The focused lifecycle suite injects parser, renderer, evidence, and final-manifest
+  failures and checks interruption recovery, cleanup, duplicate/version semantics, rotated
+  and blank PDFs, log privacy, and evidence/page identity consistency.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Owner review and merge decision for the complete Phase 0 pull request.
+- Owner review of the complete Phase 1 pull request and final teaching handoff.
 
 ## Pending pull requests / links
 
-- [PR #2: Phase 0.1 — establish Python foundation and core CI](https://github.com/ompatelz/EvidenceRAG/pull/2)
-  is open and intentionally unmerged.
+- [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
+  is the single Phase 1 PR. Subphase 1.4 principal commit `9d302b5` passed Python 3.11,
+  Python 3.14, Ingestion end-to-end, and Container CI. The PR is unmerged and is being
+  converted from draft to ready for owner review after this documentation-only record.
 
 ## Last test commands and outcomes
 
@@ -66,6 +110,75 @@ Verification evidence is updated in this file only after commands have actually 
 - Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
   and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
   temporary directory was removed afterward.
+- Phase 1 baseline after synchronizing merged `main`: complete quality gate passed; 30
+  tests passed in 0.57 seconds.
+- Phase 1.1 focused tests: 14 passed in 0.86 seconds.
+- Focused Ruff check passed. Strict mypy initially found one incompatible test-stream
+  override; the annotation was corrected before the full gate.
+- Complete Phase 1.1 Python gate — `uv sync`, Ruff lint/format, strict mypy, and pytest
+  passed on the exact pre-commit tree; 44 tests passed in 0.85 seconds. A separate
+  `uv lock --check` passed after dependency resolution.
+- Deterministic fixture regeneration and committed evaluation-data validation passed.
+- `docker compose config --quiet` passed with a named artifact volume preserving the
+  read-only root filesystem boundary.
+- `docker build --build-arg VCS_REF=phase-1.1-local -t evidencerag:phase-1 .` passed.
+- Temporary Phase 1 candidate container reached healthy, ran as UID 10001, accepted the
+  owned Atlas fixture, returned `received`, created exactly one manifest, and was removed.
+- GitHub Actions for PR #4 — Python 3.11 passed in 16 seconds, Python 3.14 passed in
+  18 seconds, and Container passed in 24 seconds.
+- Phase 1.2 parser feasibility — PyMuPDF extracted the owned narrative fixture in 0.018
+  seconds and the owned structured-table fixture in 0.011 seconds. Docling `2.129.0`
+  resolved 106 packages (approximately 1177.8 MiB) plus approximately 494.4 MiB of model
+  data but did not finish the first tiny fixture within the bounded local window.
+- Phase 1.2 focused parser suite — 11 tests passed.
+- Complete Phase 1.2 Python gate — Ruff lint and format checks passed, strict mypy passed
+  for 19 source files, and all 55 tests passed in 1.42 seconds.
+- `uv lock --check`, deterministic fixture regeneration, and committed evaluation-data
+  validation passed after adding pinned PyMuPDF `1.28.2`.
+- `uv sync --all-extras --dev` and `docker compose config --quiet` passed. The Phase 1.2
+  candidate image built with pinned PyMuPDF, reached healthy as UID 10001, accepted the
+  owned table fixture, changed from `received` to `parsed`, persisted five evidence units
+  including one structured table, and was removed after verification.
+- GitHub Actions for PR #4 head `31a38d3` — Python 3.11 passed in 17 seconds, Python 3.14
+  passed in 16 seconds, and Container passed in 17 seconds.
+- Phase 1.3 focused rendering suite — 21 tests passed in 2.04 seconds. Coverage includes all
+  four rotations, inverse round trips, multiple DPI scales, boundary boxes, crop/media
+  offsets, security scopes, stale versions, missing/corrupt artifacts, rendering/per-page/
+  total-pixel limits, geometry mismatches, page-only and unavailable precision, and a
+  pixel-based owned-table regression.
+- Manual 144-DPI overlay inspection — the computed `(144, 319, 1065, 592)` pixel box
+  enclosed the complete owned fixture table border and cells and excluded its separately
+  extracted caption. No clipping, overlap, or alignment defect was observed.
+- Complete Phase 1.3 Python gate — `uv sync`, Ruff lint/format, strict mypy, and pytest
+  passed on the exact pre-commit tree; 76 tests passed in 3.36 seconds. `uv lock --check`,
+  deterministic fixture regeneration, and committed evaluation-data validation also passed.
+- `docker compose config --quiet` and the Phase 1.3 candidate image build passed. The
+  temporary container reached healthy as UID 10001; upload returned `received`, parsing
+  returned `parsed`, rendering produced one PNG, the served 48,106-byte PNG matched its
+  manifest SHA-256, and the table anchor resolved to `(144, 319, 1065, 592)`. The temporary
+  container was removed after verification.
+- GitHub Actions for PR #4 head `07a7da5` — Python 3.11 passed in 21 seconds, Python 3.14
+  passed in 23 seconds, and Container passed in 19 seconds.
+- Phase 1.4 focused lifecycle suite — 16 tests passed in 2.85 seconds. It covers successful
+  owned-fixture ingestion, duplicates, changed versions, re-index, retry, parser/renderer/
+  evidence/final-manifest failures, cleanup, manifest recovery, missing ready assets,
+  corrupt/blank/rotated PDFs, interrupted work, log privacy, and invalid transitions.
+- Complete Phase 1.4 Python gate — `uv sync`, lock check, Ruff lint/format, strict mypy,
+  and all 92 tests passed in 7.96 seconds. Deterministic fixture regeneration and committed
+  evaluation-data validation also passed.
+- Manual 96-DPI inspection passed for the owned Atlas narrative/diagram, owned structured
+  table, and a temporary 90° rotated fixture. Every reported region enclosed its visible
+  source; the table box excluded its caption; rotation metadata and display dimensions
+  agreed. No anchors were downgraded in these three PDFs. Detailed bounded timings and
+  unsupported vector-diagram behavior are recorded in `docs/phase1_gate.md`.
+- `docker compose config --quiet` passed and `evidencerag:phase-1` built successfully with
+  `VCS_REF=phase-1.4-local`. A temporary container became healthy, ran as UID 10001,
+  ingested the owned table fixture through the one-shot endpoint, returned `ready` on the
+  first attempt with five evidence units, one preview, and all five timing stages, then was
+  removed.
+- GitHub Actions for PR #4 principal head `9d302b5` — Python 3.11 passed in 22 seconds,
+  Python 3.14 passed in 21 seconds, Ingestion end-to-end passed in 14 seconds, and Container
+  passed in 23 seconds.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -76,8 +189,16 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- No ingestion, retrieval, database, or answer-generation runtime exists. The evaluation
-  rows are schema fixtures, not a representative benchmark.
+- No polished viewer, retrieval, database, durable background jobs, or answer-generation
+  runtime exists. The evaluation rows are schema fixtures, not a representative benchmark.
+- Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
+  multiple processes nor automatically resumes after a restart; interrupted work requires
+  an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.
+- Table detection is page-local. Complex reading order, multi-page tables, vector diagrams,
+  equations, unusual malformed page boxes, and rotated/cropped production documents are not
+  yet validated broadly.
+- PyMuPDF uses AGPL/commercial licensing, while this repository has no selected license.
+  Container/source redistribution must not begin until licensing is resolved.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
   exercised in Phase 0.1.
 - The project has no selected license.
@@ -86,11 +207,20 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Decisions changed since master context
 
-- None. ADR-0001 narrows the master context to the smallest Phase 0.1 foundation and
-  defers all runtime dependencies.
+- ADR-0003 selects filename-derived logical document identity, exact-byte SHA-256 versions,
+  global local-store deduplication, atomic file/manifest publication, and an honest
+  `received` intake state.
+- ADR-0004 selects pinned PyMuPDF after a bounded feasibility gate and defines parser-native
+  coordinates, normalized regions, table structure, conservative relationships, failure
+  states, licensing constraints, and rollback.
+- ADR-0005 defines the fixed rendering profile, crop/rotation transforms, containing-pixel
+  rounding, atomic page publication, page asset security, manual verification, and rollback.
+- ADR-0006 defines the synchronous state machine, atomic ready boundary, whole-artifact
+  retry/re-index policy, immutable intake recovery, safe telemetry, and durable-job triggers.
 
 ## Next 3 tasks
 
-1. Review the complete Phase 0 PR and its architecture/evaluation decisions.
-2. Merge only with owner approval after the final docs-only CI run remains green.
-3. Synchronize `main`, then begin Phase 1 evidence-preserving PDF ingestion.
+1. Review and merge Phase 1 PR #4 only after owner approval.
+2. Resolve the PyMuPDF/repository licensing strategy before distributing builds.
+3. Begin Phase 2 — evaluation seed and search baselines only after Phase 1 is merged and
+   explicitly authorized.

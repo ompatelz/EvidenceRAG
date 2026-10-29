@@ -62,9 +62,32 @@ jobs:
           --manifest datasets/manifests/fixtures.json
           datasets/eval/fixture_items.jsonl
 
+  ingestion-e2e:
+    name: Ingestion end-to-end
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install uv and Python
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.7"
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install locked project and development dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run bounded owned-fixture ingestion lifecycle
+        run: uv run pytest tests/test_lifecycle.py -q
+
   container:
     name: Container
-    needs: quality
+    needs: [quality, ingestion-e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

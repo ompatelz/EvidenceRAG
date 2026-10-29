@@ -25,7 +25,9 @@ ENV PATH="/app/.venv/bin:${PATH}" \
 
 RUN groupadd --system --gid 10001 evidencerag \
     && useradd --uid 10001 --gid evidencerag --no-create-home \
-        --home-dir /nonexistent --shell /usr/sbin/nologin evidencerag
+        --home-dir /nonexistent --shell /usr/sbin/nologin evidencerag \
+    && mkdir -p /app/artifacts \
+    && chown evidencerag:evidencerag /app/artifacts
 
 WORKDIR /app
 COPY --from=builder --chown=evidencerag:evidencerag /app/.venv /app/.venv
