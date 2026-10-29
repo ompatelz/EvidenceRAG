@@ -4,7 +4,7 @@ EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository is in **Phase 1 final verification**. It includes the verified Phase 0
+This repository has completed the **Phase 1 acceptance gate**. It includes the verified Phase 0
 foundation and a bounded synchronous workflow from safe PDF intake through an atomic
 `ready` state, with provenance-preserving evidence and inspectable page anchors. It does
 **not** retrieve evidence, generate answers, or report benchmark results.

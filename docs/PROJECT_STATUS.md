@@ -2,8 +2,8 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 1.4 local acceptance gate passed; principal commit and PR CI are in
-progress
+Current phase: Phase 1 complete and acceptance-gate verified; PR #4 is awaiting owner
+review and remains unmerged
 
 ## Implemented and verified
 
@@ -72,15 +72,14 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Create and push the exact Phase 1.4 principal commit, verify all four PR jobs, update the
-  final remote evidence, and convert PR #4 from draft to ready for owner review.
+- Owner review of the complete Phase 1 pull request and final teaching handoff.
 
 ## Pending pull requests / links
 
 - [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
-  remains the single Phase 1 PR. The current remote head `2324a81` passed Python 3.11,
-  Python 3.14, and Container CI for the final Subphase 1.3 documentation repair. The PR
-  remains draft and unmerged while Subphase 1.4 is verified.
+  is the single Phase 1 PR. Subphase 1.4 principal commit `9d302b5` passed Python 3.11,
+  Python 3.14, Ingestion end-to-end, and Container CI. The PR is unmerged and is being
+  converted from draft to ready for owner review after this documentation-only record.
 
 ## Last test commands and outcomes
 
@@ -177,6 +176,9 @@ Verification evidence is updated in this file only after commands have actually 
   ingested the owned table fixture through the one-shot endpoint, returned `ready` on the
   first attempt with five evidence units, one preview, and all five timing stages, then was
   removed.
+- GitHub Actions for PR #4 principal head `9d302b5` — Python 3.11 passed in 22 seconds,
+  Python 3.14 passed in 21 seconds, Ingestion end-to-end passed in 14 seconds, and Container
+  passed in 23 seconds.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -218,7 +220,7 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Complete the Phase 1.4 full local, container, manual-inspection, and CI gates.
-2. Review and merge Phase 1 PR #4 only after owner approval.
+1. Review and merge Phase 1 PR #4 only after owner approval.
+2. Resolve the PyMuPDF/repository licensing strategy before distributing builds.
 3. Begin Phase 2 — evaluation seed and search baselines only after Phase 1 is merged and
    explicitly authorized.
