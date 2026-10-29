@@ -4,10 +4,10 @@ EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository is in **Phase 1.2**. It includes the verified Phase 0 foundation, safe PDF
-intake, and explicit provenance-preserving extraction into inspectable evidence artifacts.
-It does **not** yet render previews, retrieve evidence, generate answers, or report
-benchmark results.
+This repository is in **Phase 1.3**. It includes the verified Phase 0 foundation, safe PDF
+intake, provenance-preserving extraction, and versioned page previews with honest evidence
+anchors. It does **not** yet provide an atomic end-to-end ready state, retrieve evidence,
+generate answers, or report benchmark results.
 
 ## Why this project exists
 
@@ -69,6 +69,16 @@ Implemented in Phase 1.2:
 - truthful `parsing`, `parsed`, `partial`, and `failed` lifecycle states;
 - configurable page/evidence limits and source-safe parser diagnostics.
 
+Implemented in Phase 1.3:
+
+- bounded RGB PNG rendering of the visible crop box at a fixed versioned profile;
+- atomic publication of complete version-scoped page sets and their manifest;
+- opaque page asset IDs, PNG hashes, safe immutable-cache headers, and scoped preview access;
+- preserved media box, crop box, source dimensions, rotation, DPI, and pixel dimensions;
+- rotation-aware source-normalized to display-normalized and pixel transforms;
+- page and unavailable precision that never invent region boxes;
+- pixel-based and manually inspected overlay verification on the owned table fixture.
+
 Planned for later reviewed phases:
 
 - BM25, dense, hybrid, and reranked retrieval baselines;
@@ -77,9 +87,9 @@ Planned for later reviewed phases:
 
 ## Non-goals for this phase
 
-Phase 1.2 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
-diagram understanding, multi-page table linking, automatic parsing jobs, rendering,
-Qdrant, LLM SDKs, frontends, Redis, PostgreSQL, model downloads, and deployment. It makes no
+Phase 1.3 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
+diagram understanding, multi-page table linking, automatic orchestration/retry, a polished
+viewer, Qdrant, LLM SDKs, Redis, PostgreSQL, model downloads, and deployment. It makes no
 claims about retrieval quality, answer accuracy, latency, or production readiness.
 
 ## Requirements
@@ -139,6 +149,10 @@ GET /api/v1/documents/{document_id}/versions/{document_sha256}
 GET /api/v1/documents/{document_id}/versions/{document_sha256}/status
 POST /api/v1/documents/{document_id}/versions/{document_sha256}/parse
 GET /api/v1/documents/{document_id}/versions/{document_sha256}/evidence
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/render
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/pages
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/pages/{page_index}/preview
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/evidence/{evidence_id}/anchor
 ```
 
 Non-secret intake settings use the `EVIDENCERAG_` prefix:
@@ -148,11 +162,15 @@ Non-secret intake settings use the `EVIDENCERAG_` prefix:
 - `EVIDENCERAG_UPLOAD_CHUNK_BYTES` (default 64 KiB)
 - `EVIDENCERAG_MAX_PDF_PAGES` (default 200)
 - `EVIDENCERAG_MAX_EVIDENCE_UNITS` (default 10,000)
+- `EVIDENCERAG_RENDER_DPI` (default 144)
+- `EVIDENCERAG_MAX_RENDER_PIXELS_PER_PAGE` (default 20,000,000)
+- `EVIDENCERAG_MAX_RENDER_PIXELS_TOTAL` (default 100,000,000)
 
 The default deployment remains a local, single-user MVP. The upload limit is enforced once
 over the raw multipart request and again over streamed PDF bytes. Intake checks the PDF
 header and a bounded EOF trailer only. The explicit parse endpoint performs structural
-opening and extraction; upload does not silently claim that parsing succeeded.
+opening and extraction, and the explicit render endpoint creates previews only after parse;
+none of these operations silently claims end-to-end readiness.
 
 Validate all committed evaluation data and deterministic fixtures:
 
@@ -187,7 +205,7 @@ tests/                        Executable package-contract tests
 docs/PROJECT_STATUS.md        Verified state and next work
 docs/architecture.md          Current boundary and planned direction
 docs/decisions/               Architecture decision records
-src/evidence_rag/documents/   Intake, parsing, manifests, and local artifacts
+src/evidence_rag/documents/   Intake, parsing, rendering, manifests, and local artifacts
 .github/workflows/ci.yml      Reproducible automated quality gate
 ```
 

@@ -6,7 +6,8 @@ import os
 import re
 import shutil
 import tempfile
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import BinaryIO, cast
@@ -14,7 +15,12 @@ from typing import BinaryIO, cast
 from pydantic import BaseModel, ValidationError
 
 from evidence_rag.documents.identity import logical_document_id
-from evidence_rag.documents.models import EvidenceArtifact, IngestionManifest, IngestionState
+from evidence_rag.documents.models import (
+    EvidenceArtifact,
+    IngestionManifest,
+    IngestionState,
+    PagePreviewManifest,
+)
 
 _DOCUMENT_ID = re.compile(r"^doc_[a-f0-9]{24}$")
 _SHA256 = re.compile(r"^[a-f0-9]{64}$")
@@ -157,6 +163,69 @@ class LocalArtifactStore:
         except (OSError, ValidationError) as exc:
             raise ArtifactNotFoundError from exc
 
+    @contextmanager
+    def stage_page_previews(self, document_id: str, document_sha256: str) -> Iterator[Path]:
+        """Allocate and clean one private same-filesystem rendering stage."""
+        version_dir = self._version_path(document_id, document_sha256)
+        if not (version_dir / "source.pdf").is_file():
+            raise ArtifactNotFoundError
+        staging_root = Path(tempfile.mkdtemp(prefix=".render-", dir=version_dir))
+        try:
+            yield staging_root / "pages"
+        finally:
+            shutil.rmtree(staging_root, ignore_errors=True)
+
+    def publish_page_previews(
+        self, artifact: PagePreviewManifest, staged_pages: Path
+    ) -> PagePreviewManifest:
+        """Publish a complete preview directory with its manifest as one rename."""
+        version_dir = self._version_path(artifact.document_id, artifact.document_sha256)
+        if not (version_dir / "source.pdf").is_file() or not staged_pages.is_dir():
+            raise ArtifactNotFoundError
+        for page in artifact.pages:
+            if not (staged_pages / f"page-{page.page_index}.png").is_file():
+                raise StorageError("rendered page set is incomplete")
+        self._atomic_write_model(staged_pages / "manifest.json", artifact)
+        destination = version_dir / "pages"
+        try:
+            self._replace(staged_pages, destination)
+        except FileExistsError:
+            existing = self.get_page_manifest(artifact.document_id, artifact.document_sha256)
+            if existing != artifact:
+                raise StorageError("another rendering profile is already published") from None
+            return existing
+        except OSError as exc:
+            raise StorageError("could not publish rendered page previews") from exc
+        return artifact
+
+    def get_page_manifest(self, document_id: str, document_sha256: str) -> PagePreviewManifest:
+        """Load the version-scoped page-preview index."""
+        if not _DOCUMENT_ID.fullmatch(document_id) or not _SHA256.fullmatch(document_sha256):
+            raise ArtifactNotFoundError
+        path = self._version_path(document_id, document_sha256) / "pages" / "manifest.json"
+        try:
+            return PagePreviewManifest.model_validate_json(path.read_text(encoding="utf-8"))
+        except (OSError, ValidationError) as exc:
+            raise ArtifactNotFoundError from exc
+
+    def preview_path(self, document_id: str, document_sha256: str, page_index: int) -> Path:
+        """Resolve one manifest-backed PNG without accepting path fragments."""
+        manifest = self.get_page_manifest(document_id, document_sha256)
+        if page_index < 0 or page_index >= len(manifest.pages):
+            raise ArtifactNotFoundError
+        path = (
+            self._version_path(document_id, document_sha256) / "pages" / (f"page-{page_index}.png")
+        )
+        if not path.is_file():
+            raise ArtifactNotFoundError
+        try:
+            digest = self._file_sha256(path)
+        except OSError as exc:
+            raise ArtifactNotFoundError from exc
+        if digest != manifest.pages[page_index].content_sha256:
+            raise ArtifactNotFoundError
+        return path
+
     def _publish(self, staging_path: Path, manifest: IngestionManifest) -> IngestionManifest:
         version_dir = self._version_path(manifest.document_id, manifest.document_sha256)
         try:
@@ -197,6 +266,14 @@ class LocalArtifactStore:
     def _read_manifest(path: Path) -> IngestionManifest:
         raw = cast(object, json.loads(path.read_text(encoding="utf-8")))
         return IngestionManifest.model_validate(raw)
+
+    @staticmethod
+    def _file_sha256(path: Path) -> str:
+        digest = hashlib.sha256()
+        with path.open("rb") as source:
+            while chunk := source.read(64 * 1024):
+                digest.update(chunk)
+        return digest.hexdigest()
 
     @staticmethod
     def _validate_pdf_markers(path: Path, size_bytes: int) -> None:

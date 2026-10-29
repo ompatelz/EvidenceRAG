@@ -2,11 +2,18 @@
 
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
-from evidence_rag.evidence import AssetReference, EvidenceUnit, Sha256Hex, StableIdentifier
+from evidence_rag.evidence import (
+    AnchorPrecision,
+    AssetReference,
+    EvidenceUnit,
+    NormalizedBoundingBox,
+    Sha256Hex,
+    StableIdentifier,
+)
 
 DocumentVersion = Annotated[
     str,
@@ -124,6 +131,138 @@ class DocumentParseResponse(BaseModel):
     parser: ParserMetadata
     evidence_count: int = Field(ge=0)
     issues: list[ParseIssue] = Field(default_factory=list)
+
+
+class PageBox(BaseModel):
+    """One non-empty PDF box in unrotated PyMuPDF coordinates."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    x0: float
+    y0: float
+    x1: float
+    y1: float
+
+    @model_validator(mode="after")
+    def validate_ordering(self) -> Self:
+        if self.x0 >= self.x1 or self.y0 >= self.y1:
+            raise ValueError("page box must be non-empty and ordered")
+        return self
+
+
+class RendererMetadata(BaseModel):
+    """Pinned rendering implementation and stable output profile."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    name: SafeFilename
+    version: SafeFilename
+    profile: SafeFilename
+    dpi: int = Field(ge=36, le=600)
+
+
+class PagePreviewArtifact(BaseModel):
+    """Client-safe metadata for one version-scoped PNG preview."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    page_index: int = Field(ge=0)
+    asset_id: AssetReference
+    media_type: Literal["image/png"] = "image/png"
+    width_pixels: int = Field(gt=0)
+    height_pixels: int = Field(gt=0)
+    source_width: float = Field(gt=0.0)
+    source_height: float = Field(gt=0.0)
+    rotation: Literal[0, 90, 180, 270]
+    cropbox: PageBox
+    mediabox: PageBox
+    content_sha256: Sha256Hex
+
+
+class PagePreviewManifest(BaseModel):
+    """Atomic index of every rendered page for one immutable PDF version."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: Annotated[int, Field(ge=1, le=1)] = 1
+    document_id: StableIdentifier
+    document_version: DocumentVersion
+    document_sha256: Sha256Hex
+    renderer: RendererMetadata
+    pages: list[PagePreviewArtifact] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def validate_page_order(self) -> Self:
+        if self.document_version != f"sha256:{self.document_sha256}":
+            raise ValueError("document_version must equal sha256:<document_sha256>")
+        if [page.page_index for page in self.pages] != list(range(len(self.pages))):
+            raise ValueError("preview pages must be contiguous and zero-based")
+        return self
+
+
+class DocumentRenderResponse(BaseModel):
+    """Result of explicit idempotent page rendering."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    document_id: StableIdentifier
+    document_version: DocumentVersion
+    renderer: RendererMetadata
+    page_count: int = Field(gt=0)
+    pages: list[PagePreviewArtifact]
+
+    @model_validator(mode="after")
+    def validate_page_count(self) -> Self:
+        if self.page_count != len(self.pages):
+            raise ValueError("page_count must match the preview list")
+        return self
+
+
+class PixelBoundingBox(BaseModel):
+    """Non-empty integer region in rendered preview pixels."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    x0: int = Field(ge=0)
+    y0: int = Field(ge=0)
+    x1: int = Field(gt=0)
+    y1: int = Field(gt=0)
+
+    @model_validator(mode="after")
+    def validate_ordering(self) -> Self:
+        if self.x0 >= self.x1 or self.y0 >= self.y1:
+            raise ValueError("pixel bounding box must be non-empty and ordered")
+        return self
+
+
+class EvidenceAnchorResponse(BaseModel):
+    """Version-scoped mapping from evidence provenance to a rendered preview."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    evidence_id: StableIdentifier
+    document_id: StableIdentifier
+    document_version: DocumentVersion
+    page_index: int = Field(ge=0)
+    precision: AnchorPrecision
+    preview_asset_id: AssetReference | None = None
+    source_bbox: NormalizedBoundingBox | None = None
+    display_bbox: NormalizedBoundingBox | None = None
+    pixel_bbox: PixelBoundingBox | None = None
+
+    @model_validator(mode="after")
+    def validate_precision(self) -> Self:
+        boxes = (self.source_bbox, self.display_bbox, self.pixel_bbox)
+        if self.precision is AnchorPrecision.REGION:
+            if self.preview_asset_id is None or any(value is None for value in boxes):
+                raise ValueError("region anchors require a preview and all coordinate forms")
+        elif any(value is not None for value in boxes):
+            raise ValueError("page and unavailable anchors must not invent a region")
+        if self.precision is AnchorPrecision.PAGE and self.preview_asset_id is None:
+            raise ValueError("page anchors require a page preview")
+        if self.precision is AnchorPrecision.UNAVAILABLE and self.preview_asset_id is not None:
+            raise ValueError("unavailable anchors must not claim a page preview")
+        return self
 
 
 class DocumentIntakeResponse(BaseModel):

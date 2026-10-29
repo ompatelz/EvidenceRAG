@@ -2,6 +2,7 @@
 
 from contextlib import suppress
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import BinaryIO
 
 from evidence_rag.documents.identity import sanitize_filename
@@ -9,19 +10,30 @@ from evidence_rag.documents.models import (
     DocumentIntakeResponse,
     DocumentMetadataResponse,
     DocumentParseResponse,
+    DocumentRenderResponse,
     DocumentStatusResponse,
+    EvidenceAnchorResponse,
     EvidenceArtifact,
     IngestionManifest,
     IngestionState,
+    PagePreviewArtifact,
+    PagePreviewManifest,
     ParseIssue,
 )
 from evidence_rag.documents.parser import ParserError, PdfParser
+from evidence_rag.documents.rendering import (
+    PageRenderer,
+    RenderError,
+    normalized_to_pixels,
+    rotate_normalized_bbox,
+)
 from evidence_rag.documents.storage import (
     ArtifactNotFoundError,
     LocalArtifactStore,
     StorageError,
     UploadTooLargeError,
 )
+from evidence_rag.evidence import AnchorPrecision
 
 
 class IntakeError(RuntimeError):
@@ -246,4 +258,159 @@ class DocumentParsingService:
             parser=manifest.parser,
             evidence_count=manifest.evidence_count,
             issues=issues,
+        )
+
+
+class DocumentRenderingService:
+    """Render version-scoped previews and resolve honest evidence anchors."""
+
+    def __init__(self, store: LocalArtifactStore, renderer: PageRenderer) -> None:
+        self.store = store
+        self.renderer = renderer
+
+    def render(self, document_id: str, document_sha256: str) -> DocumentRenderResponse:
+        manifest = self._manifest(document_id, document_sha256)
+        if manifest.state not in {IngestionState.PARSED, IngestionState.PARTIAL}:
+            raise IntakeError(
+                "document_not_parsed",
+                "Document evidence must be parsed before page previews are rendered.",
+                409,
+            )
+        try:
+            existing = self.store.get_page_manifest(document_id, document_sha256)
+        except ArtifactNotFoundError:
+            existing = None
+        if existing is not None:
+            if existing.renderer != self.renderer.metadata:
+                raise IntakeError(
+                    "render_profile_conflict",
+                    "This version already has previews from another rendering profile.",
+                    409,
+                )
+            return self._response(existing)
+
+        try:
+            with self.store.stage_page_previews(document_id, document_sha256) as staging:
+                artifact = self.renderer.render(self.store.source_path(manifest), manifest, staging)
+                published = self.store.publish_page_previews(artifact, staging)
+        except RenderError as exc:
+            raise IntakeError(exc.code, exc.message, 422) from exc
+        except (ArtifactNotFoundError, OSError, StorageError) as exc:
+            raise IntakeError(
+                "preview_persistence_failed",
+                "Page previews could not be persisted safely.",
+                500,
+            ) from exc
+        except Exception as exc:
+            raise IntakeError(
+                "renderer_unexpected_failure",
+                "Page rendering failed unexpectedly without exposing source data.",
+                500,
+            ) from exc
+        return self._response(published)
+
+    def pages(self, document_id: str, document_sha256: str) -> PagePreviewManifest:
+        try:
+            return self.store.get_page_manifest(document_id, document_sha256)
+        except ArtifactNotFoundError as exc:
+            raise IntakeError("previews_not_found", "Page previews were not found.", 404) from exc
+
+    def preview(
+        self, document_id: str, document_sha256: str, page_index: int
+    ) -> tuple[PagePreviewArtifact, Path]:
+        artifact = self.pages(document_id, document_sha256)
+        if page_index < 0 or page_index >= len(artifact.pages):
+            raise IntakeError("page_not_found", "Page preview was not found.", 404)
+        try:
+            path = self.store.preview_path(document_id, document_sha256, page_index)
+        except ArtifactNotFoundError as exc:
+            raise IntakeError("preview_not_found", "Page preview was not found.", 404) from exc
+        return artifact.pages[page_index], path
+
+    def anchor(
+        self,
+        document_id: str,
+        document_sha256: str,
+        evidence_id: str,
+    ) -> EvidenceAnchorResponse:
+        try:
+            evidence = self.store.get_evidence(document_id, document_sha256)
+        except ArtifactNotFoundError as exc:
+            raise IntakeError("evidence_not_found", "Evidence artifact not found.", 404) from exc
+        pages = self.pages(document_id, document_sha256)
+        unit = next((item for item in evidence.units if item.evidence_id == evidence_id), None)
+        if unit is None:
+            raise IntakeError("evidence_not_found", "Evidence unit not found.", 404)
+        if unit.page_index >= len(pages.pages):
+            raise IntakeError(
+                "anchor_page_mismatch",
+                "Evidence page does not exist in the rendered preview set.",
+                409,
+            )
+        page = pages.pages[unit.page_index]
+        if unit.anchor_precision is AnchorPrecision.UNAVAILABLE:
+            return EvidenceAnchorResponse(
+                evidence_id=unit.evidence_id,
+                document_id=unit.document_id,
+                document_version=unit.document_version,
+                page_index=unit.page_index,
+                precision=unit.anchor_precision,
+            )
+        if unit.anchor_precision is AnchorPrecision.PAGE:
+            return EvidenceAnchorResponse(
+                evidence_id=unit.evidence_id,
+                document_id=unit.document_id,
+                document_version=unit.document_version,
+                page_index=unit.page_index,
+                precision=unit.anchor_precision,
+                preview_asset_id=page.asset_id,
+            )
+        if unit.bbox is None or unit.source_region is None:
+            raise IntakeError(
+                "anchor_geometry_missing",
+                "Region evidence is missing reproducible source geometry.",
+                409,
+            )
+        source = unit.source_region
+        if (
+            abs(source.page_width - page.source_width) > 0.01
+            or abs(source.page_height - page.source_height) > 0.01
+            or source.page_rotation != page.rotation
+        ):
+            raise IntakeError(
+                "anchor_geometry_mismatch",
+                "Evidence geometry does not match the rendered source page.",
+                409,
+            )
+        display_bbox = rotate_normalized_bbox(unit.bbox, page.rotation)
+        return EvidenceAnchorResponse(
+            evidence_id=unit.evidence_id,
+            document_id=unit.document_id,
+            document_version=unit.document_version,
+            page_index=unit.page_index,
+            precision=unit.anchor_precision,
+            preview_asset_id=page.asset_id,
+            source_bbox=unit.bbox,
+            display_bbox=display_bbox,
+            pixel_bbox=normalized_to_pixels(
+                display_bbox,
+                width=page.width_pixels,
+                height=page.height_pixels,
+            ),
+        )
+
+    def _manifest(self, document_id: str, document_sha256: str) -> IngestionManifest:
+        try:
+            return self.store.get_manifest(document_id, document_sha256)
+        except ArtifactNotFoundError as exc:
+            raise IntakeError("document_not_found", "Document version not found.", 404) from exc
+
+    @staticmethod
+    def _response(artifact: PagePreviewManifest) -> DocumentRenderResponse:
+        return DocumentRenderResponse(
+            document_id=artifact.document_id,
+            document_version=artifact.document_version,
+            renderer=artifact.renderer,
+            page_count=len(artifact.pages),
+            pages=artifact.pages,
         )

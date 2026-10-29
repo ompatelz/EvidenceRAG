@@ -2,7 +2,7 @@
 
 ## Current implemented architecture
 
-Phase 1.2 extends the verified Phase 0 boundary with safe intake and explicit parsing:
+Phase 1.3 extends the verified Phase 0 boundary with intake, parsing, and visual anchors:
 
 ```text
 FastAPI /health + /ready
@@ -32,6 +32,12 @@ multipart upload ---- raw body limit ---- spooled UploadFile
           text + tables + reliable caption relationships
                                       |
        versioned evidence.json + parsed/partial/failed state
+                                      |
+             explicit bounded crop-box PNG rendering
+                                      |
+       atomic pages/ manifest + opaque page asset IDs
+                                      |
+        rotation-aware evidence-to-pixel anchor resolution
 ```
 
 The package exposes operational HTTP endpoints and validates evidence objects. There are
@@ -68,6 +74,19 @@ region keeps the unrotated top-left PDF-point box, page dimensions and rotation,
 normalized top-left box. Evidence without a reliable box is page-precise, never guessed.
 Reading order and page indexes are zero-based. Table structure stays page-local.
 
+The rendering boundary uses the same pinned PyMuPDF version but a separately versioned
+`png-rgb-no-annotations-v1` profile. It stages the complete page set beside the immutable
+version, records crop/media boxes and source/pixel geometry, writes its manifest, and then
+publishes the directory atomically. Client requests are scoped by generated document ID,
+exact hash/version, and zero-based page index; responses contain opaque asset IDs or PNG
+bytes, never private paths.
+
+Evidence boxes are normalized in unrotated crop-box-relative source space. Rotation is
+applied before scaling by actual pixmap dimensions. Region anchors return source,
+display, and containing pixel boxes. Page anchors return only the preview. Unavailable
+anchors return neither. Rendering does not create a `ready` state; Phase 1.4 owns the final
+orchestration and lifecycle transition.
+
 ## Planned direction, not implemented
 
 EvidenceRAG is intended to remain a Python-first modular monolith during the local,
@@ -94,6 +113,7 @@ needed for the immutable intake manifest scan at this scale.
 The following are deferred until a reviewed phase or measured need justifies them:
 
 - OCR, scanned-page recovery, and semantic layout models such as Docling;
+- arbitrary-DPI preview negotiation and a polished visual inspector;
 - BM25, embedding models, Qdrant, and rerankers;
 - external or local LLM integrations;
 - a frontend or evidence inspector;
@@ -126,3 +146,6 @@ duplicate, validation, atomicity, and storage decisions.
 
 See [ADR-0004](decisions/ADR-0004-pymupdf-evidence-extraction.md) for the measured parser
 selection, coordinate conventions, extraction boundary, licensing caveat, and rollback.
+
+See [ADR-0005](decisions/ADR-0005-page-previews-and-anchor-transforms.md) for rendering
+profile, crop/rotation transforms, atomic page publication, asset security, and rollback.

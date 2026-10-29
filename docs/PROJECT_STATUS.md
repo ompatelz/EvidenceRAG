@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 1.2 complete and CI-verified; awaiting owner review on the Phase 1 draft PR
+Current phase: Phase 1.3 complete locally; commit, push, and PR CI pending
 
 ## Implemented and verified
 
@@ -44,12 +44,20 @@ Current phase: Phase 1.2 complete and CI-verified; awaiting owner review on the 
 - Tests cover deterministic fixture extraction, API persistence, parser metadata, tables,
   captions, source and normalized geometry, rotated pages, page ordering, page-only fallback,
   blank pages, malformed PDFs, partial extraction, unexpected exceptions, and page limits.
+- Phase 1.3 adds bounded fixed-profile PNG rendering, atomic page-set publication, opaque
+  page asset IDs, source/crop/media/pixel metadata, and manifest-backed preview responses.
+- Anchor resolution maps unrotated source-normalized boxes through page rotation into
+  display-normalized and containing pixel boxes. Page and unavailable precision return no
+  invented region.
+- Rendering lookups are scoped by generated document ID, exact hash/version, evidence ID,
+  and zero-based page index. Cross-document, stale-version, invalid-page, and missing-file
+  requests fail safely without exposing paths.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Owner review of the Subphase 1.2 implementation and teaching handoff.
+- Commit and push the verified Phase 1.3 tree, update the same draft PR, and check CI.
 
 ## Pending pull requests / links
 
@@ -117,6 +125,22 @@ Verification evidence is updated in this file only after commands have actually 
   including one structured table, and was removed after verification.
 - GitHub Actions for PR #4 head `31a38d3` — Python 3.11 passed in 17 seconds, Python 3.14
   passed in 16 seconds, and Container passed in 17 seconds.
+- Phase 1.3 focused rendering suite — 21 tests passed in 2.04 seconds. Coverage includes all
+  four rotations, inverse round trips, multiple DPI scales, boundary boxes, crop/media
+  offsets, security scopes, stale versions, missing/corrupt artifacts, rendering/per-page/
+  total-pixel limits, geometry mismatches, page-only and unavailable precision, and a
+  pixel-based owned-table regression.
+- Manual 144-DPI overlay inspection — the computed `(144, 319, 1065, 592)` pixel box
+  enclosed the complete owned fixture table border and cells and excluded its separately
+  extracted caption. No clipping, overlap, or alignment defect was observed.
+- Complete Phase 1.3 Python gate — `uv sync`, Ruff lint/format, strict mypy, and pytest
+  passed on the exact pre-commit tree; 76 tests passed in 3.36 seconds. `uv lock --check`,
+  deterministic fixture regeneration, and committed evaluation-data validation also passed.
+- `docker compose config --quiet` and the Phase 1.3 candidate image build passed. The
+  temporary container reached healthy as UID 10001; upload returned `received`, parsing
+  returned `parsed`, rendering produced one PNG, the served 48,106-byte PNG matched its
+  manifest SHA-256, and the table anchor resolved to `(144, 319, 1065, 592)`. The temporary
+  container was removed after verification.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -127,11 +151,12 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- Parsing exists, but no OCR, rendered-page viewer, retrieval, database, automatic parsing
-  queue, or answer-generation runtime exists. The evaluation rows are schema fixtures, not
-  a representative benchmark.
+- Parsing and preview APIs exist, but no polished viewer, retrieval, database, automatic
+  orchestration/retry, atomic ready transition, or answer-generation runtime exists. The
+  evaluation rows are schema fixtures, not a representative benchmark.
 - Table detection is page-local. Complex reading order, multi-page tables, vector diagrams,
-  equations, crop-box offsets, and rotated-preview mapping are not yet validated broadly.
+  equations, unusual malformed page boxes, and rotated/cropped production documents are not
+  yet validated broadly.
 - PyMuPDF uses AGPL/commercial licensing, while this repository has no selected license.
   Container/source redistribution must not begin until licensing is resolved.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
@@ -148,9 +173,11 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 - ADR-0004 selects pinned PyMuPDF after a bounded feasibility gate and defines parser-native
   coordinates, normalized regions, table structure, conservative relationships, failure
   states, licensing constraints, and rollback.
+- ADR-0005 defines the fixed rendering profile, crop/rotation transforms, containing-pixel
+  rounding, atomic page publication, page asset security, manual verification, and rollback.
 
 ## Next 3 tasks
 
-1. Review Subphase 1.2 and the updated draft Phase 1 PR.
-2. Resolve the project/PyMuPDF distribution-license strategy before publishing a build.
-3. Say `continue Phase 1` only when ready to authorize Subphase 1.3.
+1. Finish the Phase 1.3 quality gate and verify the existing draft PR CI.
+2. Review the Subphase 1.3 teaching handoff and overlay evidence.
+3. Say `continue Phase 1` only when ready to authorize Subphase 1.4.

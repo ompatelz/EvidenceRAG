@@ -24,3 +24,6 @@ class AppSettings(BaseSettings):
     multipart_overhead_bytes: int = Field(default=1024 * 1024, ge=64 * 1024)
     max_pdf_pages: int = Field(default=200, ge=1, le=10_000)
     max_evidence_units: int = Field(default=10_000, ge=1, le=1_000_000)
+    render_dpi: int = Field(default=144, ge=36, le=600)
+    max_render_pixels_per_page: int = Field(default=20_000_000, ge=1, le=200_000_000)
+    max_render_pixels_total: int = Field(default=100_000_000, ge=1, le=1_000_000_000)

@@ -5,7 +5,7 @@ from typing import Annotated, Literal
 from fastapi import FastAPI, File, Request, Response, UploadFile, status
 from pydantic import BaseModel, ConfigDict
 from starlette.middleware.body_limit import RequestBodyLimitMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import FileResponse, JSONResponse
 
 from evidence_rag import __version__
 from evidence_rag.config import AppSettings
@@ -15,10 +15,15 @@ from evidence_rag.documents import (
     DocumentMetadataResponse,
     DocumentParseResponse,
     DocumentParsingService,
+    DocumentRenderingService,
+    DocumentRenderResponse,
     DocumentStatusResponse,
+    EvidenceAnchorResponse,
     EvidenceArtifact,
     IntakeError,
     LocalArtifactStore,
+    PagePreviewManifest,
+    PyMuPDFPageRenderer,
     PyMuPDFParser,
 )
 
@@ -62,8 +67,18 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
             max_units=resolved_settings.max_evidence_units,
         ),
     )
+    rendering_service = DocumentRenderingService(
+        artifact_store,
+        PyMuPDFPageRenderer(
+            dpi=resolved_settings.render_dpi,
+            max_pages=resolved_settings.max_pdf_pages,
+            max_page_pixels=resolved_settings.max_render_pixels_per_page,
+            max_total_pixels=resolved_settings.max_render_pixels_total,
+        ),
+    )
     app.state.intake_service = intake_service
     app.state.parsing_service = parsing_service
+    app.state.rendering_service = rendering_service
     app.add_middleware(
         RequestBodyLimitMiddleware,
         max_body_size=(
@@ -156,5 +171,54 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
     def document_evidence(document_id: str, document_sha256: str) -> EvidenceArtifact:
         """Return persisted evidence without exposing its private artifact path."""
         return parsing_service.evidence(document_id, document_sha256)
+
+    @app.post(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/render",
+        response_model=DocumentRenderResponse,
+        tags=["documents"],
+    )
+    def render_document(document_id: str, document_sha256: str) -> DocumentRenderResponse:
+        """Explicitly render bounded, version-scoped PNG page previews."""
+        return rendering_service.render(document_id, document_sha256)
+
+    @app.get(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/pages",
+        response_model=PagePreviewManifest,
+        tags=["documents"],
+    )
+    def document_pages(document_id: str, document_sha256: str) -> PagePreviewManifest:
+        """Return safe preview metadata and opaque page asset identifiers."""
+        return rendering_service.pages(document_id, document_sha256)
+
+    @app.get(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/pages/{page_index}/preview",
+        response_class=FileResponse,
+        tags=["documents"],
+    )
+    def page_preview(document_id: str, document_sha256: str, page_index: int) -> FileResponse:
+        """Return one manifest-backed PNG without exposing its private path."""
+        page, path = rendering_service.preview(document_id, document_sha256, page_index)
+        return FileResponse(
+            path,
+            media_type=page.media_type,
+            headers={
+                "Cache-Control": "private, max-age=31536000, immutable",
+                "ETag": f'"sha256:{page.content_sha256}"',
+                "X-Content-Type-Options": "nosniff",
+            },
+        )
+
+    @app.get(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/evidence/{evidence_id}/anchor",
+        response_model=EvidenceAnchorResponse,
+        tags=["documents"],
+    )
+    def evidence_anchor(
+        document_id: str,
+        document_sha256: str,
+        evidence_id: str,
+    ) -> EvidenceAnchorResponse:
+        """Resolve genuine evidence geometry against the rendered page preview."""
+        return rendering_service.anchor(document_id, document_sha256, evidence_id)
 
     return app
