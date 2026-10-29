@@ -52,3 +52,52 @@ jobs:
 
       - name: Test
         run: uv run pytest
+
+      - name: Verify deterministic PDF fixtures
+        run: uv run python scripts/generate_fixtures.py --check
+
+      - name: Validate committed evaluation data
+        run: >-
+          uv run python -m evidence_rag.eval.validate
+          --manifest datasets/manifests/fixtures.json
+          datasets/eval/fixture_items.jsonl
+
+  container:
+    name: Container
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+
+      - name: Build commit-traceable candidate image
+        run: >-
+          docker build
+          --build-arg VCS_REF=${{ github.sha }}
+          --label org.opencontainers.image.revision=${{ github.sha }}
+          --tag evidencerag:pr
+          .
+
+      - name: Verify container health and runtime user
+        shell: bash
+        run: |
+          docker run --detach --name evidencerag-ci evidencerag:pr
+          cleanup() {
+            docker logs evidencerag-ci || true
+            docker rm --force evidencerag-ci || true
+          }
+          trap cleanup EXIT
+          for attempt in {1..15}; do
+            state="$(docker inspect --format '{{.State.Health.Status}}' evidencerag-ci)"
+            if [[ "$state" == "healthy" ]]; then
+              break
+            fi
+            sleep 2
+          done
+          test "${state:-missing}" = "healthy"
+          test "$(docker exec evidencerag-ci id -u)" = "10001"

@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 0.3 complete; Phase 0.4 next in the same Phase 0 pull request
+Current phase: Phase 0.4 implemented; final clean-room and CI verification in progress
 
 ## Implemented and verified
 
@@ -21,12 +21,16 @@ Current phase: Phase 0.3 complete; Phase 0.4 next in the same Phase 0 pull reque
   provenance, hashes, unknown versions, duplicates, malformed JSONL, and split conflicts.
 - Two repository-owned CC0 PDFs regenerate byte-for-byte; both pages were rendered and
   visually inspected, and extracted text matches the intended narrative, diagram, and table.
+- Multi-stage container installs only runtime dependencies, runs as UID 10001, and exposes
+  a verified HTTP health check. Compose adds a read-only filesystem and no-new-privileges.
+- CI now validates Python quality, deterministic fixtures, evaluation data, Compose, the
+  container build, container health, and the runtime UID without publishing or deploying.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Phase 0.4 container, CI, and clean-room hardening.
+- Final Phase 0 CI verification and owner review.
 
 ## Pending pull requests / links
 
@@ -49,6 +53,11 @@ Verification evidence is updated in this file only after commands have actually 
   byte-for-byte deterministic.
 - Evaluation CLI — passed for the committed manifest and JSONL file.
 - `uv run pytest` — passed after Phase 0.3; 30 tests passed in 0.57 seconds.
+- Complete Phase 0 Python gate — passed; 30 tests passed in 0.70 seconds.
+- `docker compose config --quiet` — passed.
+- Candidate image build — passed using pinned Python and uv base-image digests.
+- Candidate container — reached `healthy`; `/health` and `/ready` returned HTTP 200,
+  runtime UID was 10001, and datasets, tests, Git history, and `.env` were absent.
 - Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
   and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
   temporary directory was removed afterward.
@@ -77,6 +86,6 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Phase 0.4: add container and CI hardening (2–3 focused hours).
-2. Perform the complete Phase 0 clean-room gate and evidence table.
-3. Review and merge the complete Phase 0 PR after every gate passes.
+1. Complete the final clean-room verification from the committed tree.
+2. Confirm every GitHub Actions job passes on the complete Phase 0 head.
+3. Review and merge the complete Phase 0 PR only with owner approval.

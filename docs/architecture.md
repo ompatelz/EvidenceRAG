@@ -26,6 +26,10 @@ The offline evaluation boundary validates data before any retriever exists. Ever
 resolves to a manifest document version and every committed fixture hash is checked against
 its bytes. The evaluation plane does not call the API or claim measured performance yet.
 
+The container boundary installs the locked runtime package in a builder stage, copies only
+the resulting environment into a small Python runtime, and runs the API as an unprivileged
+user. CI builds but does not publish this candidate artifact.
+
 ## Planned direction, not implemented
 
 EvidenceRAG is intended to remain a Python-first modular monolith during the local,

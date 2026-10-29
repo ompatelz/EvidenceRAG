@@ -42,6 +42,13 @@ Implemented in Phase 0.3:
 - four human-verifiable contract rows, explicitly not benchmark results;
 - documented metric definitions, data card, and frozen-test policy.
 
+Implemented in Phase 0.4:
+
+- a minimal multi-stage container with a non-root runtime user;
+- a working HTTP health check and read-only Compose service;
+- CI validation for deterministic fixtures, evaluation data, Compose, and image builds;
+- commit-SHA traceability without image publication or deployment.
+
 Planned for later reviewed phases:
 
 - evidence-preserving PDF ingestion;
@@ -105,6 +112,18 @@ uv run python -m evidence_rag.eval.validate \
   --manifest datasets/manifests/fixtures.json \
   datasets/eval/fixture_items.jsonl
 ```
+
+Build and run the hardened local container:
+
+```bash
+docker compose config
+docker build --build-arg VCS_REF=local -t evidencerag:local .
+docker run --rm -p 8000:8000 evidencerag:local
+```
+
+The runtime image is non-root and intentionally excludes datasets, PDFs, tests, source
+control metadata, secrets, indexes, and model weights. Phase 0 builds a candidate image but
+does not publish or deploy it.
 
 `uv` installs the project in editable mode and resolves exact transitive versions from
 the committed lockfile. CI also verifies that `uv.lock` still matches `pyproject.toml`.
