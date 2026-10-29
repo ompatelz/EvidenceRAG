@@ -4,10 +4,10 @@ EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository is in **Phase 1.1**. It includes the verified Phase 0 foundation and a
-safe intake slice that accepts bounded PDFs into versioned local artifacts. It does
-**not** yet parse PDF page content, render previews, retrieve evidence, generate answers,
-or report benchmark results.
+This repository is in **Phase 1.2**. It includes the verified Phase 0 foundation, safe PDF
+intake, and explicit provenance-preserving extraction into inspectable evidence artifacts.
+It does **not** yet render previews, retrieve evidence, generate answers, or report
+benchmark results.
 
 ## Why this project exists
 
@@ -59,18 +59,27 @@ Implemented in Phase 1.1:
 - atomic source/manifest publication with partial-artifact cleanup;
 - client-safe metadata/status responses whose initial state is honestly `received`.
 
+Implemented in Phase 1.2:
+
+- pinned PyMuPDF extraction behind a narrow parser boundary;
+- deterministic page text, conservative headings, captions, captioned embedded figures,
+  and page-local structured tables;
+- zero-based pages and reading order with parser-native and normalized source regions;
+- versioned persisted evidence artifacts and explicit parser/representation metadata;
+- truthful `parsing`, `parsed`, `partial`, and `failed` lifecycle states;
+- configurable page/evidence limits and source-safe parser diagnostics.
+
 Planned for later reviewed phases:
 
-- evidence-preserving PDF ingestion;
 - BM25, dense, hybrid, and reranked retrieval baselines;
 - grounded answers, citation validation, and calibrated abstention;
 - a visual retrieval path only if experiments justify its compute and complexity.
 
 ## Non-goals for this phase
 
-Phase 1.1 deliberately excludes PDF parsers, OCR, page-count validation, extraction,
-rendering, Qdrant, LLM SDKs, frontends, Redis, PostgreSQL, model downloads, and deployment.
-It also makes no
+Phase 1.2 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
+diagram understanding, multi-page table linking, automatic parsing jobs, rendering,
+Qdrant, LLM SDKs, frontends, Redis, PostgreSQL, model downloads, and deployment. It makes no
 claims about retrieval quality, answer accuracy, latency, or production readiness.
 
 ## Requirements
@@ -112,8 +121,8 @@ uv run uvicorn evidence_rag.api:create_app --factory
 ```
 
 Then request `http://127.0.0.1:8000/health` or `/ready`. Readiness currently means only
-that required local configuration is valid; it does not imply a database, index, parser,
-or model is available.
+that required local configuration is valid; it does not imply a database, index, completed
+document parse, or model is available.
 
 Upload an owned PDF fixture:
 
@@ -128,6 +137,8 @@ never a filesystem path. Use those identifiers with:
 ```text
 GET /api/v1/documents/{document_id}/versions/{document_sha256}
 GET /api/v1/documents/{document_id}/versions/{document_sha256}/status
+POST /api/v1/documents/{document_id}/versions/{document_sha256}/parse
+GET /api/v1/documents/{document_id}/versions/{document_sha256}/evidence
 ```
 
 Non-secret intake settings use the `EVIDENCERAG_` prefix:
@@ -135,10 +146,13 @@ Non-secret intake settings use the `EVIDENCERAG_` prefix:
 - `EVIDENCERAG_ARTIFACT_ROOT` (default `artifacts`)
 - `EVIDENCERAG_MAX_UPLOAD_BYTES` (default 10 MiB)
 - `EVIDENCERAG_UPLOAD_CHUNK_BYTES` (default 64 KiB)
+- `EVIDENCERAG_MAX_PDF_PAGES` (default 200)
+- `EVIDENCERAG_MAX_EVIDENCE_UNITS` (default 10,000)
 
 The default deployment remains a local, single-user MVP. The upload limit is enforced once
 over the raw multipart request and again over streamed PDF bytes. Intake checks the PDF
-header and a bounded EOF trailer only; complete structural parsing begins in Phase 1.2.
+header and a bounded EOF trailer only. The explicit parse endpoint performs structural
+opening and extraction; upload does not silently claim that parsing succeeded.
 
 Validate all committed evaluation data and deterministic fixtures:
 
@@ -158,8 +172,9 @@ docker run --rm -p 8000:8000 evidencerag:local
 ```
 
 The runtime image is non-root and intentionally excludes datasets, PDFs, tests, source
-control metadata, secrets, indexes, and model weights. Phase 0 builds a candidate image but
-does not publish or deploy it.
+control metadata, secrets, indexes, and model weights. CI builds a candidate image but does
+not publish or deploy it. PyMuPDF licensing and the repository's own license must be resolved
+before any build is distributed.
 
 `uv` installs the project in editable mode and resolves exact transitive versions from
 the committed lockfile. CI also verifies that `uv.lock` still matches `pyproject.toml`.
@@ -172,7 +187,7 @@ tests/                        Executable package-contract tests
 docs/PROJECT_STATUS.md        Verified state and next work
 docs/architecture.md          Current boundary and planned direction
 docs/decisions/               Architecture decision records
-src/evidence_rag/documents/   Intake, identity, manifests, and local artifacts
+src/evidence_rag/documents/   Intake, parsing, manifests, and local artifacts
 .github/workflows/ci.yml      Reproducible automated quality gate
 ```
 

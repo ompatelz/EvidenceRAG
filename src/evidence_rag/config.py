@@ -22,3 +22,5 @@ class AppSettings(BaseSettings):
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1, le=1024 * 1024 * 1024)
     upload_chunk_bytes: int = Field(default=64 * 1024, ge=4096, le=1024 * 1024)
     multipart_overhead_bytes: int = Field(default=1024 * 1024, ge=64 * 1024)
+    max_pdf_pages: int = Field(default=200, ge=1, le=10_000)
+    max_evidence_units: int = Field(default=10_000, ge=1, le=1_000_000)

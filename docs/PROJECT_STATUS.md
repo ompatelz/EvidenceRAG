@@ -2,7 +2,7 @@
 
 Updated: 2026-10-29
 
-Current phase: Phase 1.1 complete; awaiting owner review on the Phase 1 draft PR
+Current phase: Phase 1.2 complete locally; awaiting CI and owner review on the Phase 1 draft PR
 
 ## Implemented and verified
 
@@ -33,18 +33,30 @@ Current phase: Phase 1.1 complete; awaiting owner review on the Phase 1 draft PR
 - The focused Phase 1.1 suite covers owned-fixture upload, empty/corrupt/wrong-signature
   files, unusual/traversal filenames, limits, duplicates, changed versions, interrupted and
   failed writes, manifest validation/atomicity, confinement, and path-safe responses.
+- Phase 1.2 pins PyMuPDF `1.28.2` after a measured Docling/PyMuPDF feasibility gate and
+  records the dependency, licensing, and replacement conditions in ADR-0004.
+- Explicit parsing extracts deterministic text, conservative headings, captions, captioned
+  embedded figures, and page-local structured tables into versioned evidence artifacts.
+- Evidence retains zero-based page/read order, stable IDs, parser/representation versions,
+  unrotated top-left PDF-point boxes, page geometry/rotation, and normalized top-left boxes.
+- Lifecycle records now distinguish `received`, `parsing`, `parsed`, `partial`, and `failed`;
+  bounded parser issues never expose source content or private paths.
+- Tests cover deterministic fixture extraction, API persistence, parser metadata, tables,
+  captions, source and normalized geometry, rotated pages, page ordering, page-only fallback,
+  blank pages, malformed PDFs, partial extraction, unexpected exceptions, and page limits.
 
 Verification evidence is updated in this file only after commands have actually run.
 
 ## In progress
 
-- Owner review of the Subphase 1.1 implementation and teaching handoff.
-- Phase 1.2 is intentionally not started until the owner says `continue Phase 1`.
+- GitHub Actions on the existing draft PR after the Phase 1.2 push.
+- Owner review of the Subphase 1.2 implementation and teaching handoff.
 
 ## Pending pull requests / links
 
 - [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
-  contains commit `0e2eb11`; Python 3.11, Python 3.14, and Container CI passed.
+  remains the single Phase 1 PR. Subphase 1.1 CI passed; the Phase 1.2 head will be recorded
+  after its commit and push.
 
 ## Last test commands and outcomes
 
@@ -91,6 +103,19 @@ Verification evidence is updated in this file only after commands have actually 
   owned Atlas fixture, returned `received`, created exactly one manifest, and was removed.
 - GitHub Actions for PR #4 — Python 3.11 passed in 16 seconds, Python 3.14 passed in
   18 seconds, and Container passed in 24 seconds.
+- Phase 1.2 parser feasibility — PyMuPDF extracted the owned narrative fixture in 0.018
+  seconds and the owned structured-table fixture in 0.011 seconds. Docling `2.129.0`
+  resolved 106 packages (approximately 1177.8 MiB) plus approximately 494.4 MiB of model
+  data but did not finish the first tiny fixture within the bounded local window.
+- Phase 1.2 focused parser suite — 11 tests passed.
+- Complete Phase 1.2 Python gate — Ruff lint and format checks passed, strict mypy passed
+  for 19 source files, and all 55 tests passed in 1.42 seconds.
+- `uv lock --check`, deterministic fixture regeneration, and committed evaluation-data
+  validation passed after adding pinned PyMuPDF `1.28.2`.
+- `uv sync --all-extras --dev` and `docker compose config --quiet` passed. The Phase 1.2
+  candidate image built with pinned PyMuPDF, reached healthy as UID 10001, accepted the
+  owned table fixture, changed from `received` to `parsed`, persisted five evidence units
+  including one structured table, and was removed after verification.
 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
@@ -101,9 +126,13 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- Intake exists, but no PDF page parsing, page-count validation, extraction, rendering,
-  retrieval, database, or answer-generation runtime exists. The evaluation rows are schema
-  fixtures, not a representative benchmark.
+- Parsing exists, but no OCR, rendered-page viewer, retrieval, database, automatic parsing
+  queue, or answer-generation runtime exists. The evaluation rows are schema fixtures, not
+  a representative benchmark.
+- Table detection is page-local. Complex reading order, multi-page tables, vector diagrams,
+  equations, crop-box offsets, and rotated-preview mapping are not yet validated broadly.
+- PyMuPDF uses AGPL/commercial licensing, while this repository has no selected license.
+  Container/source redistribution must not begin until licensing is resolved.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
   exercised in Phase 0.1.
 - The project has no selected license.
@@ -114,12 +143,13 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 - ADR-0003 selects filename-derived logical document identity, exact-byte SHA-256 versions,
   global local-store deduplication, atomic file/manifest publication, and an honest
-  `received` intake state. Parser integration remains deferred to the Phase 1.2 research
-  gate.
+  `received` intake state.
+- ADR-0004 selects pinned PyMuPDF after a bounded feasibility gate and defines parser-native
+  coordinates, normalized regions, table structure, conservative relationships, failure
+  states, licensing constraints, and rollback.
 
 ## Next 3 tasks
 
-1. Review Subphase 1.1 and the draft Phase 1 PR.
-2. Say `continue Phase 1` only when ready to authorize Subphase 1.2.
-3. On continuation, inspect the existing branch, both Phase 1.1 commits, PR CI, and review
-   feedback before the parser research gate.
+1. Review Subphase 1.2 and the updated draft Phase 1 PR.
+2. Resolve the project/PyMuPDF distribution-license strategy before publishing a build.
+3. Say `continue Phase 1` only when ready to authorize Subphase 1.3.

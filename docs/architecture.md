@@ -2,7 +2,7 @@
 
 ## Current implemented architecture
 
-Phase 1.1 extends the verified Phase 0 boundary with safe intake:
+Phase 1.2 extends the verified Phase 0 boundary with safe intake and explicit parsing:
 
 ```text
 FastAPI /health + /ready
@@ -26,6 +26,12 @@ multipart upload ---- raw body limit ---- spooled UploadFile
               confined version directory + atomic manifest
                                       |
             received metadata/status with opaque asset ID
+                                      |
+                  explicit bounded PyMuPDF parse
+                                      |
+          text + tables + reliable caption relationships
+                                      |
+       versioned evidence.json + parsed/partial/failed state
 ```
 
 The package exposes operational HTTP endpoints and validates evidence objects. There are
@@ -51,10 +57,16 @@ document/version even if a later upload uses another filename. Changed bytes und
 same canonical filename create another version beneath the same logical document. This is
 a local single-user policy, not tenant-aware deduplication.
 
-The only successful lifecycle state in this slice is `received`: bytes and the manifest
-are durable, but parsing has not occurred. No accepted version is called parsed or ready.
-Plainly truncated files are rejected by bounded header/trailer checks, but full PDF
-structural validation, page limits, parsing, and extraction are deferred to Phase 1.2.
+`received` means bytes and the manifest are durable. An explicit version-specific operation
+then records `parsing` and produces `parsed`, `partial`, or `failed`. A `parsed` artifact has
+version-matching evidence and no parser issues; `partial` preserves useful evidence while
+recording bounded issues. Neither state claims retrieval or answer readiness.
+
+PyMuPDF `1.28.2` supplies text blocks, embedded-image metadata, and page-local tables. The
+adapter stores stable application contracts rather than raw parser objects. Every reliable
+region keeps the unrotated top-left PDF-point box, page dimensions and rotation, plus a
+normalized top-left box. Evidence without a reliable box is page-precise, never guessed.
+Reading order and page indexes are zero-based. Table structure stays page-local.
 
 ## Planned direction, not implemented
 
@@ -81,7 +93,7 @@ needed for the immutable intake manifest scan at this scale.
 
 The following are deferred until a reviewed phase or measured need justifies them:
 
-- Docling, PyMuPDF, or another PDF parser/renderer;
+- OCR, scanned-page recovery, and semantic layout models such as Docling;
 - BM25, embedding models, Qdrant, and rerankers;
 - external or local LLM integrations;
 - a frontend or evidence inspector;
@@ -111,3 +123,6 @@ conditions that would justify change.
 
 See [ADR-0003](decisions/ADR-0003-pdf-intake-identity-and-storage.md) for intake identity,
 duplicate, validation, atomicity, and storage decisions.
+
+See [ADR-0004](decisions/ADR-0004-pymupdf-evidence-extraction.md) for the measured parser
+selection, coordinate conventions, extraction boundary, licensing caveat, and rollback.

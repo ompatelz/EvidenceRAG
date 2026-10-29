@@ -11,10 +11,10 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import BinaryIO, cast
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from evidence_rag.documents.identity import logical_document_id
-from evidence_rag.documents.models import IngestionManifest, IngestionState
+from evidence_rag.documents.models import EvidenceArtifact, IngestionManifest, IngestionState
 
 _DOCUMENT_ID = re.compile(r"^doc_[a-f0-9]{24}$")
 _SHA256 = re.compile(r"^[a-f0-9]{64}$")
@@ -126,6 +126,37 @@ class LocalArtifactStore:
         except (OSError, ValidationError, json.JSONDecodeError) as exc:
             raise ArtifactNotFoundError from exc
 
+    def source_path(self, manifest: IngestionManifest) -> Path:
+        """Resolve the private source path for an already-validated manifest."""
+        path = self._version_path(manifest.document_id, manifest.document_sha256) / "source.pdf"
+        if not path.is_file():
+            raise ArtifactNotFoundError
+        return path
+
+    def update_manifest(self, manifest: IngestionManifest) -> None:
+        """Atomically replace the lifecycle record for one existing version."""
+        version_dir = self._version_path(manifest.document_id, manifest.document_sha256)
+        if not (version_dir / "source.pdf").is_file():
+            raise ArtifactNotFoundError
+        self._atomic_write_model(version_dir / "manifest.json", manifest)
+
+    def write_evidence(self, artifact: EvidenceArtifact) -> None:
+        """Atomically persist evidence beside its immutable document version."""
+        version_dir = self._version_path(artifact.document_id, artifact.document_sha256)
+        if not (version_dir / "source.pdf").is_file():
+            raise ArtifactNotFoundError
+        self._atomic_write_model(version_dir / "evidence.json", artifact)
+
+    def get_evidence(self, document_id: str, document_sha256: str) -> EvidenceArtifact:
+        """Load persisted evidence using allowlisted path components only."""
+        if not _DOCUMENT_ID.fullmatch(document_id) or not _SHA256.fullmatch(document_sha256):
+            raise ArtifactNotFoundError
+        path = self._version_path(document_id, document_sha256) / "evidence.json"
+        try:
+            return EvidenceArtifact.model_validate_json(path.read_text(encoding="utf-8"))
+        except (OSError, ValidationError) as exc:
+            raise ArtifactNotFoundError from exc
+
     def _publish(self, staging_path: Path, manifest: IngestionManifest) -> IngestionManifest:
         version_dir = self._version_path(manifest.document_id, manifest.document_sha256)
         try:
@@ -138,7 +169,7 @@ class LocalArtifactStore:
 
         try:
             self._replace(staging_path, version_dir / "source.pdf")
-            self._atomic_write_manifest(version_dir / "manifest.json", manifest)
+            self._atomic_write_model(version_dir / "manifest.json", manifest)
             return manifest
         except Exception as exc:
             shutil.rmtree(version_dir, ignore_errors=True)
@@ -147,8 +178,8 @@ class LocalArtifactStore:
                 raise
             raise StorageError("could not publish the document version") from exc
 
-    def _atomic_write_manifest(self, destination: Path, manifest: IngestionManifest) -> None:
-        payload = manifest.model_dump_json(indent=2).encode("utf-8") + b"\n"
+    def _atomic_write_model(self, destination: Path, model: BaseModel) -> None:
+        payload = model.model_dump_json(indent=2).encode("utf-8") + b"\n"
         descriptor, raw_temporary_path = tempfile.mkstemp(
             prefix=".manifest-", suffix=".tmp", dir=destination.parent
         )

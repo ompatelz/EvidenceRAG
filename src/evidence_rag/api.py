@@ -13,9 +13,13 @@ from evidence_rag.documents import (
     DocumentIntakeResponse,
     DocumentIntakeService,
     DocumentMetadataResponse,
+    DocumentParseResponse,
+    DocumentParsingService,
     DocumentStatusResponse,
+    EvidenceArtifact,
     IntakeError,
     LocalArtifactStore,
+    PyMuPDFParser,
 )
 
 
@@ -45,14 +49,21 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         description="Evidence-first document retrieval API (foundation slice)",
     )
     app.state.settings = resolved_settings
-    intake_service = DocumentIntakeService(
-        LocalArtifactStore(
-            resolved_settings.artifact_root,
-            max_upload_bytes=resolved_settings.max_upload_bytes,
-            chunk_bytes=resolved_settings.upload_chunk_bytes,
-        )
+    artifact_store = LocalArtifactStore(
+        resolved_settings.artifact_root,
+        max_upload_bytes=resolved_settings.max_upload_bytes,
+        chunk_bytes=resolved_settings.upload_chunk_bytes,
+    )
+    intake_service = DocumentIntakeService(artifact_store)
+    parsing_service = DocumentParsingService(
+        artifact_store,
+        PyMuPDFParser(
+            max_pages=resolved_settings.max_pdf_pages,
+            max_units=resolved_settings.max_evidence_units,
+        ),
     )
     app.state.intake_service = intake_service
+    app.state.parsing_service = parsing_service
     app.add_middleware(
         RequestBodyLimitMiddleware,
         max_body_size=(
@@ -125,7 +136,25 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
         tags=["documents"],
     )
     def document_status(document_id: str, document_sha256: str) -> DocumentStatusResponse:
-        """Return the truthful intake-only lifecycle state for one version."""
+        """Return the truthful lifecycle state for one version."""
         return intake_service.status(document_id, document_sha256)
+
+    @app.post(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/parse",
+        response_model=DocumentParseResponse,
+        tags=["documents"],
+    )
+    def parse_document(document_id: str, document_sha256: str) -> DocumentParseResponse:
+        """Synchronously parse one received version into inspectable evidence."""
+        return parsing_service.parse(document_id, document_sha256)
+
+    @app.get(
+        "/api/v1/documents/{document_id}/versions/{document_sha256}/evidence",
+        response_model=EvidenceArtifact,
+        tags=["documents"],
+    )
+    def document_evidence(document_id: str, document_sha256: str) -> EvidenceArtifact:
+        """Return persisted evidence without exposing its private artifact path."""
+        return parsing_service.evidence(document_id, document_sha256)
 
     return app
