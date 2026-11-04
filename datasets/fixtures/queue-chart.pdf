@@ -1,0 +1,126 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/Contents 9 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/PageMode /UseNone /Pages 8 0 R /Type /Catalog
+>>
+endobj
+7 0 obj
+<<
+/Author (EvidenceRAG contributors) /CreationDate (D:20000101000000+00'00') /Creator (EvidenceRAG deterministic fixture generator) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (Queue Scheduling Note) /Trapped /False
+>>
+endobj
+8 0 obj
+<<
+/Count 1 /Kids [ 5 0 R ] /Type /Pages
+>>
+endobj
+9 0 obj
+<<
+/Length 1530
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+BT /F2 20 Tf 24 TL ET
+BT 1 0 0 1 54 724 Tm (Queue Scheduling Note) Tj T* ET
+BT /F1 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 688 Tm (Experiment QS-17 compares three scheduler modes.) Tj T* ET
+BT 1 0 0 1 54 670 Tm (Each run processed 500 synthetic requests at concurrency 8.) Tj T* ET
+BT 1 0 0 1 54 652 Tm (The timeout budget was 250 ms per request.) Tj T* ET
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 72 602 Tm (Median queue wait \(ms\)) Tj T* ET
+n 110 310 m 110 550 l S
+n 110 310 m 510 310 l S
+n 106 310 m 110 310 l S
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 94.996 307 Tm (0) Tj T* ET
+n 106 365 m 110 365 l S
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 89.992 362 Tm (20) Tj T* ET
+n 106 420 m 110 420 l S
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 89.992 417 Tm (40) Tj T* ET
+n 106 475 m 110 475 l S
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 89.992 472 Tm (60) Tj T* ET
+n 106 530 m 110 530 l S
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 89.992 527 Tm (80) Tj T* ET
+.258824 .411765 .564706 rg
+n 155 310 60 181.5 re f*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 173.61 292 Tm (FIFO) Tj T* ET
+.423529 .556863 .364706 rg
+n 275 310 60 101.75 re f*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 289.445 292 Tm (Priority) Tj T* ET
+.690196 .478431 .262745 rg
+n 395 310 60 134.75 re f*
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 416.39 292 Tm (Fair) Tj T* ET
+BT /F3 10 Tf 12 TL ET
+BT 1 0 0 1 72 260 Tm (Figure 1. Median queue wait by scheduler mode.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 1) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000061 00000 n 
+0000000112 00000 n 
+0000000219 00000 n 
+0000000331 00000 n 
+0000000446 00000 n 
+0000000639 00000 n 
+0000000707 00000 n 
+0000001030 00000 n 
+0000001089 00000 n 
+trailer
+<<
+/ID 
+[<50948adbed97c7aaec328bba7940879c><50948adbed97c7aaec328bba7940879c>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 7 0 R
+/Root 6 0 R
+/Size 10
+>>
+startxref
+2670
+%%EOF

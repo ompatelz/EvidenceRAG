@@ -1,0 +1,8 @@
+{
+  "retriever": "E0",
+  "manifest": "datasets/manifests/fixtures.json",
+  "seed": "datasets/eval/phase2_seed.jsonl",
+  "output": "reports/generated/e0-benchmark.json",
+  "splits": ["development", "validation"],
+  "cutoffs": [1, 3, 5]
+}

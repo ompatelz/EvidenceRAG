@@ -8,7 +8,13 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen.canvas import Canvas
 
-FIXTURE_NAMES = ("atlas-narrative.pdf", "retrieval-table.pdf")
+FIXTURE_NAMES = (
+    "atlas-narrative.pdf",
+    "retrieval-table.pdf",
+    "queue-chart.pdf",
+    "checksum-retry.pdf",
+    "cache-admission.pdf",
+)
 
 
 def _canvas(path: Path, title: str) -> Canvas:
@@ -106,11 +112,146 @@ def generate_table(path: Path) -> None:
     canvas.save()
 
 
+def generate_chart(path: Path) -> None:
+    """Create a technical chart whose bar heights are absent from extracted text."""
+    canvas = _canvas(path, "Queue Scheduling Note")
+    width, height = letter
+    canvas.setFont("Helvetica-Bold", 20)
+    canvas.drawString(54, height - 68, "Queue Scheduling Note")
+    canvas.setFont("Helvetica", 11)
+    canvas.drawString(54, height - 104, "Experiment QS-17 compares three scheduler modes.")
+    canvas.drawString(
+        54, height - 122, "Each run processed 500 synthetic requests at concurrency 8."
+    )
+    canvas.drawString(54, height - 140, "The timeout budget was 250 ms per request.")
+    canvas.setFont("Helvetica-Bold", 11)
+    canvas.drawString(72, height - 190, "Median queue wait (ms)")
+    x0, y0 = 110, 310
+    canvas.line(x0, y0, x0, y0 + 240)
+    canvas.line(x0, y0, x0 + 400, y0)
+    for tick, value in enumerate((0, 20, 40, 60, 80)):
+        y = y0 + tick * 55
+        canvas.line(x0 - 4, y, x0, y)
+        canvas.setFont("Helvetica", 9)
+        canvas.drawRightString(x0 - 10, y - 3, str(value))
+    for x, label, units, color in (
+        (155, "FIFO", 66, "#426990"),
+        (275, "Priority", 37, "#6C8E5D"),
+        (395, "Fair", 49, "#B07A43"),
+    ):
+        canvas.setFillColor(colors.HexColor(color))
+        canvas.rect(x, y0, 60, units * 2.75, fill=1, stroke=0)
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 10)
+        canvas.drawCentredString(x + 30, y0 - 18, label)
+    canvas.setFont("Helvetica-Oblique", 10)
+    canvas.drawString(72, y0 - 50, "Figure 1. Median queue wait by scheduler mode.")
+    canvas.setFont("Helvetica", 8)
+    canvas.drawRightString(width - 54, 36, "Repository-owned evaluation fixture | Page 1")
+    canvas.save()
+
+
+def _note_page(
+    canvas: Canvas, title: str, subtitle: str, lines: tuple[str, ...], page: int
+) -> None:
+    """Write one plain, source-inspectable technical-note page."""
+    _, height = letter
+    canvas.setFillColor(colors.HexColor("#17324D"))
+    canvas.setFont("Helvetica-Bold", 19)
+    canvas.drawString(54, height - 68, title)
+    canvas.setFont("Helvetica-Bold", 11)
+    canvas.drawString(54, height - 102, subtitle)
+    canvas.setFillColor(colors.black)
+    canvas.setFont("Helvetica", 10)
+    for index, line in enumerate(lines):
+        canvas.drawString(54, height - 142 - 25 * index, line)
+    canvas.setFont("Helvetica", 8)
+    canvas.drawRightString(558, 36, f"Repository-owned evaluation fixture | Page {page}")
+
+
+def generate_checksum_retry(path: Path) -> None:
+    """Create a two-page transfer-protocol memo with an equation and retry table."""
+    canvas = _canvas(path, "Checksum and Retry Protocol Note")
+    _note_page(
+        canvas,
+        "Checksum and Retry Protocol Note",
+        "1. Transfer contract",
+        (
+            "Protocol ID CR-42 identifies this synthetic chunk-transfer experiment.",
+            "Each chunk carries a SHA-256 digest and a 4096-byte payload.",
+            "The receiver recomputes the digest before acknowledging a chunk.",
+            "A checksum mismatch produces a negative acknowledgment.",
+            "Equation 1: payload bytes = chunk count x chunk payload bytes.",
+            "For 3 chunks, the total payload is 3 x 4096 = 12288 bytes.",
+            "The equation counts payload only; headers are excluded.",
+        ),
+        1,
+    )
+    canvas.showPage()
+    _note_page(
+        canvas,
+        "Checksum and Retry Protocol Note",
+        "2. Retry policy",
+        (
+            "The maximum is 3 attempts per chunk, including the initial send.",
+            "The timeout budget is 250 ms for each attempt.",
+            "After the final failed attempt, the chunk is marked failed.",
+            "Table 1. Retry schedule for a chunk with a negative acknowledgment.",
+            "Attempt 1 | initial send | no backoff",
+            "Attempt 2 | first retry | wait 50 ms",
+            "Attempt 3 | second retry | wait 100 ms",
+            "This note does not report a measured packet-loss percentage.",
+        ),
+        2,
+    )
+    canvas.save()
+
+
+def generate_cache_admission(path: Path) -> None:
+    """Create a two-page cache memo with a ratio equation and policy results."""
+    canvas = _canvas(path, "Cache Admission Study Note")
+    _note_page(
+        canvas,
+        "Cache Admission Study Note",
+        "1. Admission and measurement",
+        (
+            "Study ID CA-09 identifies this synthetic cache experiment.",
+            "The cache capacity is 64 MiB.",
+            "The observation window recorded 800 hits and 200 misses.",
+            "Equation 1: hit ratio = hits / (hits + misses).",
+            "The observed hit ratio is 800 / 1000 = 0.80.",
+            "Admission rejects any object larger than 8 MiB.",
+            "Eviction occurs when admitting an object would exceed capacity.",
+        ),
+        1,
+    )
+    canvas.showPage()
+    _note_page(
+        canvas,
+        "Cache Admission Study Note",
+        "2. Synthetic policy comparison",
+        (
+            "Table 1. Policy | hit ratio | median lookup latency",
+            "FIFO | 0.71 | 12 ms",
+            "LRU | 0.80 | 9 ms",
+            "TinyLFU | 0.84 | 11 ms",
+            "All table values are synthetic and are not production measurements.",
+            "Admitted objects have a time-to-live of 600 seconds.",
+            "This note does not measure energy consumption.",
+        ),
+        2,
+    )
+    canvas.save()
+
+
 def generate_all(output_dir: Path) -> None:
     """Generate every fixture into an existing or new directory."""
     output_dir.mkdir(parents=True, exist_ok=True)
     generate_atlas(output_dir / FIXTURE_NAMES[0])
     generate_table(output_dir / FIXTURE_NAMES[1])
+    generate_chart(output_dir / FIXTURE_NAMES[2])
+    generate_checksum_retry(output_dir / FIXTURE_NAMES[3])
+    generate_cache_admission(output_dir / FIXTURE_NAMES[4])
 
 
 def check_committed(output_dir: Path) -> bool:

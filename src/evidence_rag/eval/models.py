@@ -2,6 +2,7 @@
 
 from datetime import date
 from enum import StrEnum
+from pathlib import PurePosixPath
 from typing import Annotated, Self
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
@@ -45,9 +46,9 @@ class DocumentReference(BaseModel):
 
 
 class GoldEvidenceReference(DocumentReference):
-    """Human-verified evidence anchor for an evaluation item."""
+    """Source anchor; visual regions may lack a parsed evidence unit."""
 
-    evidence_id: NonEmptyText
+    evidence_id: NonEmptyText | None = None
     page_index: int = Field(ge=0)
     anchor_precision: AnchorPrecision
     bbox: NormalizedBoundingBox | None = None
@@ -89,6 +90,10 @@ class EvaluationItem(BaseModel):
                 raise ValueError("answerable items require at least one gold answer")
             if not self.gold_evidence:
                 raise ValueError("answerable items require gold evidence")
+            if not self.requires_visual_evidence and any(
+                reference.evidence_id is None for reference in self.gold_evidence
+            ):
+                raise ValueError("text evidence requires an evidence_id")
         elif self.gold_answers or self.gold_evidence or self.numeric_tolerance is not None:
             raise ValueError("unanswerable items must not contain contradictory gold fields")
         return self
@@ -114,6 +119,20 @@ class DocumentManifestEntry(BaseModel):
         expected = f"sha256:{self.sha256}"
         if self.document_version != expected:
             raise ValueError("document_version must equal sha256:<sha256>")
+        path = PurePosixPath(self.local_fixture_path)
+        if (
+            path.is_absolute()
+            or ".." in path.parts
+            or path.parts[0] != "datasets"
+            or "\\" in self.local_fixture_path
+        ):
+            raise ValueError("local_fixture_path must stay within datasets")
+        if not self.source_url.startswith(("repo://", "https://")):
+            raise ValueError("source_url must identify a repository or HTTPS source")
+        if self.license_or_permission.casefold() in {"unknown", "tbd", "none"}:
+            raise ValueError("license_or_permission must be explicit")
+        if self.redistribution_policy.casefold() in {"unknown", "tbd", "none"}:
+            raise ValueError("redistribution_policy must be explicit")
         return self
 
 

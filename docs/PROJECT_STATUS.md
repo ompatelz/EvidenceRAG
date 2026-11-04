@@ -1,9 +1,150 @@
 # Project Status
 
-Updated: 2026-10-29
+Updated: 2026-11-04
 
-Current phase: Phase 1 complete and acceptance-gate verified; PR #4 is awaiting owner
-review and remains unmerged
+Current phase: Phase 2 provisional pilot on PR #5. The owner requested an
+assistant source audit and code merge; all 31 candidate labels remain
+`needs_review`, and the Phase 2 human-review gate is **not passed**. A merged
+implementation must not be described as a validated Phase 2 benchmark.
+Phase 1 PR #4 is merged into `main` at `37e485c`.
+
+## Phase 2 review expansion
+
+- Two deterministic repository-owned CC0 two-page PDF families add protocol and
+  cache notes with equations, exact identifiers, numeric facts, policy rows,
+  multi-page evidence, and difficult negative questions. All four new pages were
+  rendered and visually inspected; parser evidence IDs, pages, and regions were
+  checked against the proposed labels. The five frozen chart rows are unchanged.
+- The seed now contains 31 candidates: 13 development, 13 validation, 5 frozen
+  test; 5 unanswerable (16.1%), 2 visual-dependent, 0 human verified.
+  `datasets/eval/REVIEW_PACKET.md` gives the owner source links and an unchecked
+  decision line for every item. The packet has no retriever rankings.
+- Both E0/E1 were rerun on the 26 development/validation candidates over 52
+  evidence units. The provisional report has 22 scored answerable nonvisual
+  queries, observed examples for each method winning, and one joint miss at K=5.
+  These numbers are unreviewed diagnostics, not validated performance claims.
+- The expanded tree passed local locked sync/check, Ruff lint/format, strict
+  mypy, 122 pytest tests with one live Qdrant-server skip, deterministic PDF
+  regeneration, and strict source/evidence validation. Commit
+  `15edd0612daa15a29f90a04fcf54de4f92cc56f5` passed all five hosted CI
+  checks: Python 3.11, Python 3.14, Ingestion end-to-end, Qdrant integration,
+  and Container. Both raw runs were regenerated against that committed source
+  with clean source-tree flags and normalized dataset SHA-256
+  `cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46`.
+  Owner source-page decisions remain pending. The assistant's item-by-item
+  source audit is recorded in `docs/phase2_label_audit.md`; it does not count
+  as human verification.
+
+## Phase 2.4 checkpoint
+
+- The shared runner accepts closed E0/E1 configs for development and validation
+  only. It rejects frozen-test selection, changed K values, incompatible E0/E1
+  manifests, malformed configs, duplicate/cross-document rankings, and raw metric
+  inconsistencies. Each retrieval error becomes a per-query failure without saving
+  exception text; failed queries leave the scored denominator.
+- `reports/baselines.md` is generated from the committed raw E0/E1 runs and
+  includes split/category metrics, provenance, failure taxonomy, timing assumptions,
+  and observed E0/E1 wins or misses. Its original 13-question pilot was a
+  provisional diagnostic, not a validated quality or latency claim.
+- Both benchmark configs and report generation passed locally with the cached real
+  MiniLM model. The frozen test was not searched or used for tuning. The full local
+  gate passed after the portability fix: locked sync, lock check, Ruff lint/format,
+  strict mypy, 121 pytest tests passed and one live-server test skipped locally.
+  Deterministic fixture and strict seed validation passed.
+- Principal commit `defdfe2a9b5db2a83131234cdb0ab0b22a293d5b` was pushed.
+  Its Python 3.11/3.14 CI jobs failed because the first report hashed raw
+  Windows CRLF dataset bytes while Linux checked out LF. Dataset and source text
+  hashing now normalize line endings; a regression test confirms the hash equals
+  the committed blob on both platforms. Corrective commit
+  `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29` passed all five hosted checks:
+  Python 3.11, Python 3.14, Ingestion end-to-end, Qdrant integration, Container.
+  Both saved runs were regenerated against that committed source with a clean
+  source tree and normalized dataset SHA-256
+  `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`.
+- The human-review gate remains open until owner source-page review and a fresh
+  gate run based on corrected labels are complete. The later owner instruction
+  permits merging the implementation as a provisional pilot only.
+
+## Phase 2.3 checkpoint
+
+- Selected FastEmbed `0.9.1` on CPU with the Apache-2.0 MiniLM ONNX model at
+  pinned Qdrant repository revision `d13954661f83248295ba75c1ed411eef3b7b936e`
+  (384 dimensions). Qdrant client `1.20.0` and NumPy `<2.5` are locked; no model
+  download occurs in ordinary CI. Official model, FastEmbed, and Qdrant contracts
+  were checked before implementation; details are in `docs/dense_baseline.md`.
+- E1 uses the same persisted canonical evidence units and development/validation
+  questions as E0. It validates dataset hash, document versions, query IDs, binary
+  evidence-unit relevance, and K=1/3/5 compatibility before running. The frozen
+  chart family was not searched.
+- The Qdrant index checks dimensions, cosine distance, model revision, and active
+  generation; version scope is applied inside Qdrant before results are returned.
+  Duplicate upsert, whole-generation rebuild, stale-version deletion, and outage
+  failure are tested with a deterministic download-free embedding double. A bounded
+  server integration job passed in hosted CI.
+- Real CPU E1 run saved to `reports/runs/e1-phase2-pilot.json`: 8 queries, 6 scored
+  answerable nonvisual candidate labels, 11 evidence units. E0 and E1 have the
+  **same relevant-unit ranks for all six**. In both splits, both methods have
+  Hit Rate@1=2/3, Hit Rate@3=3/3, Recall@3=3/3, MRR@3=5/6, and nDCG@3≈0.877.
+  These are provisional unreviewed-label diagnostics, not evidence of parity on
+  a representative benchmark. Raw rankings, manifests, and separate query embed/
+  vector-search timings support the comparison.
+- Local Docker Desktop was unavailable; live Qdrant behavior passed hosted CI.
+  Final pre-commit local gate passed: `uv sync --all-extras --dev`, `uv lock --check`,
+  Ruff lint/format, strict mypy, and 110 pytest tests in 8.35 seconds; the live
+  Qdrant test was skipped locally because no server URL was configured. Deterministic
+  fixture and strict seed validation also passed. Commit
+  `faf550637da0eeac820fe1fb957ad6cf8b9778d6` is pushed to draft PR #5.
+  GitHub Actions run 41865852141 passed all five checks: Python 3.11, Python
+  3.14, Ingestion end-to-end, Qdrant integration, and Container.
+
+## Phase 2.2 checkpoint
+
+- Corrected the Phase 2 corpus manifest and evaluation rows to use the canonical
+  filename-derived document IDs produced by ingestion. Strict validation now rejects
+  any future manifest/ingestion identity mismatch.
+- E0 BM25 rebuilds from persisted canonical evidence artifacts, retains exact
+  document/version provenance, applies scope before ranking, and gives deterministic
+  evidence-ID ordering on ties. Its tokenizer, parameters, identity, lifecycle,
+  deletion, and metric definitions are documented in `docs/bm25_baseline.md`.
+- The CLI saves raw per-query rankings, timings, source/dataset/manifest hashes,
+  index ID, configuration, environment, and evidence-unit metrics for development
+  and validation only. The frozen-test family was not searched.
+- Candidate-label E0 run: 8 queries, 6 scored answerable nonvisual queries,
+  11 evidence units. Both splits have Hit Rate@1 2/3, Hit Rate@3 3/3,
+  Recall@3 3/3, and MRR@3 5/6. These are **provisional, unreviewed-label**
+  diagnostics from `reports/runs/e0-phase2-pilot.json`, not portfolio claims.
+- Final pre-commit local quality gate passed: `uv sync --all-extras --dev`, Ruff
+  lint/format, strict mypy, and 102 pytest tests in 6.98 seconds. Lock check,
+  deterministic fixture regeneration, strict seed validation, and E0 CLI run
+  passed. Principal Subphase 2.2 commit `eb44a0f21f281633405265a5b260ca60d234d687`
+  was pushed to the existing draft PR #5. The documentation follow-up commit
+  `2654460e1e6ff44b101634eb537e3ad5018d3c81` has all four GitHub Actions
+  checks passing (Python 3.11, Python 3.14, Ingestion end-to-end, Container).
+
+## Phase 2.1 checkpoint
+
+- Branch `codex/phase-2-search-baselines` was created from current `origin/main`.
+- Three deterministic, repository-authored CC0 PDF families are recorded with source,
+  date, SHA-256, content version, and redistribution permission. The new queue chart
+  visually distinguishes scheduler modes without text listing bar values.
+- `datasets/eval/phase2_seed.jsonl` has 13 candidate questions: 4 development,
+  4 validation, and 5 frozen test; 3 unanswerable (23.1%), 2 visual-dependent.
+  All 13 need owner review; **none is claimed human verified**. The older schema-only
+  fixture rows were also marked `needs_review`, and their caption-answerable diagram
+  item is no longer labeled visual-dependent.
+- Source hashes, duplicate/near-duplicate questions, version and split references, and
+  optionally parser-produced evidence ID/page/region consistency are validated. CI now
+  requests strict evidence validation for the Phase 2 seed.
+- The chart family is frozen. Do not run retrieval or tune on its questions. This small
+  synthetic pilot does not cover equations, multi-page documents, or external sources.
+- Subphase 2.1 full local quality gate passed: `uv sync --all-extras --dev`, Ruff
+  lint/format, strict mypy, and 95 pytest tests (final pre-commit run: 4.85 seconds).
+  `uv lock --check`, deterministic PDF regeneration, schema-fixture validation, and
+  strict Phase 2 seed validation also passed.
+- Principal commit `c4b285c8eb7495fe92aaa0d574777ab49369af0d` was pushed to
+  [draft PR #5](https://github.com/ompatelz/EvidenceRAG/pull/5). On that head,
+  GitHub Actions passed Python 3.11 (25s), Python 3.14 (22s), Ingestion end-to-end
+  (10s), and Container (30s). No retrieval result or human-reviewed label is claimed.
 
 ## Implemented and verified
 
@@ -72,14 +213,19 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Owner review of the complete Phase 1 pull request and final teaching handoff.
+- Owner review of all 31 candidate labels and visual-region judgments.
+- Apply future owner corrections and rerun the human-review gate without using
+  frozen-test results for tuning.
 
-## Pending pull requests / links
+## Pull requests / links
 
-- [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
-  is the single Phase 1 PR. Subphase 1.4 principal commit `9d302b5` passed Python 3.11,
-  Python 3.14, Ingestion end-to-end, and Container CI. The PR is unmerged and is being
-  converted from draft to ready for owner review after this documentation-only record.
+- [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
+- [PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
+  contains four implementation subphases, cross-platform correction `6eb8598`,
+  and review-expansion commit `15edd06`. All five hosted checks passed on the
+  expanded corpus. The
+  owner requested code merge with the human-review gate explicitly outstanding;
+  the provisional result and label status must remain clear after merge.
 
 ## Last test commands and outcomes
 
@@ -185,12 +331,19 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Experiment registry / latest valid metrics
 
-- None. No retrieval, generation, or evaluation system exists yet.
+- E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains raw rankings
+  for 26 development/validation queries and 22 scored answerable nonvisual
+  candidate labels. All labels await owner review; no validated performance
+  result exists.
+- E1 provisional run: `reports/runs/e1-phase2-pilot.json` uses the same dataset,
+  corpus, query IDs, K values, and relevance unit. The report records observed
+  E0/E1 wins and one joint miss at K=5. No frozen-test run exists.
 
 ## Known technical debt / risks
 
-- No polished viewer, retrieval, database, durable background jobs, or answer-generation
-  runtime exists. The evaluation rows are schema fixtures, not a representative benchmark.
+- No polished viewer, retrieval API, database, durable background jobs, or
+  answer-generation runtime exists. The evaluation rows are a tiny synthetic pilot,
+  not a representative human-reviewed benchmark.
 - Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
   multiple processes nor automatically resumes after a restart; interrupted work requires
   an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.
@@ -220,7 +373,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Review and merge Phase 1 PR #4 only after owner approval.
-2. Resolve the PyMuPDF/repository licensing strategy before distributing builds.
-3. Begin Phase 2 — evaluation seed and search baselines only after Phase 1 is merged and
-   explicitly authorized.
+1. Owner reviews all 31 candidate labels in `datasets/eval/REVIEW_PACKET.md` and
+   records corrections or approval from direct source-page inspection.
+2. Apply reviewed labels, rerun E0/E1 and the report, and verify the full gate
+   including CI without using frozen-test results for tuning.
+3. Decide whether remaining external-document and PyMuPDF/repository licensing
+   limits are acceptable for this PR before merge or distribution.

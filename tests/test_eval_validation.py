@@ -174,7 +174,37 @@ def test_unknown_document_versions_are_rejected(tmp_path: Path) -> None:
 
 
 def test_document_split_conflicts_are_rejected(tmp_path: Path) -> None:
-    second = item_data(query_id="q2", split="validation")
+    second = item_data(
+        query_id="q2", split="validation", question="Which source supports this claim?"
+    )
     manifest, evaluation = write_dataset(tmp_path, [item_data(), second])
     with pytest.raises(DatasetValidationError, match="document split conflict"):
         validate_dataset(manifest, [evaluation])
+
+
+def test_near_duplicate_questions_are_rejected(tmp_path: Path) -> None:
+    second = item_data(query_id="q2", question="What is the fixture answer")
+    manifest, evaluation = write_dataset(tmp_path, [item_data(), second])
+    with pytest.raises(DatasetValidationError, match="near-duplicate questions"):
+        validate_dataset(manifest, [evaluation])
+
+
+def test_visual_region_can_lack_parsed_evidence_id() -> None:
+    visual = item_data(requires_visual_evidence=True)
+    visual["gold_evidence"][0]["evidence_id"] = None
+    EvaluationItem.model_validate(visual)
+    visual["requires_visual_evidence"] = False
+    with pytest.raises(ValidationError, match="evidence_id"):
+        EvaluationItem.model_validate(visual)
+
+
+def test_phase2_seed_resolves_real_evidence_and_rejects_unknown_id(tmp_path: Path) -> None:
+    manifest = Path("datasets/manifests/fixtures.json")
+    seed = Path("datasets/eval/phase2_seed.jsonl")
+    validate_dataset(manifest, [seed], verify_evidence=True)
+    rows = [json.loads(line) for line in seed.read_text(encoding="utf-8").splitlines()]
+    rows[0]["gold_evidence"][0]["evidence_id"] = "ev_missing"
+    broken = tmp_path / "broken.jsonl"
+    broken.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
+    with pytest.raises(DatasetValidationError, match="unknown evidence ID"):
+        validate_dataset(manifest, [broken], verify_evidence=True)
