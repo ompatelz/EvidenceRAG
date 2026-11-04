@@ -4,10 +4,10 @@
 
 - Dataset SHA-256: `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`; manifest SHA-256: `c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757`.
 - Dataset and source text hashes normalize line endings to LF so Windows and Linux checkouts have the same identity.
-- E0 raw run: `reports/runs/e0-phase2-pilot.json`; run Git SHA `defdfe2a9b5db2a83131234cdb0ab0b22a293d5b`; index `sha256:4924fb23fcbfa8df0d9470bf8d84bb998313000db59f9748e279fcccf983dda8`.
-- E0 source SHA-256 `5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085`; source uncommitted at run: `true`.
-- E1 raw run: `reports/runs/e1-phase2-pilot.json`; run Git SHA `defdfe2a9b5db2a83131234cdb0ab0b22a293d5b`; index `sha256:e710416e100a4c4af984ea20c130c5d6f1e23766f431968c7c4fe6d5b8f8686d`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
-- E1 source SHA-256 `c9af8fcf7e8f30bfba81d95e35cc78ed2c3442fec0b0879e1901f641262e61dc`; source uncommitted at run: `true`.
+- E0 raw run: `reports/runs/e0-phase2-pilot.json`; run Git SHA `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29`; index `sha256:4924fb23fcbfa8df0d9470bf8d84bb998313000db59f9748e279fcccf983dda8`.
+- E0 source SHA-256 `5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085`; source uncommitted at run: `false`.
+- E1 raw run: `reports/runs/e1-phase2-pilot.json`; run Git SHA `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29`; index `sha256:e710416e100a4c4af984ea20c130c5d6f1e23766f431968c7c4fe6d5b8f8686d`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
+- E1 source SHA-256 `c9af8fcf7e8f30bfba81d95e35cc78ed2c3442fec0b0879e1901f641262e61dc`; source uncommitted at run: `false`.
 - Both runs use the same canonical evidence units, exact document versions, query IDs, evidence-unit binary relevance, and K=1/3/5.
 - Run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e0.json`.
 - With the pinned model cached, run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e1.json`. For the first download, set `download_model` to `true` in a copy of that config; ordinary CI never downloads model weights.

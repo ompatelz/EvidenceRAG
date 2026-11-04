@@ -1,8 +1,8 @@
 {
   "experiment": "E0",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "defdfe2a9b5db2a83131234cdb0ab0b22a293d5b",
-  "source_tree_uncommitted_at_run": true,
+  "git_sha_at_run": "6eb85989384e83f0de1e32cc5f34e8e2c47c6f29",
+  "source_tree_uncommitted_at_run": false,
   "source_sha256": "5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085",
   "dataset_sha256": "77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3",
   "manifest_sha256": "c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757",
@@ -49,8 +49,8 @@
     "logical_cpus": 20
   },
   "timing": {
-    "corpus_preparation_ms": 89.98789999168366,
-    "index_build_ms": 0.6887000054121017,
+    "corpus_preparation_ms": 103.28610001306515,
+    "index_build_ms": 0.752799998736009,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -309,7 +309,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.08759999764151871
+      "search_ms": 0.1036000030580908
     },
     {
       "query_id": "p2_atlas_path",
@@ -425,7 +425,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.05149999924469739
+      "search_ms": 0.06359998951666057
     },
     {
       "query_id": "p2_atlas_filter",
@@ -511,7 +511,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.04300000728107989
+      "search_ms": 0.05280000914353877
     },
     {
       "query_id": "p2_atlas_weight",
@@ -591,7 +591,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.040099999750964344
+      "search_ms": 0.04610000178217888
     },
     {
       "query_id": "p2_table_best",
@@ -707,7 +707,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.04429998807609081
+      "search_ms": 0.059300000430084765
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -763,7 +763,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.025299988919869065
+      "search_ms": 0.030000010156072676
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -819,7 +819,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.02849999873433262
+      "search_ms": 0.03339999238960445
     },
     {
       "query_id": "p2_table_latency",
@@ -854,7 +854,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.027999994927085936
+      "search_ms": 0.03300000389572233
     }
   ]
 }

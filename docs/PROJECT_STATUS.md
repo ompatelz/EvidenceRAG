@@ -26,7 +26,12 @@ labels has been human verified. Phase 1 PR #4 is merged into `main` at `37e485c`
   Its Python 3.11/3.14 CI jobs failed because the first report hashed raw
   Windows CRLF dataset bytes while Linux checked out LF. Dataset and source text
   hashing now normalize line endings; a regression test confirms the hash equals
-  the committed blob on both platforms. A corrective push and CI retest are pending.
+  the committed blob on both platforms. Corrective commit
+  `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29` passed all five hosted checks:
+  Python 3.11, Python 3.14, Ingestion end-to-end, Qdrant integration, Container.
+  Both saved runs were regenerated against that committed source with a clean
+  source tree and normalized dataset SHA-256
+  `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`.
 - The PR must remain draft. Human source-page review, more varied reviewed queries
   (including equations and difficult negatives), and a fresh benchmark/report are
   needed before the Phase 2 gate can be reconsidered.
@@ -180,15 +185,16 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Subphase 2.4 cross-platform hash fix, corrected run artifacts, and hosted CI retest.
+- Expansion and human verification of the evaluation dataset before the Phase 2 gate.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
   is open with Subphases 2.1, 2.2, and 2.3 pushed and verified. Subphase 2.4 is
-  pushed as `defdfe2` with a cross-platform CI correction in progress. The PR
-  remains draft and unmerged.
+  pushed as `defdfe2` plus corrective commit `6eb8598`. All five hosted checks
+  passed on the corrective commit. The PR remains draft and unmerged because the
+  human-review gate is unmet.
 
 ## Last test commands and outcomes
 

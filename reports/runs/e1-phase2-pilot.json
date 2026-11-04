@@ -1,8 +1,8 @@
 {
   "experiment": "E1",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "defdfe2a9b5db2a83131234cdb0ab0b22a293d5b",
-  "source_tree_uncommitted_at_run": true,
+  "git_sha_at_run": "6eb85989384e83f0de1e32cc5f34e8e2c47c6f29",
+  "source_tree_uncommitted_at_run": false,
   "source_sha256": "c9af8fcf7e8f30bfba81d95e35cc78ed2c3442fec0b0879e1901f641262e61dc",
   "dataset_sha256": "77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3",
   "manifest_sha256": "c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757",
@@ -65,8 +65,8 @@
     "peak_memory": "not measured"
   },
   "timing": {
-    "corpus_preparation_ms": 120.88409998978022,
-    "embedding_and_index_ms": 127.81330000143498,
+    "corpus_preparation_ms": 90.5402999924263,
+    "embedding_and_index_ms": 163.08279999066144,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -340,8 +340,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 4.437699986738153,
-      "vector_search_ms": 2.0607999904314056
+      "embedding_ms": 3.892599997925572,
+      "vector_search_ms": 1.9162000098731369
     },
     {
       "query_id": "p2_atlas_path",
@@ -457,8 +457,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 3.921499999705702,
-      "vector_search_ms": 0.66970000625588
+      "embedding_ms": 3.569499996956438,
+      "vector_search_ms": 0.5900999967707321
     },
     {
       "query_id": "p2_atlas_filter",
@@ -574,8 +574,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 3.9582999888807535,
-      "vector_search_ms": 0.5655999993905425
+      "embedding_ms": 3.1423000036738813,
+      "vector_search_ms": 0.6648000126006082
     },
     {
       "query_id": "p2_atlas_weight",
@@ -670,8 +670,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 2.8950999985681847,
-      "vector_search_ms": 0.5382999952416867
+      "embedding_ms": 3.241900005377829,
+      "vector_search_ms": 0.6165999948279932
     },
     {
       "query_id": "p2_table_best",
@@ -787,8 +787,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 3.22470000537578,
-      "vector_search_ms": 0.640199999907054
+      "embedding_ms": 3.8141999975778162,
+      "vector_search_ms": 0.6606999959331006
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -904,8 +904,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 2.9784000071231276,
-      "vector_search_ms": 0.5975000094622374
+      "embedding_ms": 3.8769999955547974,
+      "vector_search_ms": 0.8323999936692417
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -1021,8 +1021,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 3.971600002842024,
-      "vector_search_ms": 0.6766000005882233
+      "embedding_ms": 4.264500006684102,
+      "vector_search_ms": 0.690999993821606
     },
     {
       "query_id": "p2_table_latency",
@@ -1117,8 +1117,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 4.4750999950338155,
-      "vector_search_ms": 0.8374000026378781
+      "embedding_ms": 4.237400004058145,
+      "vector_search_ms": 0.6582000060006976
     }
   ]
 }
