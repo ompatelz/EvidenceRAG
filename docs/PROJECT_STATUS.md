@@ -19,9 +19,14 @@ labels has been human verified. Phase 1 PR #4 is merged into `main` at `37e485c`
   pilot. It is a provisional diagnostic, not a validated quality or latency claim.
 - Both benchmark configs and report generation passed locally with the cached real
   MiniLM model. The frozen test was not searched or used for tuning. The full local
-  gate passed: locked sync, lock check, Ruff lint/format, strict mypy, 120 pytest
-  tests passed and one live-server test skipped locally. Deterministic fixture and
-  strict seed validation passed. Hosted CI awaits the Subphase 2.4 push.
+  gate passed after the portability fix: locked sync, lock check, Ruff lint/format,
+  strict mypy, 121 pytest tests passed and one live-server test skipped locally.
+  Deterministic fixture and strict seed validation passed.
+- Principal commit `defdfe2a9b5db2a83131234cdb0ab0b22a293d5b` was pushed.
+  Its Python 3.11/3.14 CI jobs failed because the first report hashed raw
+  Windows CRLF dataset bytes while Linux checked out LF. Dataset and source text
+  hashing now normalize line endings; a regression test confirms the hash equals
+  the committed blob on both platforms. A corrective push and CI retest are pending.
 - The PR must remain draft. Human source-page review, more varied reviewed queries
   (including equations and difficult negatives), and a fresh benchmark/report are
   needed before the Phase 2 gate can be reconsidered.
@@ -175,14 +180,15 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Subphase 2.4 commit, push, and hosted CI verification.
+- Subphase 2.4 cross-platform hash fix, corrected run artifacts, and hosted CI retest.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
   is open with Subphases 2.1, 2.2, and 2.3 pushed and verified. Subphase 2.4 is
-  locally verified and pending push. The PR remains draft and unmerged.
+  pushed as `defdfe2` with a cross-platform CI correction in progress. The PR
+  remains draft and unmerged.
 
 ## Last test commands and outcomes
 

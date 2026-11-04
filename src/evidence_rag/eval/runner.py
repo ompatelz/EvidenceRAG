@@ -1,8 +1,10 @@
 """Shared, failure-aware evidence-unit evaluation for lexical and dense search."""
 
+import hashlib
 from collections import defaultdict
 from collections.abc import Callable, Sequence
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
 from evidence_rag.eval.metrics import RetrievalMetrics, mean_metrics, score_ranking
@@ -14,6 +16,11 @@ Search = Callable[
     [EvaluationItem, list[tuple[str, str]]],
     tuple[Sequence[RankedEvidence], dict[str, float]],
 ]
+
+
+def normalized_text_sha256(path: Path) -> str:
+    """Hash UTF-8 evaluation text with LF newlines on Windows and Linux."""
+    return hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
 
 
 def development_items(items: Sequence[EvaluationItem]) -> list[EvaluationItem]:

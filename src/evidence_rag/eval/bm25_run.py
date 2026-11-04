@@ -12,7 +12,13 @@ from time import perf_counter
 
 from evidence_rag.eval.corpus import load_canonical_units
 from evidence_rag.eval.models import EvaluationItem
-from evidence_rag.eval.runner import CUTOFFS, aggregate_rows, development_items, evaluate_queries
+from evidence_rag.eval.runner import (
+    CUTOFFS,
+    aggregate_rows,
+    development_items,
+    evaluate_queries,
+    normalized_text_sha256,
+)
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import INDEX_VERSION, TOKENIZER_VERSION, BM25Index, RankedEvidence
 
@@ -52,7 +58,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
         Path(__file__).with_name("runner.py"),
         Path(__file__).parents[1] / "retrieval/bm25.py",
     ):
-        source_hash.update(path.read_bytes())
+        source_hash.update(path.read_text(encoding="utf-8").encode("utf-8"))
     payload: dict[str, object] = {
         "experiment": "E0",
         "status": "partial_failure" if failures else "provisional_unreviewed_labels",
@@ -61,7 +67,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
             _git("status", "--porcelain", "--", "src/evidence_rag", "pyproject.toml", "uv.lock")
         ),
         "source_sha256": source_hash.hexdigest(),
-        "dataset_sha256": hashlib.sha256(seed_path.read_bytes()).hexdigest(),
+        "dataset_sha256": normalized_text_sha256(seed_path),
         "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
         "corpus_versions": sorted(selected),
         "index_id": index.index_id,

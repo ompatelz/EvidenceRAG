@@ -12,7 +12,7 @@ from pydantic import ValidationError
 from evidence_rag.eval.benchmark import BenchmarkConfig
 from evidence_rag.eval.models import EvaluationItem
 from evidence_rag.eval.report import render_report, validate_run
-from evidence_rag.eval.runner import aggregate_rows, evaluate_queries
+from evidence_rag.eval.runner import aggregate_rows, evaluate_queries, normalized_text_sha256
 from evidence_rag.eval.validate import load_evaluation_jsonl
 from evidence_rag.retrieval.bm25 import RankedEvidence
 
@@ -43,6 +43,14 @@ def test_benchmark_rejects_malformed_or_frozen_config(change: dict[str, object])
 def test_benchmark_rejects_overwriting_e0_with_e1() -> None:
     with pytest.raises(ValidationError, match="overwrite"):
         BenchmarkConfig(retriever="E1", output=E0)
+
+
+def test_dataset_identity_is_stable_across_checkout_line_endings(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.jsonl"
+    crlf = tmp_path / "crlf.jsonl"
+    lf.write_bytes(b'{"id":"a"}\n{"id":"b"}\n')
+    crlf.write_bytes(b'{"id":"a"}\r\n{"id":"b"}\r\n')
+    assert normalized_text_sha256(lf) == normalized_text_sha256(crlf)
 
 
 def test_partial_query_failure_is_saved_and_excluded_from_metrics() -> None:

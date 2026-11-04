@@ -1,10 +1,10 @@
 {
   "experiment": "E0",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "de415f214814e3828bc057836dcf243cb88338cc",
+  "git_sha_at_run": "defdfe2a9b5db2a83131234cdb0ab0b22a293d5b",
   "source_tree_uncommitted_at_run": true,
-  "source_sha256": "3c003fc88946bfc3f80185804cad9272709f684a9494a3f8428a9788938c3cb7",
-  "dataset_sha256": "1d6c188a33af58525249638c6465bfe9ec7cca6325b62ce736e3ffcf3bd0862a",
+  "source_sha256": "5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085",
+  "dataset_sha256": "77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3",
   "manifest_sha256": "c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757",
   "corpus_versions": [
     [
@@ -49,8 +49,8 @@
     "logical_cpus": 20
   },
   "timing": {
-    "corpus_preparation_ms": 82.69409999775235,
-    "index_build_ms": 0.4302000015741214,
+    "corpus_preparation_ms": 89.98789999168366,
+    "index_build_ms": 0.6887000054121017,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -309,7 +309,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.08089999028015882
+      "search_ms": 0.08759999764151871
     },
     {
       "query_id": "p2_atlas_path",
@@ -425,7 +425,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.058200006606057286
+      "search_ms": 0.05149999924469739
     },
     {
       "query_id": "p2_atlas_filter",
@@ -511,7 +511,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.04410000110510737
+      "search_ms": 0.04300000728107989
     },
     {
       "query_id": "p2_atlas_weight",
@@ -591,7 +591,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.04260000423528254
+      "search_ms": 0.040099999750964344
     },
     {
       "query_id": "p2_table_best",
@@ -707,7 +707,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.04719999560620636
+      "search_ms": 0.04429998807609081
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -763,7 +763,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.02680000034160912
+      "search_ms": 0.025299988919869065
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -819,7 +819,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.029000002541579306
+      "search_ms": 0.02849999873433262
     },
     {
       "query_id": "p2_table_latency",
@@ -854,7 +854,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.029399991035461426
+      "search_ms": 0.027999994927085936
     }
   ]
 }

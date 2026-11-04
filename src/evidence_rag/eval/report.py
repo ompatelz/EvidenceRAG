@@ -7,7 +7,12 @@ from pathlib import Path
 from typing import Any
 
 from evidence_rag.eval.metrics import score_ranking
-from evidence_rag.eval.runner import CUTOFFS, aggregate_rows, development_items
+from evidence_rag.eval.runner import (
+    CUTOFFS,
+    aggregate_rows,
+    development_items,
+    normalized_text_sha256,
+)
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 
 
@@ -100,7 +105,7 @@ def render_report(
     manifest_path: Path,
 ) -> str:
     """Derive every figure from validated raw run artifacts."""
-    dataset_hash = hashlib.sha256(seed_path.read_bytes()).hexdigest()
+    dataset_hash = normalized_text_sha256(seed_path)
     manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
     validate_run(e0, "E0", dataset_hash, manifest_hash)
     validate_run(e1, "E1", dataset_hash, manifest_hash)
@@ -149,6 +154,8 @@ def render_report(
         "## Provenance and reproduction",
         "",
         f"- Dataset SHA-256: `{dataset_hash}`; manifest SHA-256: `{manifest_hash}`.",
+        "- Dataset and source text hashes normalize line endings to LF so Windows "
+        "and Linux checkouts have the same identity.",
         f"- E0 raw run: `{e0_path.as_posix()}`; run Git SHA `{e0['git_sha_at_run']}`; "
         f"index `{e0['index_id']}`.",
         f"- E0 source SHA-256 `{e0['source_sha256']}`; source uncommitted at run: "

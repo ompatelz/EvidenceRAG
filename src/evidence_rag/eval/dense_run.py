@@ -17,7 +17,13 @@ from qdrant_client import QdrantClient
 
 from evidence_rag.eval.corpus import load_canonical_units
 from evidence_rag.eval.models import EvaluationItem
-from evidence_rag.eval.runner import CUTOFFS, aggregate_rows, development_items, evaluate_queries
+from evidence_rag.eval.runner import (
+    CUTOFFS,
+    aggregate_rows,
+    development_items,
+    evaluate_queries,
+    normalized_text_sha256,
+)
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import RankedEvidence
 from evidence_rag.retrieval.dense import (
@@ -46,7 +52,7 @@ def run(
     selected = sorted(
         {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
     )
-    dataset_hash = hashlib.sha256(seed_path.read_bytes()).hexdigest()
+    dataset_hash = normalized_text_sha256(seed_path)
     e0 = json.loads(e0_path.read_text(encoding="utf-8"))
     if (
         e0.get("dataset_sha256") != dataset_hash
@@ -95,7 +101,7 @@ def run(
             Path(__file__).with_name("runner.py"),
             Path(__file__).parents[1] / "retrieval/dense.py",
         ):
-            source_hash.update(path.read_bytes())
+            source_hash.update(path.read_text(encoding="utf-8").encode("utf-8"))
         payload: dict[str, Any] = {
             "experiment": "E1",
             "status": "partial_failure" if failures else "provisional_unreviewed_labels",
