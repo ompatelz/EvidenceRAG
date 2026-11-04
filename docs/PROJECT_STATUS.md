@@ -2,8 +2,10 @@
 
 Updated: 2026-11-04
 
-Current phase: Phase 2.3 dense baseline in progress. Phase 1 PR #4 is merged into
-`main` at `37e485c`; its final head `dfa3cd4` is an ancestor of current `main`.
+Current phase: Phase 2.3 dense baseline implemented and verified on draft PR #5;
+Subphase 2.4 awaits the owner's next checkpoint instruction. Phase 1 PR #4 is
+merged into `main` at `37e485c`; its final head `dfa3cd4` is an ancestor of
+current `main`.
 
 ## Phase 2.3 checkpoint
 
@@ -20,7 +22,7 @@ Current phase: Phase 2.3 dense baseline in progress. Phase 1 PR #4 is merged int
   generation; version scope is applied inside Qdrant before results are returned.
   Duplicate upsert, whole-generation rebuild, stale-version deletion, and outage
   failure are tested with a deterministic download-free embedding double. A bounded
-  server integration job has been added to CI but has not run yet.
+  server integration job passed in hosted CI.
 - Real CPU E1 run saved to `reports/runs/e1-phase2-pilot.json`: 8 queries, 6 scored
   answerable nonvisual candidate labels, 11 evidence units. E0 and E1 have the
   **same relevant-unit ranks for all six**. In both splits, both methods have
@@ -32,7 +34,10 @@ Current phase: Phase 2.3 dense baseline in progress. Phase 1 PR #4 is merged int
   Final pre-commit local gate passed: `uv sync --all-extras --dev`, `uv lock --check`,
   Ruff lint/format, strict mypy, and 110 pytest tests in 8.35 seconds; the live
   Qdrant test was skipped locally because no server URL was configured. Deterministic
-  fixture and strict seed validation also passed. New hosted CI is pending.
+  fixture and strict seed validation also passed. Commit
+  `faf550637da0eeac820fe1fb957ad6cf8b9778d6` is pushed to draft PR #5.
+  GitHub Actions run 41865852141 passed all five checks: Python 3.11, Python
+  3.14, Ingestion end-to-end, Qdrant integration, and Container.
 
 ## Phase 2.2 checkpoint
 
@@ -54,8 +59,9 @@ Current phase: Phase 2.3 dense baseline in progress. Phase 1 PR #4 is merged int
   lint/format, strict mypy, and 102 pytest tests in 6.98 seconds. Lock check,
   deterministic fixture regeneration, strict seed validation, and E0 CLI run
   passed. Principal Subphase 2.2 commit `eb44a0f21f281633405265a5b260ca60d234d687`
-  was pushed to the existing draft PR #5. Its GitHub Actions run 41862914820
-  had all four jobs queued at the last check; hosted results are still pending.
+  was pushed to the existing draft PR #5. The documentation follow-up commit
+  `2654460e1e6ff44b101634eb537e3ad5018d3c81` has all four GitHub Actions
+  checks passing (Python 3.11, Python 3.14, Ingestion end-to-end, Container).
 
 ## Phase 2.1 checkpoint
 
@@ -150,16 +156,15 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Complete Subphase 2.3 quality gate, commit, push, and hosted Qdrant integration.
-- Owner review of the 13 provisional labels remains outstanding.
+- Subphase 2.4 benchmark gate awaits the owner's next `continue Phase 2`.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
-  is open with Subphases 2.1 and 2.2. Subphase 2.3 changes are local pending the
-  quality gate and push. All four jobs passed on the 2.1 principal commit;
-  the 2.2 hosted run was queued at the last check.
+  is open with Subphases 2.1, 2.2, and 2.3 pushed. The latest 2.3 implementation
+  commit passed all five hosted checks, including Qdrant integration. The PR remains
+  draft and unmerged.
 
 ## Last test commands and outcomes
 
@@ -274,8 +279,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- No polished viewer, retrieval, database, durable background jobs, or answer-generation
-  runtime exists. The evaluation rows are schema fixtures, not a representative benchmark.
+- No polished viewer, retrieval API, database, durable background jobs, or
+  answer-generation runtime exists. The evaluation rows are a tiny synthetic pilot,
+  not a representative human-reviewed benchmark.
 - Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
   multiple processes nor automatically resumes after a restart; interrupted work requires
   an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.
