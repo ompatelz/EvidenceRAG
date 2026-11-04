@@ -2,8 +2,29 @@
 
 Updated: 2026-11-04
 
-Current phase: Phase 2.1 candidate dataset in progress. Phase 1 PR #4 is merged into
+Current phase: Phase 2.2 BM25 baseline in progress. Phase 1 PR #4 is merged into
 `main` at `37e485c`; its final head `dfa3cd4` is an ancestor of current `main`.
+
+## Phase 2.2 checkpoint
+
+- Corrected the Phase 2 corpus manifest and evaluation rows to use the canonical
+  filename-derived document IDs produced by ingestion. Strict validation now rejects
+  any future manifest/ingestion identity mismatch.
+- E0 BM25 rebuilds from persisted canonical evidence artifacts, retains exact
+  document/version provenance, applies scope before ranking, and gives deterministic
+  evidence-ID ordering on ties. Its tokenizer, parameters, identity, lifecycle,
+  deletion, and metric definitions are documented in `docs/bm25_baseline.md`.
+- The CLI saves raw per-query rankings, timings, source/dataset/manifest hashes,
+  index ID, configuration, environment, and evidence-unit metrics for development
+  and validation only. The frozen-test family was not searched.
+- Candidate-label E0 run: 8 queries, 6 scored answerable nonvisual queries,
+  11 evidence units. Both splits have Hit Rate@1 2/3, Hit Rate@3 3/3,
+  Recall@3 3/3, and MRR@3 5/6. These are **provisional, unreviewed-label**
+  diagnostics from `reports/runs/e0-phase2-pilot.json`, not portfolio claims.
+- Final pre-commit local quality gate passed: `uv sync --all-extras --dev`, Ruff
+  lint/format, strict mypy, and 102 pytest tests in 6.98 seconds. Lock check,
+  deterministic fixture regeneration, strict seed validation, and E0 CLI run
+  passed. Subphase 2.2 commit/push and its hosted CI are pending at this point.
 
 ## Phase 2.1 checkpoint
 
@@ -98,7 +119,8 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Await explicit `continue Phase 2` before starting Subphase 2.2.
+- Finish Subphase 2.2 quality gate, commit, push, and PR CI check; then await
+  explicit `continue Phase 2` before starting Subphase 2.3.
 
 ## Pending pull requests / links
 
@@ -210,7 +232,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Experiment registry / latest valid metrics
 
-- None. No retrieval performance result exists yet.
+- E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains the exact
+  rankings and manifest. Its 6 scored labels are all pending human review;
+  there is no validated performance result yet.
 
 ## Known technical debt / risks
 
@@ -245,8 +269,7 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Complete the Phase 2.1 owner-review checkpoint; correct candidate labels before
-   counting any question as human verified.
-2. On explicit `continue Phase 2`, implement the BM25 E0 baseline on development and
-   validation only.
+1. Review and correct the 13 candidate labels before counting any as human verified.
+2. On explicit `continue Phase 2`, implement dense E1 and compare against E0 using
+   the same evidence units, split, relevance definition, and K values.
 3. Resolve the PyMuPDF/repository licensing strategy before distributing builds.

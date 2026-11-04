@@ -13,6 +13,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
+from evidence_rag.documents.identity import logical_document_id
 from evidence_rag.documents.parser import PyMuPDFParser
 from evidence_rag.documents.storage import LocalArtifactStore
 from evidence_rag.eval.models import DocumentManifest, EvaluationItem
@@ -81,6 +82,10 @@ def validate_dataset(
             raise DatasetValidationError(f"fixture hash mismatch: {fixture}")
         known[key] = entry.document_id
         if verify_evidence:
+            if logical_document_id(fixture.name) != entry.document_id:
+                raise DatasetValidationError(
+                    f"manifest document ID differs from ingestion identity: {entry.document_id}"
+                )
             with tempfile.TemporaryDirectory(prefix="evidencerag-eval-") as directory:
                 store = LocalArtifactStore(
                     Path(directory),

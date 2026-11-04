@@ -68,6 +68,11 @@ jobs:
           --manifest datasets/manifests/fixtures.json
           --verify-evidence datasets/eval/phase2_seed.jsonl
 
+      - name: Run bounded E0 benchmark smoke
+        run: >-
+          uv run python -m evidence_rag.eval.bm25_run
+          --output reports/generated/e0-ci-smoke.json
+
   ingestion-e2e:
     name: Ingestion end-to-end
     runs-on: ubuntu-latest

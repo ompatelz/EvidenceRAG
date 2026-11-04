@@ -2,7 +2,7 @@
   "schema_version": 1,
   "documents": [
     {
-      "document_id": "doc_atlas_fixture",
+      "document_id": "doc_cedee38ab4152274426cf3f8",
       "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
       "source_url": "repo://datasets/fixtures/atlas-narrative.pdf",
       "title": "Atlas Sensor Note",
@@ -13,7 +13,7 @@
       "local_fixture_path": "datasets/fixtures/atlas-narrative.pdf"
     },
     {
-      "document_id": "doc_retrieval_table_fixture",
+      "document_id": "doc_66624dfc102d650e04560cc4",
       "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
       "source_url": "repo://datasets/fixtures/retrieval-table.pdf",
       "title": "Retrieval Baseline Fixture",
@@ -24,7 +24,7 @@
       "local_fixture_path": "datasets/fixtures/retrieval-table.pdf"
     },
     {
-      "document_id": "doc_queue_chart_fixture",
+      "document_id": "doc_270441bcf0dd0c279db4aa8f",
       "document_version": "sha256:8ef8df167424ff466ac7d94a8cec9480ed7675fce14ca3123e791cb8084344b7",
       "source_url": "repo://datasets/fixtures/queue-chart.pdf",
       "title": "Queue Scheduling Note",
