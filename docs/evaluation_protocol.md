@@ -2,9 +2,10 @@
 
 ## Status
 
-This document defines future measurements. No retrieval or answer-quality result has been
-measured. The Phase 2 seed contains candidate labels pending owner review; the older rows
-are schema fixtures, not benchmark evidence.
+E0 and E1 have provisional retrieval runs on development and validation. Their
+candidate labels still require owner review; no validated retrieval or
+answer-quality result is claimed. The older rows are schema fixtures, not
+benchmark evidence.
 
 ## Splits and leakage prevention
 
@@ -35,12 +36,18 @@ reported separately from evidence-unit retrieval metrics. A caption ID cannot st
 for visual support. Strict seed validation reparses the committed PDFs and checks every
 nonvisual evidence ID, page index, and bounding box against canonical units.
 
-## Metrics to implement later
+## Metrics and later answer-quality measures
 
 - **Hit Rate@K:** answerable queries with at least one relevant item in the top K.
 - **Recall@K:** retrieved relevant items divided by all labeled relevant items per query.
 - **MRR:** mean reciprocal rank of the first relevant result.
-- **nDCG@K:** position-discounted gain using explicit binary or graded relevance.
+- **nDCG@K:** position-discounted gain using binary evidence-unit relevance.
+
+The four retrieval metrics above are implemented for answerable nonvisual
+questions. They are macro-averaged per query and reported by split and category;
+the raw rankings and denominators are saved. The measures below remain future
+answer/citation evaluation work.
+
 - **Page grounding accuracy:** citations resolving to the correct labeled page.
 - **Region grounding accuracy:** citations overlapping the correct labeled region under a
   documented overlap rule; never inferred from page accuracy.

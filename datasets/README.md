@@ -8,7 +8,8 @@ are not a benchmark and their synthetic values are not EvidenceRAG performance r
 - `fixtures/`: deterministic PDFs owned by this repository.
 - `manifests/fixtures.json`: source, permission, hash, version, and redistribution records.
 - `eval/fixture_items.jsonl`: small human-verifiable evaluation records.
-- `eval/phase2_seed.jsonl`: 13 candidate questions, all pending owner review.
+- `eval/phase2_seed.jsonl`: 31 candidate questions, all pending owner review.
+- `eval/REVIEW_PACKET.md`: source-only checklist for direct owner review.
 
 The fixtures are dedicated to the public domain under CC0-1.0 as recorded in
 `LICENSE-FIXTURES.txt`. Regenerate and verify them with:
@@ -26,18 +27,22 @@ must never cross development, validation, and frozen-test boundaries.
 
 ## Phase 2 pilot
 
-The pilot has three repository-authored, CC0-1.0, one-page PDF families: Atlas narrative
-and diagram, a structured retrieval table, and a queue-wait bar chart. Source, creation
-date, SHA-256, and redistribution terms are in `manifests/fixtures.json`; the generating
-source is `scripts/generate_fixtures.py`. No external acquisition or paid API is needed.
+The pilot has five repository-authored, CC0-1.0 PDF families: Atlas narrative
+and diagram, a structured retrieval table, a queue-wait bar chart, a two-page
+checksum/retry note, and a two-page cache-admission note. The new notes add
+equations, exact identifiers, numeric facts, table-like policy comparisons,
+and multi-page source references. Source, creation date, SHA-256, and
+redistribution terms are in `manifests/fixtures.json`; the generating source
+is `scripts/generate_fixtures.py`. No paid API is needed.
 
-The 13 candidate items split 4 development (Atlas), 4 validation (table), and 5 frozen
-test (chart). Three are unanswerable (23.1%); two require reading bar heights from the
-chart. All 13 have `needs_review` status. They were inspected and proposed by an AI
-assistant, so **zero are currently human verified**. The owner must check each source
-page, answer, evidence anchor, ambiguity, category, and visual-dependence claim before
-changing a status to `verified`. The small synthetic corpus does not cover equations,
-multi-page tables, external technical PDFs, or representative production layouts.
+The 31 candidate items split 13 development (Atlas and checksum/retry), 13
+validation (retrieval table and cache admission), and the original 5 frozen
+test (chart). Five are unanswerable (16.1%); two require reading bar heights
+from the chart. All 31 have `needs_review` status. They were inspected and
+proposed by an AI assistant, so **zero are currently human verified**. The
+owner can review the linked source pages and proposed evidence in
+`eval/REVIEW_PACKET.md`. The corpus still lacks external technical PDFs,
+multi-page tables, and representative production layouts.
 
 Visual chart items use a page region with no `EvidenceUnit` ID because the parser emits
 the chart's labels and caption but not its bar geometry as a semantic figure. They are

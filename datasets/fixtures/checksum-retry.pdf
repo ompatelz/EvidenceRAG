@@ -1,0 +1,130 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 9 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/Contents 10 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/PageMode /UseNone /Pages 8 0 R /Type /Catalog
+>>
+endobj
+7 0 obj
+<<
+/Author (EvidenceRAG contributors) /CreationDate (D:20000101000000+00'00') /Creator (EvidenceRAG deterministic fixture generator) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (Checksum and Retry Protocol Note) /Trapped /False
+>>
+endobj
+8 0 obj
+<<
+/Count 2 /Kids [ 4 0 R 5 0 R ] /Type /Pages
+>>
+endobj
+9 0 obj
+<<
+/Length 1023
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+BT /F2 19 Tf 22.8 TL ET
+BT 1 0 0 1 54 724 Tm (Checksum and Retry Protocol Note) Tj T* ET
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 690 Tm (1. Transfer contract) Tj T* ET
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 54 650 Tm (Protocol ID CR-42 identifies this synthetic chunk-transfer experiment.) Tj T* ET
+BT 1 0 0 1 54 625 Tm (Each chunk carries a SHA-256 digest and a 4096-byte payload.) Tj T* ET
+BT 1 0 0 1 54 600 Tm (The receiver recomputes the digest before acknowledging a chunk.) Tj T* ET
+BT 1 0 0 1 54 575 Tm (A checksum mismatch produces a negative acknowledgment.) Tj T* ET
+BT 1 0 0 1 54 550 Tm (Equation 1: payload bytes = chunk count x chunk payload bytes.) Tj T* ET
+BT 1 0 0 1 54 525 Tm (For 3 chunks, the total payload is 3 x 4096 = 12288 bytes.) Tj T* ET
+BT 1 0 0 1 54 500 Tm (The equation counts payload only; headers are excluded.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 1) Tj T* ET
+ 
+endstream
+endobj
+10 0 obj
+<<
+/Length 1034
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+BT /F2 19 Tf 22.8 TL ET
+BT 1 0 0 1 54 724 Tm (Checksum and Retry Protocol Note) Tj T* ET
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 690 Tm (2. Retry policy) Tj T* ET
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 54 650 Tm (The maximum is 3 attempts per chunk, including the initial send.) Tj T* ET
+BT 1 0 0 1 54 625 Tm (The timeout budget is 250 ms for each attempt.) Tj T* ET
+BT 1 0 0 1 54 600 Tm (After the final failed attempt, the chunk is marked failed.) Tj T* ET
+BT 1 0 0 1 54 575 Tm (Table 1. Retry schedule for a chunk with a negative acknowledgment.) Tj T* ET
+BT 1 0 0 1 54 550 Tm (Attempt 1 | initial send | no backoff) Tj T* ET
+BT 1 0 0 1 54 525 Tm (Attempt 2 | first retry | wait 50 ms) Tj T* ET
+BT 1 0 0 1 54 500 Tm (Attempt 3 | second retry | wait 100 ms) Tj T* ET
+BT 1 0 0 1 54 475 Tm (This note does not report a measured packet-loss percentage.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 2) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000514 00000 n 
+0000000708 00000 n 
+0000000776 00000 n 
+0000001110 00000 n 
+0000001175 00000 n 
+0000002249 00000 n 
+trailer
+<<
+/ID 
+[<a37c2f3869a691a7169f69e7e38e4847><a37c2f3869a691a7169f69e7e38e4847>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 7 0 R
+/Root 6 0 R
+/Size 11
+>>
+startxref
+3335
+%%EOF

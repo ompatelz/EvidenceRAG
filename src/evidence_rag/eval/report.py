@@ -137,10 +137,13 @@ def render_report(
     verified = sum(item.review_status.value == "verified" for item in items)
     scored = sum(row["metrics"] is not None for row in a_rows)
     wins: dict[str, list[str]] = {"E0": [], "E1": [], "both_miss_at_5": []}
+    both_late: list[tuple[str, int, int]] = []
     for a, b in zip(a_rows, b_rows, strict=True):
         if a["metrics"] is None or b["metrics"] is None:
             continue
         ar, br = _first_relevant_rank(a), _first_relevant_rank(b)
+        if ar is not None and br is not None and ar > 1 and br > 1:
+            both_late.append((a["query_id"], ar, br))
         if ar is None and br is None:
             wins["both_miss_at_5"].append(a["query_id"])
         elif br is None or (ar is not None and ar < br):
@@ -184,8 +187,8 @@ def render_report(
         f"- The frozen test was not searched or used for tuning. {len(items) - verified} "
         "labels require owner review.",
         "- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified "
-        "questions; this pilot has 13 candidate labels and 0 verified. It also "
-        "lacks equations and broader external document coverage. The PR remains draft.",
+        f"questions; this pilot has {len(items)} candidate labels and {verified} verified. "
+        "Broader external document coverage remains untested. The PR remains draft.",
         "",
         "## Aggregate evidence-unit results",
         "",
@@ -232,13 +235,19 @@ def render_report(
         f"- E1 wins on first relevant rank: {', '.join(wins['E1']) or 'none observed'}.",
         "- Both miss relevant evidence within K=5: "
         f"{', '.join(wins['both_miss_at_5']) or 'none observed'}.",
-        "- `p2_atlas_path` places its provisional relevant unit at rank 2 in both "
-        "runs. At K=1 this is a ranking failure (taxonomy d); both retrieve it by K=3.",
+        (
+            f"- `{both_late[0][0]}` has its provisional relevant unit at rank "
+            f"{both_late[0][1]} in E0 and {both_late[0][2]} in E1; both miss at "
+            "K=1 (taxonomy d)."
+            if both_late
+            else "- No shared rank-1 failure is observed among scored questions."
+        ),
         "- Unanswerable questions still return candidates; this retrieval-only benchmark "
         "cannot measure abstention (taxonomy g).",
         "- No parser/OCR/layout (a) or indexing/chunking (b) failure can be "
-        "established from these eight queries. No relevant-source miss by K=5 (c) "
-        "is observed. Interpretation (e), citation support (f), and security (h) "
+        f"established from these {len(selected)} development/validation queries. "
+        f"Relevant-source misses by K=5 (c): {len(wins['both_miss_at_5'])}. "
+        "Interpretation (e), citation support (f), and security (h) "
         "are outside this retrieval evaluation; document/version isolation has "
         "separate tests.",
         "- Visual chart questions stay in the frozen family. Their parsing and "
@@ -250,10 +259,10 @@ def render_report(
         "",
         "## Limits",
         "",
-        "These figures are diagnostics from a small repository-authored synthetic "
-        "pilot, not validated generalization or a portfolio improvement claim. "
-        "There are no observed E0 wins, E1 wins, or joint misses at K=5 to "
-        "illustrate; creating such examples would misrepresent the saved runs.",
+        "These figures are diagnostics from repository-authored synthetic PDFs, "
+        "not validated generalization or a portfolio improvement claim. The "
+        "comparison lists only observed wins and misses; absent failure categories "
+        "are not illustrated with invented examples.",
         "",
     ]
     return "\n".join(lines)

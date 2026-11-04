@@ -2,12 +2,12 @@
 
 ## Provenance and reproduction
 
-- Dataset SHA-256: `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`; manifest SHA-256: `c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757`.
+- Dataset SHA-256: `cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46`; manifest SHA-256: `282ec1b50522c1969f0f3a553421f887de8f2c14624ce5bd6ff2e444412cc433`.
 - Dataset and source text hashes normalize line endings to LF so Windows and Linux checkouts have the same identity.
-- E0 raw run: `reports/runs/e0-phase2-pilot.json`; run Git SHA `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29`; index `sha256:4924fb23fcbfa8df0d9470bf8d84bb998313000db59f9748e279fcccf983dda8`.
-- E0 source SHA-256 `5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085`; source uncommitted at run: `false`.
-- E1 raw run: `reports/runs/e1-phase2-pilot.json`; run Git SHA `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29`; index `sha256:e710416e100a4c4af984ea20c130c5d6f1e23766f431968c7c4fe6d5b8f8686d`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
-- E1 source SHA-256 `c9af8fcf7e8f30bfba81d95e35cc78ed2c3442fec0b0879e1901f641262e61dc`; source uncommitted at run: `false`.
+- E0 raw run: `reports/runs/e0-phase2-pilot.json`; run Git SHA `d156761f0ced640763d04d2d446c6df1235dec05`; index `sha256:b060bce67d8752ae0fc16df0b33c3447c0dc1c41e586cc0a8581e0786e7aa542`.
+- E0 source SHA-256 `5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085`; source uncommitted at run: `true`.
+- E1 raw run: `reports/runs/e1-phase2-pilot.json`; run Git SHA `d156761f0ced640763d04d2d446c6df1235dec05`; index `sha256:c75946feda3b91910063ec9aacb2b14d5639ecfd22ccb4a0851b27b88902124f`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
+- E1 source SHA-256 `c9af8fcf7e8f30bfba81d95e35cc78ed2c3442fec0b0879e1901f641262e61dc`; source uncommitted at run: `true`.
 - Both runs use the same canonical evidence units, exact document versions, query IDs, evidence-unit binary relevance, and K=1/3/5.
 - Run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e0.json`.
 - With the pinned model cached, run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e1.json`. For the first download, set `download_model` to `true` in a copy of that config; ordinary CI never downloads model weights.
@@ -16,18 +16,18 @@
 
 ## Dataset and gate
 
-- 13 candidate questions: 8 development/validation queries and 5 frozen-test queries; 0 human verified. 6 answerable nonvisual questions are scored in each run.
-- The frozen test was not searched or used for tuning. 13 labels require owner review.
-- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified questions; this pilot has 13 candidate labels and 0 verified. It also lacks equations and broader external document coverage. The PR remains draft.
+- 31 candidate questions: 26 development/validation queries and 5 frozen-test queries; 0 human verified. 22 answerable nonvisual questions are scored in each run.
+- The frozen test was not searched or used for tuning. 31 labels require owner review.
+- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified questions; this pilot has 31 candidate labels and 0 verified. Broader external document coverage remains untested. The PR remains draft.
 
 ## Aggregate evidence-unit results
 
 | Split | Method | Scored | Hit@1 | Hit@3 | Recall@3 | MRR@3 | nDCG@3 |
 |---|---|---:|---:|---:|---:|---:|---:|
-| development | E0 | 3 | 0.667 | 1.000 | 1.000 | 0.833 | 0.877 |
-| development | E1 | 3 | 0.667 | 1.000 | 1.000 | 0.833 | 0.877 |
-| validation | E0 | 3 | 0.667 | 1.000 | 1.000 | 0.833 | 0.877 |
-| validation | E1 | 3 | 0.667 | 1.000 | 1.000 | 0.833 | 0.877 |
+| development | E0 | 11 | 0.727 | 0.909 | 0.909 | 0.818 | 0.842 |
+| development | E1 | 11 | 0.818 | 1.000 | 1.000 | 0.894 | 0.921 |
+| validation | E0 | 11 | 0.636 | 0.909 | 0.909 | 0.758 | 0.797 |
+| validation | E1 | 11 | 0.636 | 0.909 | 0.909 | 0.773 | 0.814 |
 
 ## Per-category diagnostics
 
@@ -37,26 +37,34 @@ Categories with no scored answerable nonvisual questions have no retrieval metri
 |---|---|---:|---:|---:|
 | diagram_interpretation | E0 | 1 | 0.000 | 1.000 |
 | diagram_interpretation | E1 | 1 | 0.000 | 1.000 |
-| narrative_fact | E0 | 2 | 1.000 | 1.000 |
-| narrative_fact | E1 | 2 | 1.000 | 1.000 |
+| equation_calculation | E0 | 2 | 0.500 | 1.000 |
+| equation_calculation | E1 | 2 | 0.500 | 1.000 |
+| equation_lookup | E0 | 2 | 1.000 | 1.000 |
+| equation_lookup | E1 | 2 | 1.000 | 1.000 |
+| exact_identifier | E0 | 3 | 1.000 | 1.000 |
+| exact_identifier | E1 | 3 | 1.000 | 1.000 |
+| exact_number | E0 | 4 | 0.500 | 0.750 |
+| exact_number | E1 | 4 | 0.750 | 1.000 |
+| narrative_fact | E0 | 4 | 1.000 | 1.000 |
+| narrative_fact | E1 | 4 | 0.750 | 1.000 |
 | table_calculation | E0 | 1 | 1.000 | 1.000 |
 | table_calculation | E1 | 1 | 1.000 | 1.000 |
-| table_lookup | E0 | 2 | 0.500 | 1.000 |
-| table_lookup | E1 | 2 | 0.500 | 1.000 |
+| table_lookup | E0 | 5 | 0.400 | 0.800 |
+| table_lookup | E1 | 5 | 0.600 | 0.800 |
 | unanswerable | E0 | 0 | — | — |
 | unanswerable | E1 | 0 | — | — |
 
 ## Controlled comparison and failures
 
-- E0 wins on first relevant rank: none observed.
-- E1 wins on first relevant rank: none observed.
-- Both miss relevant evidence within K=5: none observed.
-- `p2_atlas_path` places its provisional relevant unit at rank 2 in both runs. At K=1 this is a ranking failure (taxonomy d); both retrieve it by K=3.
+- E0 wins on first relevant rank: p2_cache_ratio, p2_cache_eviction.
+- E1 wins on first relevant rank: p2_retry_chunk_bytes, p2_retry_total, p2_cache_limit, p2_cache_lru_latency.
+- Both miss relevant evidence within K=5: p2_cache_best_hit.
+- `p2_atlas_path` has its provisional relevant unit at rank 2 in E0 and 2 in E1; both miss at K=1 (taxonomy d).
 - Unanswerable questions still return candidates; this retrieval-only benchmark cannot measure abstention (taxonomy g).
-- No parser/OCR/layout (a) or indexing/chunking (b) failure can be established from these eight queries. No relevant-source miss by K=5 (c) is observed. Interpretation (e), citation support (f), and security (h) are outside this retrieval evaluation; document/version isolation has separate tests.
+- No parser/OCR/layout (a) or indexing/chunking (b) failure can be established from these 26 development/validation queries. Relevant-source misses by K=5 (c): 1. Interpretation (e), citation support (f), and security (h) are outside this retrieval evaluation; document/version isolation has separate tests.
 - Visual chart questions stay in the frozen family. Their parsing and annotation quality cannot be inferred from this run. All provisional labels could change after source-page review.
 - Recorded query failures: E0=0, E1=0; any future partial failures are saved per query and excluded from scored denominators.
 
 ## Limits
 
-These figures are diagnostics from a small repository-authored synthetic pilot, not validated generalization or a portfolio improvement claim. There are no observed E0 wins, E1 wins, or joint misses at K=5 to illustrate; creating such examples would misrepresent the saved runs.
+These figures are diagnostics from repository-authored synthetic PDFs, not validated generalization or a portfolio improvement claim. The comparison lists only observed wins and misses; absent failure categories are not illustrated with invented examples.

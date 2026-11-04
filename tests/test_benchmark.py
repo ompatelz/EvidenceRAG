@@ -1,6 +1,7 @@
 """Contract, partial-failure, and report tests that require no model download."""
 
 import copy
+import hashlib
 import json
 from collections.abc import Sequence
 from pathlib import Path
@@ -10,7 +11,7 @@ import pytest
 from pydantic import ValidationError
 
 from evidence_rag.eval.benchmark import BenchmarkConfig
-from evidence_rag.eval.models import EvaluationItem
+from evidence_rag.eval.models import EvaluationItem, EvaluationSplit
 from evidence_rag.eval.report import render_report, validate_run
 from evidence_rag.eval.runner import aggregate_rows, evaluate_queries, normalized_text_sha256
 from evidence_rag.eval.validate import load_evaluation_jsonl
@@ -64,13 +65,13 @@ def test_partial_query_failure_is_saved_and_excluded_from_metrics() -> None:
         return [], {"search_ms": 0.1}
 
     rows, failures = evaluate_queries(items, search)
-    assert len(rows) == 8
+    assert len(rows) == 26
     assert failures == [
         {"query_id": "p2_atlas_rate", "stage": "retrieval", "error_type": "ConnectionError"}
     ]
     assert rows[0]["metrics"] is None
     assert "private document text" not in str(rows)
-    assert aggregate_rows(rows, "split")["development"]["scored"] == 2
+    assert aggregate_rows(rows, "split")["development"]["scored"] == 10
 
 
 def test_category_aggregation_uses_scored_query_denominator() -> None:
@@ -89,14 +90,28 @@ def test_category_aggregation_uses_scored_query_denominator() -> None:
     assert group["metrics"]["3"]["hit_rate"] == 0.5
 
 
-def test_saved_runs_recompute_and_report_factual_absences() -> None:
+def test_frozen_family_is_unchanged() -> None:
+    rows = [
+        item.model_dump(mode="json")
+        for item in load_evaluation_jsonl(SEED)
+        if item.split is EvaluationSplit.FROZEN_TEST
+    ]
+    encoded = json.dumps(rows, sort_keys=True, separators=(",", ":")).encode()
+    assert len(rows) == 5
+    assert hashlib.sha256(encoded).hexdigest() == (
+        "ee07fc398cde07c34d4189b6345426136d6bafaf07ca34c87525d0ef50379fb4"
+    )
+
+
+def test_saved_runs_recompute_and_report_factual_comparison() -> None:
     e0, e1 = _runs()
     report = render_report(e0, e1, e0_path=E0, e1_path=E1, seed_path=SEED, manifest_path=MANIFEST)
     assert "Phase 2 gate: NOT PASSED" in report
-    assert "E0 wins on first relevant rank: none observed" in report
-    assert "E1 wins on first relevant rank: none observed" in report
-    assert "Both miss relevant evidence within K=5: none observed" in report
+    assert "E0 wins on first relevant rank:" in report
+    assert "E1 wins on first relevant rank:" in report
+    assert "Both miss relevant evidence within K=5:" in report
     assert "0 human verified" in report
+    assert "31 candidate questions" in report
 
 
 def test_report_rejects_tampered_metric_and_frozen_row() -> None:

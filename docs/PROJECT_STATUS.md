@@ -2,9 +2,30 @@
 
 Updated: 2026-11-04
 
-Current phase: Phase 2.4 benchmark implementation and provisional report on
-draft PR #5. The Phase 2 gate is **not passed** because none of the 13 candidate
-labels has been human verified. Phase 1 PR #4 is merged into `main` at `37e485c`.
+Current phase: Phase 2 label-review preparation on draft PR #5. The Phase 2
+gate is **not passed** because none of the 31 candidate labels has been reviewed
+by the owner. Phase 1 PR #4 is merged into `main` at `37e485c`.
+
+## Phase 2 review expansion (local, pending push)
+
+- Two deterministic repository-owned CC0 two-page PDF families add protocol and
+  cache notes with equations, exact identifiers, numeric facts, policy rows,
+  multi-page evidence, and difficult negative questions. All four new pages were
+  rendered and visually inspected; parser evidence IDs, pages, and regions were
+  checked against the proposed labels. The five frozen chart rows are unchanged.
+- The seed now contains 31 candidates: 13 development, 13 validation, 5 frozen
+  test; 5 unanswerable (16.1%), 2 visual-dependent, 0 human verified.
+  `datasets/eval/REVIEW_PACKET.md` gives the owner source links and an unchecked
+  decision line for every item. The packet has no retriever rankings.
+- Both E0/E1 were rerun on the 26 development/validation candidates over 52
+  evidence units. The provisional report has 22 scored answerable nonvisual
+  queries, observed examples for each method winning, and one joint miss at K=5.
+  These numbers are unreviewed diagnostics, not validated performance claims.
+- The expanded tree passed local locked sync/check, Ruff lint/format, strict
+  mypy, 122 pytest tests with one live Qdrant-server skip, deterministic PDF
+  regeneration, and strict source/evidence validation. Updated commit, hosted
+  CI, and owner source-page decisions are pending. The PR remains draft and
+  unmerged.
 
 ## Phase 2.4 checkpoint
 
@@ -15,8 +36,8 @@ labels has been human verified. Phase 1 PR #4 is merged into `main` at `37e485c`
   exception text; failed queries leave the scored denominator.
 - `reports/baselines.md` is generated from the committed raw E0/E1 runs and
   includes split/category metrics, provenance, failure taxonomy, timing assumptions,
-  and the explicit absence of E0 wins, E1 wins, or shared misses at K=5 in this
-  pilot. It is a provisional diagnostic, not a validated quality or latency claim.
+  and observed E0/E1 wins or misses. Its original 13-question pilot was a
+  provisional diagnostic, not a validated quality or latency claim.
 - Both benchmark configs and report generation passed locally with the cached real
   MiniLM model. The frozen test was not searched or used for tuning. The full local
   gate passed after the portability fix: locked sync, lock check, Ruff lint/format,
@@ -32,9 +53,8 @@ labels has been human verified. Phase 1 PR #4 is merged into `main` at `37e485c`
   Both saved runs were regenerated against that committed source with a clean
   source tree and normalized dataset SHA-256
   `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`.
-- The PR must remain draft. Human source-page review, more varied reviewed queries
-  (including equations and difficult negatives), and a fresh benchmark/report are
-  needed before the Phase 2 gate can be reconsidered.
+- The PR must remain draft until owner source-page review and a fresh gate run
+  based on corrected labels are complete.
 
 ## Phase 2.3 checkpoint
 
@@ -184,8 +204,8 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Owner review of all 13 candidate labels and visual-region judgments.
-- Expansion and human verification of the evaluation dataset before the Phase 2 gate.
+- Owner review of all 31 candidate labels and visual-region judgments.
+- Quality gate and hosted CI for the expanded corpus before the Phase 2 merge decision.
 
 ## Pending pull requests / links
 
@@ -341,9 +361,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Review and correct the 13 candidate labels before counting any as human verified.
-2. Expand the legally usable corpus to cover equations, difficult negatives, and
-   external technical PDFs; build 30–50 human-verified questions without changing
-   the frozen test based on development results.
-3. Rerun E0/E1 and regenerate the gate report after review, then resolve the
-   PyMuPDF/repository licensing strategy before distributing builds.
+1. Owner reviews all 31 candidate labels in `datasets/eval/REVIEW_PACKET.md` and
+   records corrections or approval from direct source-page inspection.
+2. Apply reviewed labels, rerun E0/E1 and the report, and verify the full gate
+   including CI without using frozen-test results for tuning.
+3. Decide whether remaining external-document and PyMuPDF/repository licensing
+   limits are acceptable for this PR before merge or distribution.

@@ -142,7 +142,7 @@ def test_e0_runner_saves_development_and_validation_only(tmp_path: Path) -> None
         output,
     )
     assert output.is_file()
-    assert result["counts"] == {"queries": 8, "scored": 6, "index_units": 11}
+    assert result["counts"] == {"queries": 26, "scored": 22, "index_units": 52}
     rows = cast(list[dict[str, Any]], result["queries"])
     assert {row["split"] for row in rows} == {"development", "validation"}
     assert all(row["split"] != "frozen_test" for row in rows)

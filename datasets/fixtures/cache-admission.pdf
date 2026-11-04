@@ -1,0 +1,129 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 9 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/Contents 10 0 R /MediaBox [ 0 0 612 792 ] /Parent 8 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/PageMode /UseNone /Pages 8 0 R /Type /Catalog
+>>
+endobj
+7 0 obj
+<<
+/Author (EvidenceRAG contributors) /CreationDate (D:20000101000000+00'00') /Creator (EvidenceRAG deterministic fixture generator) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (unspecified) /Title (Cache Admission Study Note) /Trapped /False
+>>
+endobj
+8 0 obj
+<<
+/Count 2 /Kids [ 4 0 R 5 0 R ] /Type /Pages
+>>
+endobj
+9 0 obj
+<<
+/Length 947
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+BT /F2 19 Tf 22.8 TL ET
+BT 1 0 0 1 54 724 Tm (Cache Admission Study Note) Tj T* ET
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 690 Tm (1. Admission and measurement) Tj T* ET
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 54 650 Tm (Study ID CA-09 identifies this synthetic cache experiment.) Tj T* ET
+BT 1 0 0 1 54 625 Tm (The cache capacity is 64 MiB.) Tj T* ET
+BT 1 0 0 1 54 600 Tm (The observation window recorded 800 hits and 200 misses.) Tj T* ET
+BT 1 0 0 1 54 575 Tm (Equation 1: hit ratio = hits / \(hits + misses\).) Tj T* ET
+BT 1 0 0 1 54 550 Tm (The observed hit ratio is 800 / 1000 = 0.80.) Tj T* ET
+BT 1 0 0 1 54 525 Tm (Admission rejects any object larger than 8 MiB.) Tj T* ET
+BT 1 0 0 1 54 500 Tm (Eviction occurs when admitting an object would exceed capacity.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 1) Tj T* ET
+ 
+endstream
+endobj
+10 0 obj
+<<
+/Length 877
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+BT /F2 19 Tf 22.8 TL ET
+BT 1 0 0 1 54 724 Tm (Cache Admission Study Note) Tj T* ET
+BT /F2 11 Tf 13.2 TL ET
+BT 1 0 0 1 54 690 Tm (2. Synthetic policy comparison) Tj T* ET
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 54 650 Tm (Table 1. Policy | hit ratio | median lookup latency) Tj T* ET
+BT 1 0 0 1 54 625 Tm (FIFO | 0.71 | 12 ms) Tj T* ET
+BT 1 0 0 1 54 600 Tm (LRU | 0.80 | 9 ms) Tj T* ET
+BT 1 0 0 1 54 575 Tm (TinyLFU | 0.84 | 11 ms) Tj T* ET
+BT 1 0 0 1 54 550 Tm (All table values are synthetic and are not production measurements.) Tj T* ET
+BT 1 0 0 1 54 525 Tm (Admitted objects have a time-to-live of 600 seconds.) Tj T* ET
+BT 1 0 0 1 54 500 Tm (This note does not measure energy consumption.) Tj T* ET
+BT /F1 8 Tf 9.6 TL ET
+BT 1 0 0 1 398.96 36 Tm (Repository-owned evaluation fixture | Page 2) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 11
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000514 00000 n 
+0000000708 00000 n 
+0000000776 00000 n 
+0000001104 00000 n 
+0000001169 00000 n 
+0000002166 00000 n 
+trailer
+<<
+/ID 
+[<0b945a5d1d040336e57a857f7969a074><0b945a5d1d040336e57a857f7969a074>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 7 0 R
+/Root 6 0 R
+/Size 11
+>>
+startxref
+3094
+%%EOF
