@@ -1,8 +1,8 @@
 {
   "experiment": "E1",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "d156761f0ced640763d04d2d446c6df1235dec05",
-  "source_tree_uncommitted_at_run": true,
+  "git_sha_at_run": "15edd0612daa15a29f90a04fcf54de4f92cc56f5",
+  "source_tree_uncommitted_at_run": false,
   "source_sha256": "c9af8fcf7e8f30bfba81d95e35cc78ed2c3442fec0b0879e1901f641262e61dc",
   "dataset_sha256": "cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46",
   "manifest_sha256": "282ec1b50522c1969f0f3a553421f887de8f2c14624ce5bd6ff2e444412cc433",
@@ -73,8 +73,8 @@
     "peak_memory": "not measured"
   },
   "timing": {
-    "corpus_preparation_ms": 210.18520000507124,
-    "embedding_and_index_ms": 908.2758000004105,
+    "corpus_preparation_ms": 171.97250000026543,
+    "embedding_and_index_ms": 353.12149999663234,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -448,8 +448,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.917499995324761,
-      "vector_search_ms": 6.106100001488812
+      "embedding_ms": 3.504300009808503,
+      "vector_search_ms": 1.3821000029565766
     },
     {
       "query_id": "p2_atlas_path",
@@ -565,8 +565,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.263900002930313,
-      "vector_search_ms": 2.8149999998277053
+      "embedding_ms": 2.9196999967098236,
+      "vector_search_ms": 1.2786000006599352
     },
     {
       "query_id": "p2_atlas_filter",
@@ -682,8 +682,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.96510000852868,
-      "vector_search_ms": 3.677899992908351
+      "embedding_ms": 2.7269999991403893,
+      "vector_search_ms": 1.2435999960871413
     },
     {
       "query_id": "p2_atlas_weight",
@@ -778,8 +778,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 6.328800009214319,
-      "vector_search_ms": 3.530199988745153
+      "embedding_ms": 3.18689999403432,
+      "vector_search_ms": 1.2860999995609745
     },
     {
       "query_id": "p2_table_best",
@@ -895,8 +895,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.6182000047992915,
-      "vector_search_ms": 2.913300006184727
+      "embedding_ms": 2.797300010570325,
+      "vector_search_ms": 1.4057999942451715
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -1012,8 +1012,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.827900000847876,
-      "vector_search_ms": 3.044400000362657
+      "embedding_ms": 3.8566000002902,
+      "vector_search_ms": 2.512100007152185
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -1129,8 +1129,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.732300000498071,
-      "vector_search_ms": 2.926300003309734
+      "embedding_ms": 5.160000000614673,
+      "vector_search_ms": 2.4107000062940642
     },
     {
       "query_id": "p2_table_latency",
@@ -1225,8 +1225,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 10.265500008244999,
-      "vector_search_ms": 2.54539999878034
+      "embedding_ms": 4.034400000819005,
+      "vector_search_ms": 1.4676999999210238
     },
     {
       "query_id": "p2_retry_protocol",
@@ -1342,8 +1342,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.1420000022044405,
-      "vector_search_ms": 2.7280999929644167
+      "embedding_ms": 2.89649999467656,
+      "vector_search_ms": 1.4057999942451715
     },
     {
       "query_id": "p2_retry_digest",
@@ -1459,8 +1459,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.50969999737572,
-      "vector_search_ms": 2.6295999996364117
+      "embedding_ms": 3.1710999901406467,
+      "vector_search_ms": 1.3932000001659617
     },
     {
       "query_id": "p2_retry_chunk_bytes",
@@ -1576,8 +1576,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.152099991799332,
-      "vector_search_ms": 2.705600010813214
+      "embedding_ms": 2.9152999923098832,
+      "vector_search_ms": 1.41050000092946
     },
     {
       "query_id": "p2_retry_ack",
@@ -1693,8 +1693,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.746600003680214,
-      "vector_search_ms": 3.1525999947916716
+      "embedding_ms": 3.0433000065386295,
+      "vector_search_ms": 1.1958999966736883
     },
     {
       "query_id": "p2_retry_formula",
@@ -1810,8 +1810,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.308800002443604,
-      "vector_search_ms": 2.8395999979693443
+      "embedding_ms": 2.694299997529015,
+      "vector_search_ms": 1.2272000021766871
     },
     {
       "query_id": "p2_retry_total",
@@ -1927,8 +1927,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.384100012131967,
-      "vector_search_ms": 3.072099993005395
+      "embedding_ms": 3.296700000646524,
+      "vector_search_ms": 1.2455999967642128
     },
     {
       "query_id": "p2_retry_attempts",
@@ -2044,8 +2044,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.910600008675829,
-      "vector_search_ms": 3.378499997779727
+      "embedding_ms": 2.748099999735132,
+      "vector_search_ms": 1.3809000083710998
     },
     {
       "query_id": "p2_retry_second_backoff",
@@ -2161,8 +2161,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.885900005931035,
-      "vector_search_ms": 3.243400002247654
+      "embedding_ms": 3.4961000055773184,
+      "vector_search_ms": 1.8592999986140057
     },
     {
       "query_id": "p2_retry_loss",
@@ -2257,8 +2257,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 9.671799998614006,
-      "vector_search_ms": 2.7846000011777505
+      "embedding_ms": 3.4158000053139403,
+      "vector_search_ms": 1.4913999912096187
     },
     {
       "query_id": "p2_cache_study_id",
@@ -2374,8 +2374,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 5.683700001100078,
-      "vector_search_ms": 2.765900004305877
+      "embedding_ms": 3.0327999993460253,
+      "vector_search_ms": 1.5829000039957464
     },
     {
       "query_id": "p2_cache_capacity",
@@ -2491,8 +2491,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.276599997770973,
-      "vector_search_ms": 2.630600007250905
+      "embedding_ms": 2.5956999888876453,
+      "vector_search_ms": 1.336100001935847
     },
     {
       "query_id": "p2_cache_formula",
@@ -2608,8 +2608,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.075899997493252,
-      "vector_search_ms": 2.6615999959176406
+      "embedding_ms": 2.4150999961420894,
+      "vector_search_ms": 1.333299995167181
     },
     {
       "query_id": "p2_cache_ratio",
@@ -2726,8 +2726,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.993400002713315,
-      "vector_search_ms": 3.0595000134781003
+      "embedding_ms": 2.709000007598661,
+      "vector_search_ms": 1.3430999970296398
     },
     {
       "query_id": "p2_cache_limit",
@@ -2843,8 +2843,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.249999998952262,
-      "vector_search_ms": 2.965000006952323
+      "embedding_ms": 2.5901999906636775,
+      "vector_search_ms": 1.0914000013144687
     },
     {
       "query_id": "p2_cache_eviction",
@@ -2960,8 +2960,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.265300002880394,
-      "vector_search_ms": 3.6639000027207658
+      "embedding_ms": 2.5405999913346022,
+      "vector_search_ms": 1.4482999977190048
     },
     {
       "query_id": "p2_cache_best_hit",
@@ -3079,8 +3079,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.06889999168925,
-      "vector_search_ms": 4.134600007091649
+      "embedding_ms": 2.370999995036982,
+      "vector_search_ms": 1.2233000015839934
     },
     {
       "query_id": "p2_cache_lru_latency",
@@ -3196,8 +3196,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.043299993616529,
-      "vector_search_ms": 3.5820000048261136
+      "embedding_ms": 2.7982000028714538,
+      "vector_search_ms": 1.229399989824742
     },
     {
       "query_id": "p2_cache_energy",
@@ -3292,8 +3292,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 6.8472999992081895,
-      "vector_search_ms": 3.06770000315737
+      "embedding_ms": 3.0393999913940206,
+      "vector_search_ms": 1.481300001614727
     }
   ]
 }

@@ -6,7 +6,7 @@ Current phase: Phase 2 label-review preparation on draft PR #5. The Phase 2
 gate is **not passed** because none of the 31 candidate labels has been reviewed
 by the owner. Phase 1 PR #4 is merged into `main` at `37e485c`.
 
-## Phase 2 review expansion (local, pending push)
+## Phase 2 review expansion
 
 - Two deterministic repository-owned CC0 two-page PDF families add protocol and
   cache notes with equations, exact identifiers, numeric facts, policy rows,
@@ -23,9 +23,13 @@ by the owner. Phase 1 PR #4 is merged into `main` at `37e485c`.
   These numbers are unreviewed diagnostics, not validated performance claims.
 - The expanded tree passed local locked sync/check, Ruff lint/format, strict
   mypy, 122 pytest tests with one live Qdrant-server skip, deterministic PDF
-  regeneration, and strict source/evidence validation. Updated commit, hosted
-  CI, and owner source-page decisions are pending. The PR remains draft and
-  unmerged.
+  regeneration, and strict source/evidence validation. Commit
+  `15edd0612daa15a29f90a04fcf54de4f92cc56f5` passed all five hosted CI
+  checks: Python 3.11, Python 3.14, Ingestion end-to-end, Qdrant integration,
+  and Container. Both raw runs were regenerated against that committed source
+  with clean source-tree flags and normalized dataset SHA-256
+  `cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46`.
+  Owner source-page decisions remain pending; the PR is draft and unmerged.
 
 ## Phase 2.4 checkpoint
 
@@ -205,16 +209,16 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 31 candidate labels and visual-region judgments.
-- Quality gate and hosted CI for the expanded corpus before the Phase 2 merge decision.
+- Apply owner corrections, rerun the gate, and decide whether the PR can merge.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
   is open with Subphases 2.1, 2.2, and 2.3 pushed and verified. Subphase 2.4 is
-  pushed as `defdfe2` plus corrective commit `6eb8598`. All five hosted checks
-  passed on the corrective commit. The PR remains draft and unmerged because the
-  human-review gate is unmet.
+  pushed as `defdfe2` plus corrective commit `6eb8598` and review-expansion
+  commit `15edd06`. All five hosted checks passed on the expanded corpus. The
+  PR remains draft and unmerged because the human-review gate is unmet.
 
 ## Last test commands and outcomes
 
@@ -320,12 +324,13 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Experiment registry / latest valid metrics
 
-- E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains the exact
-  rankings and manifest. Its 6 scored labels are all pending human review;
-  there is no validated performance result yet.
+- E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains raw rankings
+  for 26 development/validation queries and 22 scored answerable nonvisual
+  candidate labels. All labels await owner review; no validated performance
+  result exists.
 - E1 provisional run: `reports/runs/e1-phase2-pilot.json` uses the same dataset,
-  corpus, query IDs, K values, and relevance unit. Both methods have identical
-  relevant ranks on the six scored candidates. No frozen-test run exists.
+  corpus, query IDs, K values, and relevance unit. The report records observed
+  E0/E1 wins and one joint miss at K=5. No frozen-test run exists.
 
 ## Known technical debt / risks
 

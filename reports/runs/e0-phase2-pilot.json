@@ -1,8 +1,8 @@
 {
   "experiment": "E0",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "d156761f0ced640763d04d2d446c6df1235dec05",
-  "source_tree_uncommitted_at_run": true,
+  "git_sha_at_run": "15edd0612daa15a29f90a04fcf54de4f92cc56f5",
+  "source_tree_uncommitted_at_run": false,
   "source_sha256": "5affd19b6421d5a9569a3dfb336ba4d2db810e3dedc0d9867ad89e0487deb085",
   "dataset_sha256": "cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46",
   "manifest_sha256": "282ec1b50522c1969f0f3a553421f887de8f2c14624ce5bd6ff2e444412cc433",
@@ -57,8 +57,8 @@
     "logical_cpus": 20
   },
   "timing": {
-    "corpus_preparation_ms": 147.7147999976296,
-    "index_build_ms": 0.9836999961407855,
+    "corpus_preparation_ms": 152.16689999215305,
+    "index_build_ms": 0.9921000018948689,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -417,7 +417,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.08720000914763659
+      "search_ms": 0.06520000169984996
     },
     {
       "query_id": "p2_atlas_path",
@@ -533,7 +533,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.04359999729786068
+      "search_ms": 0.046200002543628216
     },
     {
       "query_id": "p2_atlas_filter",
@@ -619,7 +619,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.035299992305226624
+      "search_ms": 0.03579999611247331
     },
     {
       "query_id": "p2_atlas_weight",
@@ -699,7 +699,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.03060000017285347
+      "search_ms": 0.031099989428184927
     },
     {
       "query_id": "p2_table_best",
@@ -815,7 +815,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.037299992982298136
+      "search_ms": 0.037600009818561375
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -871,7 +871,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.021700005163438618
+      "search_ms": 0.02230000973213464
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -927,7 +927,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.02370000584051013
+      "search_ms": 0.025300003471784294
     },
     {
       "query_id": "p2_table_latency",
@@ -962,7 +962,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.023800006601959467
+      "search_ms": 0.02469999890308827
     },
     {
       "query_id": "p2_retry_protocol",
@@ -1078,7 +1078,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.05609999061562121
+      "search_ms": 0.06120000034570694
     },
     {
       "query_id": "p2_retry_digest",
@@ -1194,7 +1194,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.06570000550709665
+      "search_ms": 0.054799995268695056
     },
     {
       "query_id": "p2_retry_chunk_bytes",
@@ -1310,7 +1310,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.06259999645408243
+      "search_ms": 0.05949998740106821
     },
     {
       "query_id": "p2_retry_ack",
@@ -1426,7 +1426,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.06770000618416816
+      "search_ms": 0.06389999180100858
     },
     {
       "query_id": "p2_retry_formula",
@@ -1542,7 +1542,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.055800002883188426
+      "search_ms": 0.05699999746866524
     },
     {
       "query_id": "p2_retry_total",
@@ -1658,7 +1658,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.066100008552894
+      "search_ms": 0.06720000237692147
     },
     {
       "query_id": "p2_retry_attempts",
@@ -1774,7 +1774,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.07189999450929463
+      "search_ms": 0.07069999992381781
     },
     {
       "query_id": "p2_retry_second_backoff",
@@ -1890,7 +1890,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.0619000056758523
+      "search_ms": 0.060000005760230124
     },
     {
       "query_id": "p2_retry_loss",
@@ -1985,7 +1985,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.056899996707215905
+      "search_ms": 0.054499992984347045
     },
     {
       "query_id": "p2_cache_study_id",
@@ -2101,7 +2101,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.05529999907594174
+      "search_ms": 0.049700000090524554
     },
     {
       "query_id": "p2_cache_capacity",
@@ -2217,7 +2217,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.04090000584255904
+      "search_ms": 0.04030000127386302
     },
     {
       "query_id": "p2_cache_formula",
@@ -2333,7 +2333,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.052400006097741425
+      "search_ms": 0.05269999383017421
     },
     {
       "query_id": "p2_cache_ratio",
@@ -2450,7 +2450,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.06010000652167946
+      "search_ms": 0.0594000011915341
     },
     {
       "query_id": "p2_cache_limit",
@@ -2566,7 +2566,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.05639999289996922
+      "search_ms": 0.056599994422867894
     },
     {
       "query_id": "p2_cache_eviction",
@@ -2682,7 +2682,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.048300003982149065
+      "search_ms": 0.049299997044727206
     },
     {
       "query_id": "p2_cache_best_hit",
@@ -2800,7 +2800,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.05400000372901559
+      "search_ms": 0.059999991208314896
     },
     {
       "query_id": "p2_cache_lru_latency",
@@ -2901,7 +2901,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.048999994760379195
+      "search_ms": 0.052799994591623545
     },
     {
       "query_id": "p2_cache_energy",
@@ -2996,7 +2996,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.0543000060133636
+      "search_ms": 0.056599994422867894
     }
   ]
 }
