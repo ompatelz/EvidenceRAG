@@ -22,9 +22,13 @@ Current phase: Phase 2.1 candidate dataset in progress. Phase 1 PR #4 is merged 
 - The chart family is frozen. Do not run retrieval or tune on its questions. This small
   synthetic pilot does not cover equations, multi-page documents, or external sources.
 - Subphase 2.1 full local quality gate passed: `uv sync --all-extras --dev`, Ruff
-  lint/format, strict mypy, and 95 pytest tests (7.72 seconds). `uv lock --check`,
-  deterministic PDF regeneration, schema-fixture validation, and strict Phase 2 seed
-  validation also passed. Draft PR and hosted CI outcomes are pending at this point.
+  lint/format, strict mypy, and 95 pytest tests (final pre-commit run: 4.85 seconds).
+  `uv lock --check`, deterministic PDF regeneration, schema-fixture validation, and
+  strict Phase 2 seed validation also passed.
+- Principal commit `c4b285c8eb7495fe92aaa0d574777ab49369af0d` was pushed to
+  [draft PR #5](https://github.com/ompatelz/EvidenceRAG/pull/5). On that head,
+  GitHub Actions passed Python 3.11 (25s), Python 3.14 (22s), Ingestion end-to-end
+  (10s), and Container (30s). No retrieval result or human-reviewed label is claimed.
 
 ## Implemented and verified
 
@@ -93,13 +97,14 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Finish Subphase 2.1 verification, commit, push, and open the single draft Phase 2 PR.
 - Owner review of all 13 candidate labels and visual-region judgments.
+- Await explicit `continue Phase 2` before starting Subphase 2.2.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
-- Phase 2 draft PR: pending Subphase 2.1 commit and push.
+- [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
+  is open with Subphase 2.1 only; all four CI jobs passed on the principal commit.
 
 ## Last test commands and outcomes
 
