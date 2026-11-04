@@ -188,7 +188,8 @@ def render_report(
         "labels require owner review.",
         "- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified "
         f"questions; this pilot has {len(items)} candidate labels and {verified} verified. "
-        "Broader external document coverage remains untested. The PR remains draft.",
+        "Broader external document coverage remains untested. A code merge does "
+        "not complete the human-review gate.",
         "",
         "## Aggregate evidence-unit results",
         "",

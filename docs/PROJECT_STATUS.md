@@ -2,9 +2,11 @@
 
 Updated: 2026-11-04
 
-Current phase: Phase 2 label-review preparation on draft PR #5. The Phase 2
-gate is **not passed** because none of the 31 candidate labels has been reviewed
-by the owner. Phase 1 PR #4 is merged into `main` at `37e485c`.
+Current phase: Phase 2 provisional pilot on PR #5. The owner requested an
+assistant source audit and code merge; all 31 candidate labels remain
+`needs_review`, and the Phase 2 human-review gate is **not passed**. A merged
+implementation must not be described as a validated Phase 2 benchmark.
+Phase 1 PR #4 is merged into `main` at `37e485c`.
 
 ## Phase 2 review expansion
 
@@ -29,7 +31,9 @@ by the owner. Phase 1 PR #4 is merged into `main` at `37e485c`.
   and Container. Both raw runs were regenerated against that committed source
   with clean source-tree flags and normalized dataset SHA-256
   `cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46`.
-  Owner source-page decisions remain pending; the PR is draft and unmerged.
+  Owner source-page decisions remain pending. The assistant's item-by-item
+  source audit is recorded in `docs/phase2_label_audit.md`; it does not count
+  as human verification.
 
 ## Phase 2.4 checkpoint
 
@@ -57,8 +61,9 @@ by the owner. Phase 1 PR #4 is merged into `main` at `37e485c`.
   Both saved runs were regenerated against that committed source with a clean
   source tree and normalized dataset SHA-256
   `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`.
-- The PR must remain draft until owner source-page review and a fresh gate run
-  based on corrected labels are complete.
+- The human-review gate remains open until owner source-page review and a fresh
+  gate run based on corrected labels are complete. The later owner instruction
+  permits merging the implementation as a provisional pilot only.
 
 ## Phase 2.3 checkpoint
 
@@ -209,16 +214,18 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 31 candidate labels and visual-region judgments.
-- Apply owner corrections, rerun the gate, and decide whether the PR can merge.
+- Apply future owner corrections and rerun the human-review gate without using
+  frozen-test results for tuning.
 
-## Pending pull requests / links
+## Pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
-- [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
-  is open with Subphases 2.1, 2.2, and 2.3 pushed and verified. Subphase 2.4 is
-  pushed as `defdfe2` plus corrective commit `6eb8598` and review-expansion
-  commit `15edd06`. All five hosted checks passed on the expanded corpus. The
-  PR remains draft and unmerged because the human-review gate is unmet.
+- [PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
+  contains four implementation subphases, cross-platform correction `6eb8598`,
+  and review-expansion commit `15edd06`. All five hosted checks passed on the
+  expanded corpus. The
+  owner requested code merge with the human-review gate explicitly outstanding;
+  the provisional result and label status must remain clear after merge.
 
 ## Last test commands and outcomes
 

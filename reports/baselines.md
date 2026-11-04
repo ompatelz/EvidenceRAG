@@ -18,7 +18,7 @@
 
 - 31 candidate questions: 26 development/validation queries and 5 frozen-test queries; 0 human verified. 22 answerable nonvisual questions are scored in each run.
 - The frozen test was not searched or used for tuning. 31 labels require owner review.
-- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified questions; this pilot has 31 candidate labels and 0 verified. Broader external document coverage remains untested. The PR remains draft.
+- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified questions; this pilot has 31 candidate labels and 0 verified. Broader external document coverage remains untested. A code merge does not complete the human-review gate.
 
 ## Aggregate evidence-unit results
 
