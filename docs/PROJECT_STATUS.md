@@ -24,7 +24,9 @@ Current phase: Phase 2.2 BM25 baseline in progress. Phase 1 PR #4 is merged into
 - Final pre-commit local quality gate passed: `uv sync --all-extras --dev`, Ruff
   lint/format, strict mypy, and 102 pytest tests in 6.98 seconds. Lock check,
   deterministic fixture regeneration, strict seed validation, and E0 CLI run
-  passed. Subphase 2.2 commit/push and its hosted CI are pending at this point.
+  passed. Principal Subphase 2.2 commit `eb44a0f21f281633405265a5b260ca60d234d687`
+  was pushed to the existing draft PR #5. Its GitHub Actions run 41862914820
+  had all four jobs queued at the last check; hosted results are still pending.
 
 ## Phase 2.1 checkpoint
 
@@ -119,14 +121,15 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Finish Subphase 2.2 quality gate, commit, push, and PR CI check; then await
-  explicit `continue Phase 2` before starting Subphase 2.3.
+- Await hosted CI for Subphase 2.2 and owner review of the provisional labels.
+- Await explicit `continue Phase 2` before starting Subphase 2.3.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
-  is open with Subphase 2.1 only; all four CI jobs passed on the principal commit.
+  is open with Subphases 2.1 and 2.2. All four jobs passed on the 2.1 principal
+  commit; the 2.2 hosted run is queued and has no result yet.
 
 ## Last test commands and outcomes
 
