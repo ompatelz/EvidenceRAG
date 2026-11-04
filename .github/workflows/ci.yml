@@ -62,6 +62,12 @@ jobs:
           --manifest datasets/manifests/fixtures.json
           datasets/eval/fixture_items.jsonl
 
+      - name: Validate Phase 2 seed against parsed evidence
+        run: >-
+          uv run python -m evidence_rag.eval.validate
+          --manifest datasets/manifests/fixtures.json
+          --verify-evidence datasets/eval/phase2_seed.jsonl
+
   ingestion-e2e:
     name: Ingestion end-to-end
     runs-on: ubuntu-latest

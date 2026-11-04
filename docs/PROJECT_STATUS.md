@@ -1,9 +1,30 @@
 # Project Status
 
-Updated: 2026-10-29
+Updated: 2026-11-04
 
-Current phase: Phase 1 complete and acceptance-gate verified; PR #4 is awaiting owner
-review and remains unmerged
+Current phase: Phase 2.1 candidate dataset in progress. Phase 1 PR #4 is merged into
+`main` at `37e485c`; its final head `dfa3cd4` is an ancestor of current `main`.
+
+## Phase 2.1 checkpoint
+
+- Branch `codex/phase-2-search-baselines` was created from current `origin/main`.
+- Three deterministic, repository-authored CC0 PDF families are recorded with source,
+  date, SHA-256, content version, and redistribution permission. The new queue chart
+  visually distinguishes scheduler modes without text listing bar values.
+- `datasets/eval/phase2_seed.jsonl` has 13 candidate questions: 4 development,
+  4 validation, and 5 frozen test; 3 unanswerable (23.1%), 2 visual-dependent.
+  All 13 need owner review; **none is claimed human verified**. The older schema-only
+  fixture rows were also marked `needs_review`, and their caption-answerable diagram
+  item is no longer labeled visual-dependent.
+- Source hashes, duplicate/near-duplicate questions, version and split references, and
+  optionally parser-produced evidence ID/page/region consistency are validated. CI now
+  requests strict evidence validation for the Phase 2 seed.
+- The chart family is frozen. Do not run retrieval or tune on its questions. This small
+  synthetic pilot does not cover equations, multi-page documents, or external sources.
+- Subphase 2.1 full local quality gate passed: `uv sync --all-extras --dev`, Ruff
+  lint/format, strict mypy, and 95 pytest tests (7.72 seconds). `uv lock --check`,
+  deterministic PDF regeneration, schema-fixture validation, and strict Phase 2 seed
+  validation also passed. Draft PR and hosted CI outcomes are pending at this point.
 
 ## Implemented and verified
 
@@ -72,14 +93,13 @@ Verification evidence is updated in this file only after commands have actually 
 
 ## In progress
 
-- Owner review of the complete Phase 1 pull request and final teaching handoff.
+- Finish Subphase 2.1 verification, commit, push, and open the single draft Phase 2 PR.
+- Owner review of all 13 candidate labels and visual-region judgments.
 
 ## Pending pull requests / links
 
-- [Draft PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4)
-  is the single Phase 1 PR. Subphase 1.4 principal commit `9d302b5` passed Python 3.11,
-  Python 3.14, Ingestion end-to-end, and Container CI. The PR is unmerged and is being
-  converted from draft to ready for owner review after this documentation-only record.
+- [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
+- Phase 2 draft PR: pending Subphase 2.1 commit and push.
 
 ## Last test commands and outcomes
 
@@ -185,7 +205,7 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Experiment registry / latest valid metrics
 
-- None. No retrieval, generation, or evaluation system exists yet.
+- None. No retrieval performance result exists yet.
 
 ## Known technical debt / risks
 
@@ -220,7 +240,8 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Next 3 tasks
 
-1. Review and merge Phase 1 PR #4 only after owner approval.
-2. Resolve the PyMuPDF/repository licensing strategy before distributing builds.
-3. Begin Phase 2 — evaluation seed and search baselines only after Phase 1 is merged and
-   explicitly authorized.
+1. Complete the Phase 2.1 owner-review checkpoint; correct candidate labels before
+   counting any question as human verified.
+2. On explicit `continue Phase 2`, implement the BM25 E0 baseline on development and
+   validation only.
+3. Resolve the PyMuPDF/repository licensing strategy before distributing builds.

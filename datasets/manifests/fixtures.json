@@ -22,6 +22,17 @@
       "sha256": "38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
       "redistribution_policy": "May be redistributed under CC0-1.0",
       "local_fixture_path": "datasets/fixtures/retrieval-table.pdf"
+    },
+    {
+      "document_id": "doc_queue_chart_fixture",
+      "document_version": "sha256:8ef8df167424ff466ac7d94a8cec9480ed7675fce14ca3123e791cb8084344b7",
+      "source_url": "repo://datasets/fixtures/queue-chart.pdf",
+      "title": "Queue Scheduling Note",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-04",
+      "sha256": "8ef8df167424ff466ac7d94a8cec9480ed7675fce14ca3123e791cb8084344b7",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/queue-chart.pdf"
     }
   ]
 }

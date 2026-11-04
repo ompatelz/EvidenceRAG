@@ -8,7 +8,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen.canvas import Canvas
 
-FIXTURE_NAMES = ("atlas-narrative.pdf", "retrieval-table.pdf")
+FIXTURE_NAMES = ("atlas-narrative.pdf", "retrieval-table.pdf", "queue-chart.pdf")
 
 
 def _canvas(path: Path, title: str) -> Canvas:
@@ -106,11 +106,51 @@ def generate_table(path: Path) -> None:
     canvas.save()
 
 
+def generate_chart(path: Path) -> None:
+    """Create a technical chart whose bar heights are absent from extracted text."""
+    canvas = _canvas(path, "Queue Scheduling Note")
+    width, height = letter
+    canvas.setFont("Helvetica-Bold", 20)
+    canvas.drawString(54, height - 68, "Queue Scheduling Note")
+    canvas.setFont("Helvetica", 11)
+    canvas.drawString(54, height - 104, "Experiment QS-17 compares three scheduler modes.")
+    canvas.drawString(
+        54, height - 122, "Each run processed 500 synthetic requests at concurrency 8."
+    )
+    canvas.drawString(54, height - 140, "The timeout budget was 250 ms per request.")
+    canvas.setFont("Helvetica-Bold", 11)
+    canvas.drawString(72, height - 190, "Median queue wait (ms)")
+    x0, y0 = 110, 310
+    canvas.line(x0, y0, x0, y0 + 240)
+    canvas.line(x0, y0, x0 + 400, y0)
+    for tick, value in enumerate((0, 20, 40, 60, 80)):
+        y = y0 + tick * 55
+        canvas.line(x0 - 4, y, x0, y)
+        canvas.setFont("Helvetica", 9)
+        canvas.drawRightString(x0 - 10, y - 3, str(value))
+    for x, label, units, color in (
+        (155, "FIFO", 66, "#426990"),
+        (275, "Priority", 37, "#6C8E5D"),
+        (395, "Fair", 49, "#B07A43"),
+    ):
+        canvas.setFillColor(colors.HexColor(color))
+        canvas.rect(x, y0, 60, units * 2.75, fill=1, stroke=0)
+        canvas.setFillColor(colors.black)
+        canvas.setFont("Helvetica", 10)
+        canvas.drawCentredString(x + 30, y0 - 18, label)
+    canvas.setFont("Helvetica-Oblique", 10)
+    canvas.drawString(72, y0 - 50, "Figure 1. Median queue wait by scheduler mode.")
+    canvas.setFont("Helvetica", 8)
+    canvas.drawRightString(width - 54, 36, "Repository-owned evaluation fixture | Page 1")
+    canvas.save()
+
+
 def generate_all(output_dir: Path) -> None:
     """Generate every fixture into an existing or new directory."""
     output_dir.mkdir(parents=True, exist_ok=True)
     generate_atlas(output_dir / FIXTURE_NAMES[0])
     generate_table(output_dir / FIXTURE_NAMES[1])
+    generate_chart(output_dir / FIXTURE_NAMES[2])
 
 
 def check_committed(output_dir: Path) -> bool:

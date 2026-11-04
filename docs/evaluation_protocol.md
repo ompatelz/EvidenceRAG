@@ -3,7 +3,8 @@
 ## Status
 
 This document defines future measurements. No retrieval or answer-quality result has been
-measured. The committed rows are contract fixtures, not benchmark evidence.
+measured. The Phase 2 seed contains candidate labels pending owner review; the older rows
+are schema fixtures, not benchmark evidence.
 
 ## Splits and leakage prevention
 
@@ -14,6 +15,8 @@ measured. The committed rows are contract fixtures, not benchmark evidence.
   stay together when detectable; random question-level splitting is insufficient.
 - Model-generated candidate questions require human verification of answerability, answer,
   evidence, ambiguity, and difficulty.
+- The queue chart is the frozen-test document family. Its questions are defined but may not
+  be run or inspected for model choice during E0/E1 development.
 
 Example leakage: paraphrasing a table question into development while keeping the original
 question in frozen test exposes the same table and answer during tuning. The apparent test
@@ -24,6 +27,13 @@ gain would not measure generalization to an unseen document family.
 `verified` means a human checked the source and label. `needs_review` and `uncertain` labels
 must not be treated as final ground truth. Answerable items require answers and evidence;
 unanswerable items deliberately contain neither.
+
+For visual-dependent chart questions, a source-page region may exist without a parsed
+`EvidenceUnit` ID. The current parser extracts captions, tick labels, and mode names but
+does not encode bar heights. Such judgments must be evaluated at page/region level and
+reported separately from evidence-unit retrieval metrics. A caption ID cannot stand in
+for visual support. Strict seed validation reparses the committed PDFs and checks every
+nonvisual evidence ID, page index, and bounding box against canonical units.
 
 ## Metrics to implement later
 
