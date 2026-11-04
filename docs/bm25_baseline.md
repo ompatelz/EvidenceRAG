@@ -42,7 +42,8 @@ The command is fixed to development and validation; it does not search frozen-te
 questions. It saves every raw ranking and query timing, source/dataset/manifest hashes,
 Git SHA at run, index identity, parser/tokenizer/config, environment, and split metrics.
 The Git SHA is the parent commit when generated before the code commit; the run also
-records that source changes were uncommitted and hashes its three core source files.
+records that source changes were uncommitted and hashes the runner, corpus loader,
+metric module, and BM25 implementation.
 
 Relevance is a binary **evidence-unit ID** judgment. Hit Rate@K is 1 if any gold unit
 is in the top K, else 0. Recall@K is retrieved gold units divided by all gold units.

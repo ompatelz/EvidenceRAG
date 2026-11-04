@@ -2,8 +2,37 @@
 
 Updated: 2026-11-04
 
-Current phase: Phase 2.2 BM25 baseline in progress. Phase 1 PR #4 is merged into
+Current phase: Phase 2.3 dense baseline in progress. Phase 1 PR #4 is merged into
 `main` at `37e485c`; its final head `dfa3cd4` is an ancestor of current `main`.
+
+## Phase 2.3 checkpoint
+
+- Selected FastEmbed `0.9.1` on CPU with the Apache-2.0 MiniLM ONNX model at
+  pinned Qdrant repository revision `d13954661f83248295ba75c1ed411eef3b7b936e`
+  (384 dimensions). Qdrant client `1.20.0` and NumPy `<2.5` are locked; no model
+  download occurs in ordinary CI. Official model, FastEmbed, and Qdrant contracts
+  were checked before implementation; details are in `docs/dense_baseline.md`.
+- E1 uses the same persisted canonical evidence units and development/validation
+  questions as E0. It validates dataset hash, document versions, query IDs, binary
+  evidence-unit relevance, and K=1/3/5 compatibility before running. The frozen
+  chart family was not searched.
+- The Qdrant index checks dimensions, cosine distance, model revision, and active
+  generation; version scope is applied inside Qdrant before results are returned.
+  Duplicate upsert, whole-generation rebuild, stale-version deletion, and outage
+  failure are tested with a deterministic download-free embedding double. A bounded
+  server integration job has been added to CI but has not run yet.
+- Real CPU E1 run saved to `reports/runs/e1-phase2-pilot.json`: 8 queries, 6 scored
+  answerable nonvisual candidate labels, 11 evidence units. E0 and E1 have the
+  **same relevant-unit ranks for all six**. In both splits, both methods have
+  Hit Rate@1=2/3, Hit Rate@3=3/3, Recall@3=3/3, MRR@3=5/6, and nDCG@3≈0.877.
+  These are provisional unreviewed-label diagnostics, not evidence of parity on
+  a representative benchmark. Raw rankings, manifests, and separate query embed/
+  vector-search timings support the comparison.
+- Local Docker Desktop was unavailable, so live Qdrant server behavior awaits CI.
+  Final pre-commit local gate passed: `uv sync --all-extras --dev`, `uv lock --check`,
+  Ruff lint/format, strict mypy, and 110 pytest tests in 8.35 seconds; the live
+  Qdrant test was skipped locally because no server URL was configured. Deterministic
+  fixture and strict seed validation also passed. New hosted CI is pending.
 
 ## Phase 2.2 checkpoint
 
@@ -121,15 +150,16 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Await hosted CI for Subphase 2.2 and owner review of the provisional labels.
-- Await explicit `continue Phase 2` before starting Subphase 2.3.
+- Complete Subphase 2.3 quality gate, commit, push, and hosted Qdrant integration.
+- Owner review of the 13 provisional labels remains outstanding.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
-  is open with Subphases 2.1 and 2.2. All four jobs passed on the 2.1 principal
-  commit; the 2.2 hosted run is queued and has no result yet.
+  is open with Subphases 2.1 and 2.2. Subphase 2.3 changes are local pending the
+  quality gate and push. All four jobs passed on the 2.1 principal commit;
+  the 2.2 hosted run was queued at the last check.
 
 ## Last test commands and outcomes
 
@@ -238,6 +268,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 - E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains the exact
   rankings and manifest. Its 6 scored labels are all pending human review;
   there is no validated performance result yet.
+- E1 provisional run: `reports/runs/e1-phase2-pilot.json` uses the same dataset,
+  corpus, query IDs, K values, and relevance unit. Both methods have identical
+  relevant ranks on the six scored candidates. No frozen-test run exists.
 
 ## Known technical debt / risks
 
@@ -273,6 +306,6 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 ## Next 3 tasks
 
 1. Review and correct the 13 candidate labels before counting any as human verified.
-2. On explicit `continue Phase 2`, implement dense E1 and compare against E0 using
-   the same evidence units, split, relevance definition, and K values.
+2. On explicit `continue Phase 2`, harden the shared benchmark runner and publish
+   the Phase 2 gate report from saved raw outputs.
 3. Resolve the PyMuPDF/repository licensing strategy before distributing builds.

@@ -1,9 +1,9 @@
 {
   "experiment": "E0",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "984c3bf3202f033c549c6a343ffae80a810b7644",
+  "git_sha_at_run": "2654460e1e6ff44b101634eb537e3ad5018d3c81",
   "source_tree_uncommitted_at_run": true,
-  "source_sha256": "877de775fe4fd8f7ae99924d91a933c7f9636534f5804ef99fc1ae81fbe7f0ae",
+  "source_sha256": "9b3ac1ad8e500ffb764cf164f9fa2ed802914976fd8a94e084033f1a84837873",
   "dataset_sha256": "1d6c188a33af58525249638c6465bfe9ec7cca6325b62ce736e3ffcf3bd0862a",
   "manifest_sha256": "c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757",
   "corpus_versions": [
@@ -48,8 +48,8 @@
     "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel"
   },
   "timing": {
-    "corpus_preparation_ms": 63.91910000820644,
-    "index_build_ms": 3.7320999981602654,
+    "corpus_preparation_ms": 70.0801000057254,
+    "index_build_ms": 0.6911999953445047,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -173,7 +173,7 @@
           }
         }
       ],
-      "search_ms": 0.15970000822562724,
+      "search_ms": 0.10560000373516232,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -288,7 +288,7 @@
           }
         }
       ],
-      "search_ms": 0.07169999298639596,
+      "search_ms": 0.040700004319660366,
       "metrics": {
         "1": {
           "hit_rate": 0.0,
@@ -373,7 +373,7 @@
           }
         }
       ],
-      "search_ms": 0.05329999839887023,
+      "search_ms": 0.03369999467395246,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -471,7 +471,7 @@
           }
         }
       ],
-      "search_ms": 0.05190000229049474,
+      "search_ms": 0.030399998649954796,
       "metrics": null
     },
     {
@@ -567,7 +567,7 @@
           }
         }
       ],
-      "search_ms": 0.0568000104976818,
+      "search_ms": 0.037300007534213364,
       "metrics": {
         "1": {
           "hit_rate": 0.0,
@@ -622,7 +622,7 @@
           }
         }
       ],
-      "search_ms": 0.03770001058001071,
+      "search_ms": 0.020399995264597237,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -677,7 +677,7 @@
           }
         }
       ],
-      "search_ms": 0.035599994589574635,
+      "search_ms": 0.02200000744778663,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -730,7 +730,7 @@
           }
         }
       ],
-      "search_ms": 0.03440000000409782,
+      "search_ms": 0.023800006601959467,
       "metrics": null
     }
   ]

@@ -2,21 +2,17 @@
 
 import argparse
 import hashlib
-import io
 import json
 import platform
 import subprocess
-import tempfile
 from dataclasses import asdict
 from pathlib import Path
 from time import perf_counter
 
-from evidence_rag.documents.models import EvidenceArtifact
-from evidence_rag.documents.parser import PyMuPDFParser
-from evidence_rag.documents.storage import LocalArtifactStore
+from evidence_rag.eval.corpus import load_canonical_units
 from evidence_rag.eval.metrics import mean_metrics, score_ranking
 from evidence_rag.eval.models import EvaluationSplit
-from evidence_rag.eval.validate import load_evaluation_jsonl, load_manifest, validate_dataset
+from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import INDEX_VERSION, TOKENIZER_VERSION, BM25Index
 
 
@@ -35,50 +31,13 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
     if not items:
         raise ValueError("no development or validation items")
     selected = {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
-    manifest = load_manifest(manifest_path)
-    entries = [
-        entry
-        for entry in manifest.documents
-        if (entry.document_id, entry.document_version) in selected
-    ]
-    if len(entries) != len(selected):
-        raise ValueError("selected document version missing from manifest")
-
     index = BM25Index()
-    parser = PyMuPDFParser()
     started = perf_counter()
-    with tempfile.TemporaryDirectory(prefix="evidencerag-e0-") as directory:
-        store = LocalArtifactStore(
-            Path(directory), max_upload_bytes=64 * 1024 * 1024, chunk_bytes=64 * 1024
-        )
-        for entry in entries:
-            source = Path(entry.local_fixture_path)
-            document, _ = store.ingest(
-                io.BytesIO(source.read_bytes()),
-                original_filename=source.name,
-                sanitized_filename=source.name,
-            )
-            if (document.document_id, document.document_version) != (
-                entry.document_id,
-                entry.document_version,
-            ):
-                raise ValueError("manifest identity does not match ingestion identity")
-            parsed = parser.parse(source, document)
-            store.write_evidence(
-                EvidenceArtifact(
-                    document_id=document.document_id,
-                    document_version=document.document_version,
-                    document_sha256=document.document_sha256,
-                    parser=parser.metadata,
-                    page_count=parsed.page_count,
-                    units=list(parsed.units),
-                    issues=list(parsed.issues),
-                )
-            )
-        preparation_ms = (perf_counter() - started) * 1000
-        index_started = perf_counter()
-        index.rebuild_from_store(store, sorted(selected))
-        index_ms = (perf_counter() - index_started) * 1000
+    units, parser_metadata = load_canonical_units(manifest_path, sorted(selected))
+    preparation_ms = (perf_counter() - started) * 1000
+    index_started = perf_counter()
+    index.rebuild(units)
+    index_ms = (perf_counter() - index_started) * 1000
 
     cutoffs = (1, 3, 5)
     rows: list[dict[str, object]] = []
@@ -124,6 +83,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
     for path in (
         Path(__file__),
         Path(__file__).with_name("metrics.py"),
+        Path(__file__).with_name("corpus.py"),
         Path(__file__).parents[1] / "retrieval/bm25.py",
     ):
         source_hash.update(path.read_bytes())
@@ -139,7 +99,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
         "index_id": index.index_id,
         "index_version": INDEX_VERSION,
         "tokenizer_version": TOKENIZER_VERSION,
-        "parser": parser.metadata.model_dump(),
+        "parser": parser_metadata,
         "config": {
             "k1": index.k1,
             "b": index.b,

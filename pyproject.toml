@@ -27,6 +27,13 @@ dependencies = [
     "uvicorn>=0.38,<1",
 ]
 
+[project.optional-dependencies]
+dense = [
+    "fastembed==0.9.1",
+    "numpy>=2.3,<2.5",
+    "qdrant-client>=1.15,<2",
+]
+
 [dependency-groups]
 dev = [
     "httpx2>=2,<3",
