@@ -6,7 +6,7 @@ import json
 import os
 import platform
 import subprocess
-from dataclasses import asdict
+from collections.abc import Sequence
 from importlib.metadata import version
 from pathlib import Path
 from time import perf_counter
@@ -16,9 +16,10 @@ from huggingface_hub import snapshot_download
 from qdrant_client import QdrantClient
 
 from evidence_rag.eval.corpus import load_canonical_units
-from evidence_rag.eval.metrics import RetrievalMetrics, mean_metrics, score_ranking
-from evidence_rag.eval.models import EvaluationSplit
+from evidence_rag.eval.models import EvaluationItem
+from evidence_rag.eval.runner import CUTOFFS, aggregate_rows, development_items, evaluate_queries
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
+from evidence_rag.retrieval.bm25 import RankedEvidence
 from evidence_rag.retrieval.dense import (
     INDEX_VERSION,
     MODEL_DIMENSION,
@@ -28,8 +29,6 @@ from evidence_rag.retrieval.dense import (
     DenseIndex,
     FastEmbedder,
 )
-
-CUTOFFS = (1, 3, 5)
 
 
 def run(
@@ -43,11 +42,7 @@ def run(
 ) -> dict[str, Any]:
     """Save raw E1 rankings; refuse E0/E1 evaluation contract drift."""
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
-    items = [
-        item
-        for item in load_evaluation_jsonl(seed_path)
-        if item.split in {EvaluationSplit.DEVELOPMENT, EvaluationSplit.VALIDATION}
-    ]
+    items = development_items(load_evaluation_jsonl(seed_path))
     selected = sorted(
         {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
     )
@@ -79,56 +74,47 @@ def run(
         started = perf_counter()
         index.rebuild(units)
         embedding_and_index_ms = (perf_counter() - started) * 1000
-        rows: list[dict[str, Any]] = []
-        for item in items:
-            scope = sorted((ref.document_id, ref.document_version) for ref in item.documents)
+
+        def search(
+            item: EvaluationItem, scope: list[tuple[str, str]]
+        ) -> tuple[Sequence[RankedEvidence], dict[str, float]]:
             result = index.search(item.question, k=max(CUTOFFS), versions=scope)
-            ranked_ids = [hit.evidence_id for hit in result.hits]
-            gold_ids = {ref.evidence_id for ref in item.gold_evidence if ref.evidence_id}
-            metrics = (
-                {str(k): asdict(score_ranking(ranked_ids, gold_ids, k=k)) for k in CUTOFFS}
-                if item.answerable and not item.requires_visual_evidence
-                else None
-            )
-            rows.append(
-                {
-                    "query_id": item.query_id,
-                    "split": item.split.value,
-                    "category": item.category,
-                    "review_status": item.review_status.value,
-                    "answerable": item.answerable,
-                    "requires_visual_evidence": item.requires_visual_evidence,
-                    "scope": scope,
-                    "gold_evidence_ids": sorted(gold_ids),
-                    "ranking": [asdict(hit) for hit in result.hits],
-                    "embedding_ms": result.embedding_ms,
-                    "vector_search_ms": result.vector_search_ms,
-                    "metrics": metrics,
-                }
-            )
-        aggregates: dict[str, dict[str, dict[str, float]]] = {}
-        for split in (EvaluationSplit.DEVELOPMENT, EvaluationSplit.VALIDATION):
-            split_rows = [row for row in rows if row["split"] == split.value and row["metrics"]]
-            aggregates[split.value] = {}
-            for k in CUTOFFS:
-                scores = [RetrievalMetrics(**row["metrics"][str(k)]) for row in split_rows]
-                aggregates[split.value][str(k)] = asdict(mean_metrics(scores)) if scores else {}
+            return result.hits, {
+                "embedding_ms": result.embedding_ms,
+                "vector_search_ms": result.vector_search_ms,
+            }
+
+        rows, failures = evaluate_queries(items, search)
+        splits = aggregate_rows(rows, "split")
+        aggregates = {split: data["metrics"] for split, data in splits.items()}
         source_hash = hashlib.sha256()
         for path in (
             Path(__file__),
             Path(__file__).with_name("corpus.py"),
             Path(__file__).with_name("metrics.py"),
+            Path(__file__).with_name("runner.py"),
             Path(__file__).parents[1] / "retrieval/dense.py",
         ):
             source_hash.update(path.read_bytes())
         payload: dict[str, Any] = {
             "experiment": "E1",
-            "status": "provisional_unreviewed_labels",
+            "status": "partial_failure" if failures else "provisional_unreviewed_labels",
             "git_sha_at_run": subprocess.check_output(
                 ["git", "rev-parse", "HEAD"], text=True
             ).strip(),
             "source_tree_uncommitted_at_run": bool(
-                subprocess.check_output(["git", "status", "--porcelain"], text=True).strip()
+                subprocess.check_output(
+                    [
+                        "git",
+                        "status",
+                        "--porcelain",
+                        "--",
+                        "src/evidence_rag",
+                        "pyproject.toml",
+                        "uv.lock",
+                    ],
+                    text=True,
+                ).strip()
             ),
             "source_sha256": source_hash.hexdigest(),
             "dataset_sha256": dataset_hash,
@@ -180,6 +166,9 @@ def run(
                 "assumption": "single cold process; no warmup; exploratory only",
             },
             "aggregates": aggregates,
+            "per_category": aggregate_rows(rows, "category"),
+            "failures": failures,
+            "seed": None,
             "queries": rows,
         }
         output_path.parent.mkdir(parents=True, exist_ok=True)

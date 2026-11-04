@@ -3,17 +3,18 @@
 import argparse
 import hashlib
 import json
+import os
 import platform
 import subprocess
-from dataclasses import asdict
+from collections.abc import Sequence
 from pathlib import Path
 from time import perf_counter
 
 from evidence_rag.eval.corpus import load_canonical_units
-from evidence_rag.eval.metrics import mean_metrics, score_ranking
-from evidence_rag.eval.models import EvaluationSplit
+from evidence_rag.eval.models import EvaluationItem
+from evidence_rag.eval.runner import CUTOFFS, aggregate_rows, development_items, evaluate_queries
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
-from evidence_rag.retrieval.bm25 import INDEX_VERSION, TOKENIZER_VERSION, BM25Index
+from evidence_rag.retrieval.bm25 import INDEX_VERSION, TOKENIZER_VERSION, BM25Index, RankedEvidence
 
 
 def _git(*args: str) -> str:
@@ -23,13 +24,7 @@ def _git(*args: str) -> str:
 def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, object]:
     """Reparse selected PDFs, persist evidence, then benchmark the same units."""
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
-    items = [
-        item
-        for item in load_evaluation_jsonl(seed_path)
-        if item.split in {EvaluationSplit.DEVELOPMENT, EvaluationSplit.VALIDATION}
-    ]
-    if not items:
-        raise ValueError("no development or validation items")
+    items = development_items(load_evaluation_jsonl(seed_path))
     selected = {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
     index = BM25Index()
     started = perf_counter()
@@ -39,59 +34,32 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
     index.rebuild(units)
     index_ms = (perf_counter() - index_started) * 1000
 
-    cutoffs = (1, 3, 5)
-    rows: list[dict[str, object]] = []
-    for item in items:
-        scope = sorted((ref.document_id, ref.document_version) for ref in item.documents)
-        result = index.search(item.question, k=max(cutoffs), versions=scope)
-        ranked_ids = [hit.evidence_id for hit in result.hits]
-        gold_ids = {ref.evidence_id for ref in item.gold_evidence if ref.evidence_id}
-        metrics = (
-            {str(k): asdict(score_ranking(ranked_ids, gold_ids, k=k)) for k in cutoffs}
-            if item.answerable and not item.requires_visual_evidence
-            else None
-        )
-        rows.append(
-            {
-                "query_id": item.query_id,
-                "split": item.split.value,
-                "category": item.category,
-                "review_status": item.review_status.value,
-                "answerable": item.answerable,
-                "requires_visual_evidence": item.requires_visual_evidence,
-                "scope": scope,
-                "gold_evidence_ids": sorted(gold_ids),
-                "ranking": [asdict(hit) for hit in result.hits],
-                "search_ms": result.search_ms,
-                "metrics": metrics,
-            }
-        )
-    aggregates: dict[str, dict[str, dict[str, float]]] = {}
-    for split in (EvaluationSplit.DEVELOPMENT, EvaluationSplit.VALIDATION):
-        split_rows = [row for row in rows if row["split"] == split.value and row["metrics"]]
-        aggregates[split.value] = {}
-        for k in cutoffs:
-            from evidence_rag.eval.metrics import RetrievalMetrics
+    def search(
+        item: EvaluationItem, scope: list[tuple[str, str]]
+    ) -> tuple[Sequence[RankedEvidence], dict[str, float]]:
+        result = index.search(item.question, k=max(CUTOFFS), versions=scope)
+        return result.hits, {"search_ms": result.search_ms}
 
-            scores = [
-                RetrievalMetrics(**row["metrics"][str(k)])  # type: ignore[index]
-                for row in split_rows
-            ]
-            aggregates[split.value][str(k)] = asdict(mean_metrics(scores)) if scores else {}
+    rows, failures = evaluate_queries(items, search)
+    splits = aggregate_rows(rows, "split")
+    aggregates = {split: data["metrics"] for split, data in splits.items()}
 
     source_hash = hashlib.sha256()
     for path in (
         Path(__file__),
         Path(__file__).with_name("metrics.py"),
         Path(__file__).with_name("corpus.py"),
+        Path(__file__).with_name("runner.py"),
         Path(__file__).parents[1] / "retrieval/bm25.py",
     ):
         source_hash.update(path.read_bytes())
     payload: dict[str, object] = {
         "experiment": "E0",
-        "status": "provisional_unreviewed_labels",
+        "status": "partial_failure" if failures else "provisional_unreviewed_labels",
         "git_sha_at_run": _git("rev-parse", "HEAD"),
-        "source_tree_uncommitted_at_run": bool(_git("status", "--porcelain")),
+        "source_tree_uncommitted_at_run": bool(
+            _git("status", "--porcelain", "--", "src/evidence_rag", "pyproject.toml", "uv.lock")
+        ),
         "source_sha256": source_hash.hexdigest(),
         "dataset_sha256": hashlib.sha256(seed_path.read_bytes()).hexdigest(),
         "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
@@ -103,7 +71,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
         "config": {
             "k1": index.k1,
             "b": index.b,
-            "cutoffs": cutoffs,
+            "cutoffs": CUTOFFS,
             "stopwords": "none",
             "scope": "exact document/version",
         },
@@ -118,6 +86,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
             "python": platform.python_version(),
             "platform": platform.platform(),
             "processor": platform.processor(),
+            "logical_cpus": os.cpu_count(),
         },
         "timing": {
             "corpus_preparation_ms": preparation_ms,
@@ -125,6 +94,9 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
             "assumption": "single cold process; no warmup; exploratory only",
         },
         "aggregates": aggregates,
+        "per_category": aggregate_rows(rows, "category"),
+        "failures": failures,
+        "seed": None,
         "queries": rows,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)

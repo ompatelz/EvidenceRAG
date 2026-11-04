@@ -1,9 +1,9 @@
 {
   "experiment": "E1",
   "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "2654460e1e6ff44b101634eb537e3ad5018d3c81",
+  "git_sha_at_run": "de415f214814e3828bc057836dcf243cb88338cc",
   "source_tree_uncommitted_at_run": true,
-  "source_sha256": "3a26c0ba380217c3f86f08d34a2a751fa338ff2c41ee4f5c659c840cb31e451a",
+  "source_sha256": "260b22c30e8862e6b3177bf97be33042794b46d7ed0beebf3c55d859a2861a53",
   "dataset_sha256": "1d6c188a33af58525249638c6465bfe9ec7cca6325b62ce736e3ffcf3bd0862a",
   "manifest_sha256": "c78fe687d261a1a1200a08aa94c778045c29f7ea0b4eaabf435f6a593403e757",
   "corpus_versions": [
@@ -65,8 +65,8 @@
     "peak_memory": "not measured"
   },
   "timing": {
-    "corpus_preparation_ms": 73.65089999802876,
-    "embedding_and_index_ms": 110.45680000097491,
+    "corpus_preparation_ms": 93.28349999850616,
+    "embedding_and_index_ms": 141.73609999124892,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -111,6 +111,120 @@
       }
     }
   },
+  "per_category": {
+    "diagram_interpretation": {
+      "queries": 1,
+      "scored": 1,
+      "failures": 0,
+      "metrics": {
+        "1": {
+          "hit_rate": 0.0,
+          "recall": 0.0,
+          "mrr": 0.0,
+          "ndcg": 0.0
+        },
+        "3": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714575
+        },
+        "5": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 0.5,
+          "ndcg": 0.6309297535714575
+        }
+      }
+    },
+    "narrative_fact": {
+      "queries": 2,
+      "scored": 2,
+      "failures": 0,
+      "metrics": {
+        "1": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0
+        },
+        "3": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0
+        },
+        "5": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0
+        }
+      }
+    },
+    "table_calculation": {
+      "queries": 1,
+      "scored": 1,
+      "failures": 0,
+      "metrics": {
+        "1": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0
+        },
+        "3": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0
+        },
+        "5": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 1.0,
+          "ndcg": 1.0
+        }
+      }
+    },
+    "table_lookup": {
+      "queries": 2,
+      "scored": 2,
+      "failures": 0,
+      "metrics": {
+        "1": {
+          "hit_rate": 0.5,
+          "recall": 0.5,
+          "mrr": 0.5,
+          "ndcg": 0.5
+        },
+        "3": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 0.75,
+          "ndcg": 0.8154648767857288
+        },
+        "5": {
+          "hit_rate": 1.0,
+          "recall": 1.0,
+          "mrr": 0.75,
+          "ndcg": 0.8154648767857288
+        }
+      }
+    },
+    "unanswerable": {
+      "queries": 2,
+      "scored": 0,
+      "failures": 0,
+      "metrics": {
+        "1": null,
+        "3": null,
+        "5": null
+      }
+    }
+  },
+  "failures": [],
+  "seed": null,
   "queries": [
     {
       "query_id": "p2_atlas_rate",
@@ -205,8 +319,6 @@
           }
         }
       ],
-      "embedding_ms": 5.3410999971674755,
-      "vector_search_ms": 1.1582000006455928,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -226,7 +338,10 @@
           "mrr": 1.0,
           "ndcg": 1.0
         }
-      }
+      },
+      "failure": null,
+      "embedding_ms": 6.428199994843453,
+      "vector_search_ms": 1.195499993627891
     },
     {
       "query_id": "p2_atlas_path",
@@ -321,8 +436,6 @@
           }
         }
       ],
-      "embedding_ms": 4.581300003337674,
-      "vector_search_ms": 0.793100000009872,
       "metrics": {
         "1": {
           "hit_rate": 0.0,
@@ -342,7 +455,10 @@
           "mrr": 0.5,
           "ndcg": 0.6309297535714575
         }
-      }
+      },
+      "failure": null,
+      "embedding_ms": 4.5449000026565045,
+      "vector_search_ms": 0.8667999936733395
     },
     {
       "query_id": "p2_atlas_filter",
@@ -437,8 +553,6 @@
           }
         }
       ],
-      "embedding_ms": 4.45670000044629,
-      "vector_search_ms": 0.8377000049222261,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -458,7 +572,10 @@
           "mrr": 1.0,
           "ndcg": 1.0
         }
-      }
+      },
+      "failure": null,
+      "embedding_ms": 4.52919999952428,
+      "vector_search_ms": 0.6673999887425452
     },
     {
       "query_id": "p2_atlas_weight",
@@ -551,9 +668,10 @@
           }
         }
       ],
-      "embedding_ms": 3.500299993902445,
-      "vector_search_ms": 0.6329000025289133,
-      "metrics": null
+      "metrics": null,
+      "failure": null,
+      "embedding_ms": 3.971999991335906,
+      "vector_search_ms": 0.5768999981228262
     },
     {
       "query_id": "p2_table_best",
@@ -648,8 +766,6 @@
           }
         }
       ],
-      "embedding_ms": 3.3614999993005767,
-      "vector_search_ms": 0.5615999980363995,
       "metrics": {
         "1": {
           "hit_rate": 0.0,
@@ -669,7 +785,10 @@
           "mrr": 0.5,
           "ndcg": 0.6309297535714575
         }
-      }
+      },
+      "failure": null,
+      "embedding_ms": 3.9315000030910596,
+      "vector_search_ms": 0.777699999161996
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -764,8 +883,6 @@
           }
         }
       ],
-      "embedding_ms": 2.831799996783957,
-      "vector_search_ms": 0.6475000118371099,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -785,7 +902,10 @@
           "mrr": 1.0,
           "ndcg": 1.0
         }
-      }
+      },
+      "failure": null,
+      "embedding_ms": 3.942399998777546,
+      "vector_search_ms": 0.6140000041341409
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -880,8 +1000,6 @@
           }
         }
       ],
-      "embedding_ms": 4.379399993922561,
-      "vector_search_ms": 0.6853999948361889,
       "metrics": {
         "1": {
           "hit_rate": 1.0,
@@ -901,7 +1019,10 @@
           "mrr": 1.0,
           "ndcg": 1.0
         }
-      }
+      },
+      "failure": null,
+      "embedding_ms": 4.272699996363372,
+      "vector_search_ms": 0.6144000071799383
     },
     {
       "query_id": "p2_table_latency",
@@ -994,9 +1115,10 @@
           }
         }
       ],
-      "embedding_ms": 4.287700008717366,
-      "vector_search_ms": 0.7833999989088625,
-      "metrics": null
+      "metrics": null,
+      "failure": null,
+      "embedding_ms": 4.271600002539344,
+      "vector_search_ms": 0.7572000031359494
     }
   ]
 }

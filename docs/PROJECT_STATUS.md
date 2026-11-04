@@ -2,10 +2,29 @@
 
 Updated: 2026-11-04
 
-Current phase: Phase 2.3 dense baseline implemented and verified on draft PR #5;
-Subphase 2.4 awaits the owner's next checkpoint instruction. Phase 1 PR #4 is
-merged into `main` at `37e485c`; its final head `dfa3cd4` is an ancestor of
-current `main`.
+Current phase: Phase 2.4 benchmark implementation and provisional report on
+draft PR #5. The Phase 2 gate is **not passed** because none of the 13 candidate
+labels has been human verified. Phase 1 PR #4 is merged into `main` at `37e485c`.
+
+## Phase 2.4 checkpoint
+
+- The shared runner accepts closed E0/E1 configs for development and validation
+  only. It rejects frozen-test selection, changed K values, incompatible E0/E1
+  manifests, malformed configs, duplicate/cross-document rankings, and raw metric
+  inconsistencies. Each retrieval error becomes a per-query failure without saving
+  exception text; failed queries leave the scored denominator.
+- `reports/baselines.md` is generated from the committed raw E0/E1 runs and
+  includes split/category metrics, provenance, failure taxonomy, timing assumptions,
+  and the explicit absence of E0 wins, E1 wins, or shared misses at K=5 in this
+  pilot. It is a provisional diagnostic, not a validated quality or latency claim.
+- Both benchmark configs and report generation passed locally with the cached real
+  MiniLM model. The frozen test was not searched or used for tuning. The full local
+  gate passed: locked sync, lock check, Ruff lint/format, strict mypy, 120 pytest
+  tests passed and one live-server test skipped locally. Deterministic fixture and
+  strict seed validation passed. Hosted CI awaits the Subphase 2.4 push.
+- The PR must remain draft. Human source-page review, more varied reviewed queries
+  (including equations and difficult negatives), and a fresh benchmark/report are
+  needed before the Phase 2 gate can be reconsidered.
 
 ## Phase 2.3 checkpoint
 
@@ -30,7 +49,7 @@ current `main`.
   These are provisional unreviewed-label diagnostics, not evidence of parity on
   a representative benchmark. Raw rankings, manifests, and separate query embed/
   vector-search timings support the comparison.
-- Local Docker Desktop was unavailable, so live Qdrant server behavior awaits CI.
+- Local Docker Desktop was unavailable; live Qdrant behavior passed hosted CI.
   Final pre-commit local gate passed: `uv sync --all-extras --dev`, `uv lock --check`,
   Ruff lint/format, strict mypy, and 110 pytest tests in 8.35 seconds; the live
   Qdrant test was skipped locally because no server URL was configured. Deterministic
@@ -156,15 +175,14 @@ Verification evidence is updated in this file only after commands have actually 
 ## In progress
 
 - Owner review of all 13 candidate labels and visual-region judgments.
-- Subphase 2.4 benchmark gate awaits the owner's next `continue Phase 2`.
+- Subphase 2.4 commit, push, and hosted CI verification.
 
 ## Pending pull requests / links
 
 - [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
 - [Draft PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
-  is open with Subphases 2.1, 2.2, and 2.3 pushed. The latest 2.3 implementation
-  commit passed all five hosted checks, including Qdrant integration. The PR remains
-  draft and unmerged.
+  is open with Subphases 2.1, 2.2, and 2.3 pushed and verified. Subphase 2.4 is
+  locally verified and pending push. The PR remains draft and unmerged.
 
 ## Last test commands and outcomes
 
@@ -312,6 +330,8 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 ## Next 3 tasks
 
 1. Review and correct the 13 candidate labels before counting any as human verified.
-2. On explicit `continue Phase 2`, harden the shared benchmark runner and publish
-   the Phase 2 gate report from saved raw outputs.
-3. Resolve the PyMuPDF/repository licensing strategy before distributing builds.
+2. Expand the legally usable corpus to cover equations, difficult negatives, and
+   external technical PDFs; build 30–50 human-verified questions without changing
+   the frozen test based on development results.
+3. Rerun E0/E1 and regenerate the gate report after review, then resolve the
+   PyMuPDF/repository licensing strategy before distributing builds.

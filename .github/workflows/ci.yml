@@ -68,10 +68,15 @@ jobs:
           --manifest datasets/manifests/fixtures.json
           --verify-evidence datasets/eval/phase2_seed.jsonl
 
-      - name: Run bounded E0 benchmark smoke
+      - name: Run bounded shared benchmark smoke
         run: >-
-          uv run python -m evidence_rag.eval.bm25_run
-          --output reports/generated/e0-ci-smoke.json
+          uv run python -m evidence_rag.eval.benchmark
+          --config configs/phase2-e0.json
+
+      - name: Validate saved baselines and regenerate report
+        run: >-
+          uv run python -m evidence_rag.eval.report
+          --output reports/generated/baselines-ci.md
 
   ingestion-e2e:
     name: Ingestion end-to-end
