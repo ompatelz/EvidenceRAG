@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Evidence inspector · EvidenceRAG</title>
+  <link rel="stylesheet" href="/inspector/app.css">
+  <script src="/inspector/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>EvidenceRAG</span></div>
+    <div class="topbar-note">Local document workspace <span class="status-dot" aria-hidden="true"></span></div>
+  </header>
+  <main id="workspace" class="workspace">
+    <section class="controls" aria-labelledby="workspace-title">
+      <div class="intro">
+        <h1 id="workspace-title">Inspect the source.</h1>
+        <p>Search a PDF, ask a question, and follow each citation to the page it came from.</p>
+      </div>
+      <form id="upload-form" class="task-form">
+        <h2>Document</h2>
+        <label for="pdf-file">PDF to inspect</label>
+        <input id="pdf-file" name="file" type="file" accept="application/pdf,.pdf" required>
+        <label class="check-row"><input id="permission" type="checkbox" required><span>I have permission to use this PDF.</span></label>
+        <button id="upload-button" type="submit">Ingest PDF</button>
+        <p id="document-state" class="state-message" role="status" aria-live="polite">Choose a PDF to begin.</p>
+      </form>
+      <form id="query-form" class="task-form" aria-describedby="query-help">
+        <h2>Question</h2>
+        <label for="question">Ask about this document</label>
+        <textarea id="question" rows="3" maxlength="500" placeholder="What does the source say?" required disabled></textarea>
+        <label for="mode">Search method</label>
+        <select id="mode" disabled>
+          <option value="bm25">BM25 · lexical</option>
+          <option value="dense">Dense · semantic</option>
+          <option value="hybrid">Hybrid · RRF</option>
+          <option value="reranked">Hybrid + reranker</option>
+        </select>
+        <p id="query-help" class="helper">Dense modes require locally cached models. No model is downloaded by this page.</p>
+        <button id="query-button" type="submit" disabled>Find evidence</button>
+        <button id="sample-button" type="button" class="text-button" hidden>Use an Atlas example question</button>
+      </form>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="results" aria-labelledby="results-title">
+      <div class="section-heading"><h2 id="results-title">Answer & evidence</h2><span id="mode-label">No search yet</span></div>
+      <div id="answer" class="answer empty-state" aria-live="polite">
+        <h3>Your answer will appear here</h3>
+        <p>Ingest a PDF, then ask a question. An unsupported question will get a clear insufficient-evidence result.</p>
+      </div>
+      <div class="section-heading trace-heading"><h2>Retrieval trace</h2><span id="result-count"></span></div>
+      <p class="scale-note">BM25, cosine, RRF, and reranker scores use different scales. Compare ranks within a method.</p>
+      <ol id="candidates" class="candidates"></ol>
+      <details class="timings"><summary>Stage timings</summary><dl id="timings-list"></dl></details>
+    </section>
+
+    <section class="source" aria-labelledby="source-title">
+      <div class="section-heading"><h2 id="source-title">Source page</h2><span id="page-label">No page selected</span></div>
+      <div id="viewer" class="viewer empty-state">
+        <div id="page-stage" class="page-stage" hidden>
+          <img id="page-image" alt="Rendered source PDF page">
+          <div id="region-overlay" class="region-overlay" hidden></div>
+        </div>
+        <p id="viewer-message">Open a citation or retrieval result to inspect its page.</p>
+      </div>
+      <p id="anchor-precision" class="anchor-note" aria-live="polite"></p>
+      <div id="source-text" class="source-text"></div>
+    </section>
+  </main>
+</body>
+</html>

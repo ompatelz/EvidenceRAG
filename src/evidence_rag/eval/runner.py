@@ -2,7 +2,7 @@
 
 import hashlib
 from collections import defaultdict
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -10,11 +10,13 @@ from typing import Any
 from evidence_rag.eval.metrics import RetrievalMetrics, mean_metrics, score_ranking
 from evidence_rag.eval.models import EvaluationItem, EvaluationSplit
 from evidence_rag.retrieval.bm25 import RankedEvidence
+from evidence_rag.retrieval.hybrid import HybridHit
+from evidence_rag.retrieval.rerank import RerankedHit
 
 CUTOFFS = (1, 3, 5)
 Search = Callable[
     [EvaluationItem, list[tuple[str, str]]],
-    tuple[Sequence[RankedEvidence], dict[str, float]],
+    tuple[Sequence[RankedEvidence | HybridHit | RerankedHit], Mapping[str, float | str]],
 ]
 
 
