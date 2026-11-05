@@ -1,13 +1,14 @@
 # EvidenceRAG
 
-EvidenceRAG is a planned evidence-first retrieval system for technical PDFs. Its goal is
+EvidenceRAG is an evidence-first retrieval system for technical PDFs. Its goal is
 to retrieve text, tables, figures, and equations with honest page or region provenance,
 then produce answers whose material claims can be inspected against their sources.
 
-This repository has completed the **Phase 1 acceptance gate**. It includes the verified Phase 0
-foundation and a bounded synchronous workflow from safe PDF intake through an atomic
-`ready` state, with provenance-preserving evidence and inspectable page anchors. It does
-**not** retrieve evidence, generate answers, or report benchmark results.
+The current draft milestone adds BM25, dense, hybrid, optional reranked retrieval,
+structured answers, citation checks, and a local evidence inspector. The evaluation
+labels remain unreviewed, so the saved metrics are provisional diagnostics. The API
+abstains unless a generator is configured; its opt-in fixture answer supports a local
+end-to-end demonstration, not general answer generation.
 
 ## Why this project exists
 
@@ -92,19 +93,25 @@ Implemented in Phase 1.4:
   duplicate evidence from surviving a successful attempt;
 - a bounded owned-fixture end-to-end CI job and failure-injection lifecycle tests.
 
-Planned for later reviewed phases:
+Implemented in Phase 2 and the current draft milestone:
 
-- BM25, dense, hybrid, and reranked retrieval baselines;
-- grounded answers, citation validation, and calibrated abstention;
-- a visual retrieval path only if experiments justify its compute and complexity.
+- persisted-evidence BM25 and Qdrant/FastEmbed dense baselines, with saved raw runs;
+- rank-based hybrid fusion and an opt-in pinned CPU cross-encoder reranker;
+- a bounded answer contract with exact document/version/page citation validation;
+- an inspector that opens the cited page, draws only real region boxes, and shows
+  retrieval ranks, method-specific scores, timing stages, and explicit abstention.
 
-## Non-goals for this phase
+See [the inspector guide](docs/inspector.md) for the local demo and limits. A visual
+retrieval path remains deferred.
 
-Phase 1 deliberately excludes OCR, scanned-page recovery, equation semantics, vector
-diagram understanding, multi-page table linking, a polished viewer, Qdrant, LLM SDKs,
-Redis, PostgreSQL, distributed jobs, model downloads, and deployment. It makes no claims
-about retrieval quality, answer accuracy, broad document understanding, latency, or
-production readiness.
+## Current limits
+
+OCR, scanned-page recovery, equation semantics, vector diagram understanding,
+multi-page table linking, general answer generation, LLM SDKs, Redis, PostgreSQL,
+distributed jobs, and deployment remain outside this milestone. The inspector shows
+caption text for figures but does not interpret image content. Candidate retrieval
+labels need human review before any quality claim. PyMuPDF and project licensing
+remain unresolved for distribution.
 
 ## Requirements
 
@@ -138,15 +145,18 @@ Verify the package and version manually:
 uv run python -c "import evidence_rag; print(evidence_rag.__version__)"
 ```
 
-Start the current API slice:
+Start the local API and inspector:
 
 ```bash
 uv run uvicorn evidence_rag.api:create_app --factory
 ```
 
-Then request `http://127.0.0.1:8000/health` or `/ready`. Readiness currently means only
-that required local configuration is valid; it does not imply a database, index, completed
-document parse, or model is available.
+Open `http://127.0.0.1:8000/inspector`. The default API can retrieve evidence but
+returns `generator_unavailable` for answers. To enable the one exact Atlas fixture
+answer for the demo, set `EVIDENCERAG_DEMO_ANSWERS=true` before starting the API.
+This is never enabled by default. Dense and reranked modes require cached model files;
+the page does not download them. `/ready` validates local configuration only; it does
+not imply a database, index, completed parse, or model is available.
 
 Upload an owned PDF fixture:
 

@@ -19,6 +19,8 @@ class AppSettings(BaseSettings):
     environment: str = "local"
     ready: bool = True
     artifact_root: Path = Path("artifacts")
+    model_cache_dir: Path = Path("tmp/hf-model-cache")
+    demo_answers: bool = False
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1, le=1024 * 1024 * 1024)
     upload_chunk_bytes: int = Field(default=64 * 1024, ge=4096, le=1024 * 1024)
     multipart_overhead_bytes: int = Field(default=1024 * 1024, ge=64 * 1024)

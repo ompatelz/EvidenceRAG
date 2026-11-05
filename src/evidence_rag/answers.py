@@ -11,7 +11,20 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 from evidence_rag.documents.models import IngestionManifest, IngestionState, PagePreviewManifest
 from evidence_rag.documents.storage import ArtifactNotFoundError, LocalArtifactStore
 from evidence_rag.evidence import AnchorPrecision, EvidenceUnit
-from evidence_rag.retrieval.bm25 import RankedEvidence
+
+
+class RankedCandidate(Protocol):
+    @property
+    def evidence_id(self) -> str: ...
+
+    @property
+    def document_id(self) -> str: ...
+
+    @property
+    def document_version(self) -> str: ...
+
+    @property
+    def page_index(self) -> int: ...
 
 
 class PackItem(BaseModel):
@@ -127,6 +140,46 @@ class ScriptedGenerator:
         return self.responses.get(question, {"status": "insufficient_evidence"})
 
 
+class FixtureDemoGenerator:
+    """One explicit owned-fixture answer; no general inference is implied."""
+
+    QUESTION = "What is the calibration sampling rate of the Atlas sensor?"
+    DOCUMENT_ID = "doc_cedee38ab4152274426cf3f8"
+    DOCUMENT_VERSION = "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+    EVIDENCE_ID = "ev_db963e2e6b7064f643c914bace118433"
+
+    def generate(self, question: str, pack: EvidencePack) -> Mapping[str, Any]:
+        if question != self.QUESTION:
+            return {"status": "insufficient_evidence"}
+        item = next((unit for unit in pack.items if unit.evidence_id == self.EVIDENCE_ID), None)
+        if item is None or (item.document_id, item.document_version, item.page_index) != (
+            self.DOCUMENT_ID,
+            self.DOCUMENT_VERSION,
+            0,
+        ):
+            return {"status": "insufficient_evidence"}
+        if "20 hertz" not in item.text.casefold():
+            return {"status": "insufficient_evidence"}
+        answer = "The Atlas sensor's calibration sampling rate is 20 hertz."
+        return {
+            "status": "answered",
+            "answer": answer,
+            "claims": [
+                {
+                    "text": answer,
+                    "citations": [
+                        {
+                            "evidence_id": item.evidence_id,
+                            "document_id": item.document_id,
+                            "document_version": item.document_version,
+                            "page_index": item.page_index,
+                        }
+                    ],
+                }
+            ],
+        }
+
+
 @dataclass(frozen=True)
 class AnswerConfig:
     max_candidates: int = 5
@@ -142,7 +195,7 @@ class AnswerConfig:
 
 
 def build_pack(
-    hits: Sequence[RankedEvidence],
+    hits: Sequence[RankedCandidate],
     units: Mapping[str, EvidenceUnit],
     *,
     document_id: str,
@@ -205,7 +258,7 @@ class GroundedAnswerService:
         manifest: IngestionManifest,
         pages: PagePreviewManifest,
         units: Sequence[EvidenceUnit],
-        hits: Sequence[RankedEvidence],
+        hits: Sequence[RankedCandidate],
     ) -> AnswerResult:
         if manifest.state is not IngestionState.READY:
             raise ValueError("document version is not ready")

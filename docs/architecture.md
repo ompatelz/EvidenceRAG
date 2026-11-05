@@ -2,7 +2,8 @@
 
 ## Current implemented architecture
 
-Phase 1 connects the verified Phase 0 boundary to one reliable ingestion lifecycle:
+The current draft connects reliable ingestion to version-scoped retrieval,
+bounded answers, and browser inspection:
 
 ```text
 FastAPI /health + /ready
@@ -42,15 +43,27 @@ multipart upload ---- raw body limit ---- spooled UploadFile
                complete evidence + complete page set
                                       |
                       atomic `ready` manifest
+                                      |
+              persisted evidence -> BM25 / dense Qdrant
+                                      |
+                       RRF -> optional CPU reranker
+                                      |
+                   bounded evidence pack -> answer checks
+                                      |
+               query API -> inspector -> anchor -> PNG page
 ```
 
-The package exposes operational HTTP endpoints and validates evidence objects. There are
-no database calls, document reads, model loads, retrieval operations, or external network
-calls behind package import or application creation.
+The package exposes operational HTTP endpoints and validates evidence objects.
+Package import and application creation do not read documents, load models,
+run retrieval, or call external networks. Query requests read ready local
+artifacts; optional dense modes load cached models and build an in-memory
+Qdrant index on request. The base container has no model weights.
 
-The offline evaluation boundary validates data before any retriever exists. Every item
-resolves to a manifest document version and every committed fixture hash is checked against
-its bytes. The evaluation plane does not call the API or claim measured performance yet.
+The offline evaluation boundary validates data and runs BM25, dense, hybrid,
+and optional reranked retrieval against the same persisted evidence contract.
+Every item resolves to a manifest document version. Saved validation metrics
+remain provisional because all candidate labels await human review. Frozen
+test rows have not been used for retrieval tuning.
 
 The container boundary installs the locked runtime package in a builder stage, copies only
 the resulting environment into a small Python runtime, and runs the API as an unprivileged
@@ -105,7 +118,24 @@ attempts for the supported single-process deployment. It is not a distributed lo
 does not make work durable across process failure; a later explicit retry restarts an
 interrupted attempt from the source.
 
-## Planned direction, not implemented
+## Current answer and inspection boundary
+
+`POST /api/v1/query` requires an exact ready document version and selects
+one of four retrieval modes. The answer service receives only the bounded
+retrieved pack and checks every returned citation against its evidence ID,
+document/version/page identity, and real preview asset. It withholds invalid
+answers and reports a reason. These checks cannot establish that the prose
+claim is semantically supported. No generator is configured by default. An
+opt-in Atlas fixture generator exists solely for deterministic local demos.
+
+The inspector calls the scoped anchor endpoint for each selected citation or
+retrieval result. Only a region anchor with stored display coordinates draws
+an overlay; a page anchor shows the page without a fabricated box. Retrieval
+scores are labelled by method. The UI treats caption and figure text as text,
+not as an interpretation of their images. See
+[ADR-0008](decisions/ADR-0008-local-evidence-inspector.md).
+
+## Planned direction
 
 EvidenceRAG is intended to remain a Python-first modular monolith during the local,
 single-user MVP. Future modules will live in one process and repository while retaining
@@ -113,10 +143,11 @@ clear boundaries for:
 
 1. document validation, hashing, parsing, and page artifacts;
 2. structured evidence with document-version and page/region provenance;
-3. lexical, dense, hybrid, and optional reranked retrieval;
-4. evidence-constrained answer generation;
-5. deterministic citation checks and measured support/abstention;
-6. offline evaluation using the same retrieval and answer functions as the API.
+3. lexical, dense, hybrid, and optional reranked retrieval (implemented);
+4. general evidence-constrained answer generation (not implemented);
+5. deterministic citation checks (implemented), with measured semantic
+   support and calibrated abstention still pending;
+6. offline retrieval evaluation (implemented with provisional labels).
 
 The central invariant is **evidence before answers**. A retrieved item must retain stable
 document/version identity and honest page or region precision. Later answers may cite
@@ -131,10 +162,9 @@ needed for the immutable intake manifest scan at this scale.
 The following are deferred until a reviewed phase or measured need justifies them:
 
 - OCR, scanned-page recovery, and semantic layout models such as Docling;
-- arbitrary-DPI preview negotiation and a polished visual inspector;
-- BM25, embedding models, Qdrant, and rerankers;
+- arbitrary-DPI preview negotiation;
 - external or local LLM integrations;
-- a frontend or evidence inspector;
+- visual retrieval and interpretation of diagram or chart image content;
 - Redis, PostgreSQL, durable distributed queues, and object storage (until measured
   latency, concurrency, or restart-durability requirements justify them);
 - heavy visual-document models;

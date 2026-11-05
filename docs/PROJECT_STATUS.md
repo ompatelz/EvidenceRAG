@@ -2,7 +2,7 @@
 
 Updated: 2026-11-05
 
-Current phase: Grounded QA checkpoint 3 on `codex/grounded-qa` (draft PR #6). Phase 2
+Current phase: Grounded QA checkpoint 4 on `codex/grounded-qa` (draft PR #6). Phase 2
 baselines merged into `main` at `73c49f8`. All 31 candidate labels remain
 `needs_review`, and the Phase 2 human-review gate is **not passed**. A merged
 implementation must not be described as a validated Phase 2 benchmark.
@@ -18,7 +18,22 @@ matching dense, with about 45 ms mean additional per-query CPU time. It is
 disabled by default. The bounded structured-answer flow and deterministic
 citation checks are implemented in `docs/answer_contract.md`. The default
 local API abstains without a configured generator; a saved-response test
-generator exercises cited answers. Evidence inspection awaits checkpoint 4.
+generator exercises cited answers. Checkpoint 4 adds the local inspector,
+exact-version citation navigation, page/region preview states, four query
+modes, labelled retrieval scores, and stage timings. The opt-in Atlas fixture
+answer is for the local demonstration only. The default API still abstains.
+See `docs/inspector.md` and ADR-0008. A manual real-model API flow exercised
+BM25, dense, hybrid, and reranked queries on the owned Atlas PDF and opened
+the answer citation's real PNG anchor. No additional private PDF was used.
+The browser's initial desktop workspace was inspected visually; the current
+page is a restrained three-panel layout. Checkpoint 4 local gate passed:
+locked offline sync and lock check, Ruff format/lint, strict mypy (49 source
+files), 151 pytest tests with one opt-in live Qdrant-server skip, deterministic
+fixture check, both evaluation-data validators, Compose config, image build,
+and a healthy non-root container serving all inspector assets. The first
+checkpoint 4 push passed all five hosted CI jobs (Python 3.11, Python 3.14,
+Ingestion end-to-end, Qdrant integration, and Container). Check PR #6 for
+the final head's CI and review state; those are live GitHub facts.
 
 ## Phase 2 review expansion
 
@@ -350,12 +365,19 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 - E1 provisional run: `reports/runs/e1-phase2-pilot.json` uses the same dataset,
   corpus, query IDs, K values, and relevance unit. The report records observed
   E0/E1 wins and one joint miss at K=5. No frozen-test run exists.
+- E2 hybrid validation: `reports/runs/e2-hybrid-validation.json`; selected
+  RRF 60, prefetch 10, final K=5. Its candidate-label nDCG@5 is 0.781,
+  compared with BM25 0.797 and dense 0.814 on the same validation rows.
+- E3 reranked validation: `reports/runs/e3-rerank-validation.json`; candidate-
+  label MRR@5 rises from hybrid 0.727 to 0.773, with 45.04 ms mean added
+  CPU rerank time. These are provisional, unreviewed-label diagnostics.
 
 ## Known technical debt / risks
 
-- No polished viewer, retrieval API, database, durable background jobs, or
-  answer-generation runtime exists. The evaluation rows are a tiny synthetic pilot,
-  not a representative human-reviewed benchmark.
+- The local inspector and retrieval API are implemented, but there is no
+  general answer-generation runtime, database, or durable background job
+  system. The evaluation rows are a small synthetic pilot, not a
+  representative human-reviewed benchmark.
 - Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
   multiple processes nor automatically resumes after a restart; interrupted work requires
   an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.
