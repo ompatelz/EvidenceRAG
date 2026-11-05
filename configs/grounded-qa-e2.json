@@ -1,0 +1,17 @@
+{
+  "retriever": "E2",
+  "manifest": "datasets/manifests/fixtures.json",
+  "seed": "datasets/eval/phase2_seed.jsonl",
+  "e0_baseline": "reports/runs/e0-phase2-pilot.json",
+  "e1_baseline": "reports/runs/e1-phase2-pilot.json",
+  "model_cache": "tmp/hf-model-cache",
+  "output": "reports/runs/e2-hybrid-validation.json",
+  "splits": ["development", "validation"],
+  "cutoffs": [1, 3, 5],
+  "hybrid_configs": [
+    {"rrf_k": 60, "prefetch": 10, "final_k": 5},
+    {"rrf_k": 10, "prefetch": 10, "final_k": 5},
+    {"rrf_k": 60, "prefetch": 20, "final_k": 5},
+    {"rrf_k": 10, "prefetch": 20, "final_k": 5}
+  ]
+}

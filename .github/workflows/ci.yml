@@ -53,6 +53,9 @@ jobs:
       - name: Test
         run: uv run pytest
 
+      - name: Verify deterministic hybrid fusion fixtures
+        run: uv run pytest tests/test_hybrid.py -q
+
       - name: Verify deterministic PDF fixtures
         run: uv run python scripts/generate_fixtures.py --check
 
