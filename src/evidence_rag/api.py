@@ -5,11 +5,12 @@ from typing import Annotated, Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, File, Request, Response, UploadFile, status
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from starlette.middleware.body_limit import RequestBodyLimitMiddleware
 from starlette.responses import FileResponse, JSONResponse
 
 from evidence_rag import __version__
+from evidence_rag.answers import AnswerGenerator, AnswerResult, GroundedAnswerService
 from evidence_rag.config import AppSettings
 from evidence_rag.documents import (
     DocumentIngestionResponse,
@@ -33,6 +34,8 @@ from evidence_rag.documents import (
     PyMuPDFPageRenderer,
     PyMuPDFParser,
 )
+from evidence_rag.documents.storage import ArtifactNotFoundError
+from evidence_rag.retrieval.bm25 import BM25Index, RankedEvidence
 
 CallNext = Callable[[Request], Awaitable[Response]]
 
@@ -54,13 +57,33 @@ class ReadinessResponse(BaseModel):
     status: Literal["ready", "not_ready"]
 
 
-def create_app(settings: AppSettings | None = None) -> FastAPI:
+class QueryRequest(BaseModel):
+    """One local single-user exact-version question."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    question: str = Field(min_length=1, max_length=500)
+    document_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+    document_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+class QueryResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    result: AnswerResult
+    retrieval: tuple[RankedEvidence, ...]
+    retrieval_ms: float
+
+
+def create_app(
+    settings: AppSettings | None = None, *, answer_generator: AnswerGenerator | None = None
+) -> FastAPI:
     """Construct an isolated application using explicit settings."""
     resolved_settings = settings or AppSettings()
     app = FastAPI(
         title=resolved_settings.app_name,
         version=__version__,
-        description="Evidence-first document retrieval API (foundation slice)",
+        description="Evidence-first document ingestion and local cited-query API",
     )
     app.state.settings = resolved_settings
     artifact_store = LocalArtifactStore(
@@ -82,10 +105,12 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
     parsing_service = DocumentParsingService(artifact_store, parser)
     rendering_service = DocumentRenderingService(artifact_store, renderer)
     ingestion_service = DocumentIngestionService(artifact_store, parser, renderer)
+    answer_service = GroundedAnswerService(artifact_store, answer_generator)
     app.state.intake_service = intake_service
     app.state.parsing_service = parsing_service
     app.state.rendering_service = rendering_service
     app.state.ingestion_service = ingestion_service
+    app.state.answer_service = answer_service
     app.add_middleware(
         RequestBodyLimitMiddleware,
         max_body_size=(
@@ -319,5 +344,38 @@ def create_app(settings: AppSettings | None = None) -> FastAPI:
     ) -> EvidenceAnchorResponse:
         """Resolve genuine evidence geometry against the rendered page preview."""
         return rendering_service.anchor(document_id, document_sha256, evidence_id)
+
+    @app.post("/api/v1/query", response_model=QueryResponse, tags=["query"])
+    def query_document(request: QueryRequest) -> QueryResponse:
+        """Search a ready exact version and return a checked answer or abstention."""
+        try:
+            manifest = artifact_store.get_manifest(request.document_id, request.document_sha256)
+        except ArtifactNotFoundError as exc:
+            raise IntakeError("document_not_found", "Document version not found.", 404) from exc
+        if manifest.state is not IngestionState.READY:
+            raise IntakeError("document_not_ready", "Document version is not ready.", 409)
+        try:
+            evidence = artifact_store.get_evidence(request.document_id, request.document_sha256)
+            pages = artifact_store.get_page_manifest(request.document_id, request.document_sha256)
+        except ArtifactNotFoundError as exc:
+            raise IntakeError(
+                "ready_artifacts_missing", "Ready document artifacts are missing.", 409
+            ) from exc
+        index = BM25Index()
+        index.rebuild(evidence.units)
+        ranking = index.search(
+            request.question,
+            k=5,
+            versions=[(manifest.document_id, manifest.document_version)],
+        )
+        try:
+            answer = answer_service.answer(
+                request.question, manifest, pages, evidence.units, ranking.hits
+            )
+        except ValueError as exc:
+            raise IntakeError(
+                "evidence_mismatch", "Document evidence is inconsistent.", 409
+            ) from exc
+        return QueryResponse(result=answer, retrieval=ranking.hits, retrieval_ms=ranking.search_ms)
 
     return app

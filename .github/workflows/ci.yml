@@ -59,6 +59,9 @@ jobs:
       - name: Verify optional reranker behavior without model weights
         run: uv run pytest tests/test_rerank.py -q
 
+      - name: Verify deterministic cited-answer flow
+        run: uv run pytest tests/test_answers.py -q
+
       - name: Verify deterministic PDF fixtures
         run: uv run python scripts/generate_fixtures.py --check
 
