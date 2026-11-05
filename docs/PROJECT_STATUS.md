@@ -2,7 +2,7 @@
 
 Updated: 2026-11-05
 
-Current phase: Grounded QA checkpoint 1 on `codex/grounded-qa`. Phase 2
+Current phase: Grounded QA checkpoint 2 on `codex/grounded-qa` (draft PR #6). Phase 2
 baselines merged into `main` at `73c49f8`. All 31 candidate labels remain
 `needs_review`, and the Phase 2 human-review gate is **not passed**. A merged
 implementation must not be described as a validated Phase 2 benchmark.
@@ -12,7 +12,10 @@ Hybrid RRF retrieval is implemented and measured in `docs/hybrid_retrieval.md`.
 The selected validation configuration is RRF constant 60, per-method prefetch
 10, final K=5. Validation nDCG@5 is 0.781 on provisional candidate labels,
 below both BM25 (0.797) and dense (0.814); no quality gain is claimed.
-Optional reranking, answer generation, and evidence inspection await later
+Optional CPU reranking is implemented and measured in `docs/reranking.md`.
+On provisional validation labels it raises hybrid MRR@5 from 0.727 to 0.773,
+matching dense, with about 45 ms mean additional per-query CPU time. It is
+disabled by default. Answer generation and evidence inspection await later
 checkpoints.
 
 ## Phase 2 review expansion
