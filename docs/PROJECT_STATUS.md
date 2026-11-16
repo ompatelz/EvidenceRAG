@@ -4,10 +4,29 @@ Updated: 2026-11-16
 
 Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
 at `c096832`. Visual evidence feasibility is a no-go on the current seed.
+The feasibility decision merged in [PR #7](https://github.com/ompatelz/EvidenceRAG/pull/7)
+at `efa55d4`. The runtime can display page and region previews and has no pixel interpreter.
 There are zero visual-dependent development or validation questions. The two
 visual-dependent labels belong to the frozen test. See
 [ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md) for the owned
 preflight fixture, model comparison, and conditions for reopening the milestone.
+
+## Claim support and abstention
+
+The deterministic checkpoint requires the answer text to match its cited
+claims. The query API checks exact-version citation scope, supplied evidence
+membership, and resolvable source locations. It reports table rule support
+separately from citation validity and withholds drafts with missing or invalid
+citations or failed table checks. See [the answer contract](answer_contract.md).
+Semantic assessment, validation-set policy selection, and controlled
+answer-quality evaluation remain pending. The frozen test was not used for
+implementation or tuning. The next checkpoint is semantic support assessment.
+
+Local verification passed lock and dependency checks, Ruff formatting and lint,
+strict mypy, 165 pytest tests and a separate live Qdrant test, deterministic
+fixture and evaluation-data validation, and the E0 and report smoke commands.
+Compose validation and the candidate image build passed. The container reached
+healthy and ran as UID 10001.
 
 ## Grounded QA milestone record
 

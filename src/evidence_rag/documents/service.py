@@ -34,7 +34,7 @@ from evidence_rag.documents.storage import (
     StorageError,
     UploadTooLargeError,
 )
-from evidence_rag.evidence import AnchorPrecision
+from evidence_rag.evidence import AnchorPrecision, EvidenceUnit
 
 
 class DocumentIntakeService:
@@ -340,63 +340,7 @@ class DocumentRenderingService:
         unit = next((item for item in evidence.units if item.evidence_id == evidence_id), None)
         if unit is None:
             raise IntakeError("evidence_not_found", "Evidence unit not found.", 404)
-        if unit.page_index >= len(pages.pages):
-            raise IntakeError(
-                "anchor_page_mismatch",
-                "Evidence page does not exist in the rendered preview set.",
-                409,
-            )
-        page = pages.pages[unit.page_index]
-        if unit.anchor_precision is AnchorPrecision.UNAVAILABLE:
-            return EvidenceAnchorResponse(
-                evidence_id=unit.evidence_id,
-                document_id=unit.document_id,
-                document_version=unit.document_version,
-                page_index=unit.page_index,
-                precision=unit.anchor_precision,
-            )
-        if unit.anchor_precision is AnchorPrecision.PAGE:
-            return EvidenceAnchorResponse(
-                evidence_id=unit.evidence_id,
-                document_id=unit.document_id,
-                document_version=unit.document_version,
-                page_index=unit.page_index,
-                precision=unit.anchor_precision,
-                preview_asset_id=page.asset_id,
-            )
-        if unit.bbox is None or unit.source_region is None:
-            raise IntakeError(
-                "anchor_geometry_missing",
-                "Region evidence is missing reproducible source geometry.",
-                409,
-            )
-        source = unit.source_region
-        if (
-            abs(source.page_width - page.source_width) > 0.01
-            or abs(source.page_height - page.source_height) > 0.01
-            or source.page_rotation != page.rotation
-        ):
-            raise IntakeError(
-                "anchor_geometry_mismatch",
-                "Evidence geometry does not match the rendered source page.",
-                409,
-            )
-        display_bbox = rotate_normalized_bbox(unit.bbox, page.rotation)
-        return EvidenceAnchorResponse(
-            evidence_id=unit.evidence_id,
-            document_id=unit.document_id,
-            document_version=unit.document_version,
-            page_index=unit.page_index,
-            precision=unit.anchor_precision,
-            preview_asset_id=page.asset_id,
-            source_bbox=unit.bbox,
-            display_bbox=display_bbox,
-            pixel_bbox=normalized_to_pixels(
-                display_bbox,
-                width=page.width_pixels,
-                height=page.height_pixels,
-            ),
-        )
+        return resolve_evidence_anchor(unit, pages)
 
     def _manifest(self, document_id: str, document_sha256: str) -> IngestionManifest:
         try:
@@ -413,3 +357,66 @@ class DocumentRenderingService:
             page_count=len(artifact.pages),
             pages=artifact.pages,
         )
+
+
+def resolve_evidence_anchor(
+    unit: EvidenceUnit, pages: PagePreviewManifest
+) -> EvidenceAnchorResponse:
+    """Resolve an evidence unit against its versioned page manifest."""
+    if unit.page_index >= len(pages.pages):
+        raise IntakeError(
+            "anchor_page_mismatch",
+            "Evidence page does not exist in the rendered preview set.",
+            409,
+        )
+    page = pages.pages[unit.page_index]
+    if unit.anchor_precision is AnchorPrecision.UNAVAILABLE:
+        return EvidenceAnchorResponse(
+            evidence_id=unit.evidence_id,
+            document_id=unit.document_id,
+            document_version=unit.document_version,
+            page_index=unit.page_index,
+            precision=unit.anchor_precision,
+        )
+    if unit.anchor_precision is AnchorPrecision.PAGE:
+        return EvidenceAnchorResponse(
+            evidence_id=unit.evidence_id,
+            document_id=unit.document_id,
+            document_version=unit.document_version,
+            page_index=unit.page_index,
+            precision=unit.anchor_precision,
+            preview_asset_id=page.asset_id,
+        )
+    if unit.bbox is None or unit.source_region is None:
+        raise IntakeError(
+            "anchor_geometry_missing",
+            "Region evidence is missing reproducible source geometry.",
+            409,
+        )
+    source = unit.source_region
+    if (
+        abs(source.page_width - page.source_width) > 0.01
+        or abs(source.page_height - page.source_height) > 0.01
+        or source.page_rotation != page.rotation
+    ):
+        raise IntakeError(
+            "anchor_geometry_mismatch",
+            "Evidence geometry does not match the rendered source page.",
+            409,
+        )
+    display_bbox = rotate_normalized_bbox(unit.bbox, page.rotation)
+    return EvidenceAnchorResponse(
+        evidence_id=unit.evidence_id,
+        document_id=unit.document_id,
+        document_version=unit.document_version,
+        page_index=unit.page_index,
+        precision=unit.anchor_precision,
+        preview_asset_id=page.asset_id,
+        source_bbox=unit.bbox,
+        display_bbox=display_bbox,
+        pixel_bbox=normalized_to_pixels(
+            display_bbox,
+            width=page.width_pixels,
+            height=page.height_pixels,
+        ),
+    )

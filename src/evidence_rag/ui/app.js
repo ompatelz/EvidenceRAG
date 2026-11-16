@@ -104,6 +104,9 @@
       for (const claim of result.claims) {
         const item = node("li");
         item.append(document.createTextNode(claim.text));
+        const support = claim.rule_support === "rule_supported"
+          ? "Table rule passed" : "Support not assessed by rules";
+        item.append(node("span", "helper", ` · ${support}`));
         for (const citation of claim.citations) {
           const button = node("button", "citation-button", `Source · p. ${citation.page_index + 1}`);
           button.type = "button";
@@ -113,7 +116,6 @@
         claims.append(item);
       }
       box.append(claims);
-      box.append(node("p", "helper", "Citation IDs and pages are checked. Claim support still needs human review."));
     } else {
       const reasons = {
         no_relevant_evidence: "No matching evidence was retrieved. Try a more specific question.",
@@ -122,7 +124,10 @@
         generation_timeout: "Answer generation timed out. The retrieved evidence remains available below.",
         generation_failed: "Answer generation failed. The retrieved evidence remains available below.",
         malformed_response: "The answer response was invalid, so it was withheld.",
+        missing_citation: "Part of the answer lacked a citation, so it was withheld.",
         invalid_citation: "An answer cited invalid source evidence, so it was withheld.",
+        contradicted_evidence: "Cited table values contradict an answer claim.",
+        insufficient_claim_support: "A table claim could not be checked from its cited evidence.",
         search_unavailable: "Search could not complete. Check the message beside the form and try again."
       };
       box.append(node("p", "", reasons[result.reason] || "No supported answer is available."));
