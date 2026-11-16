@@ -9,9 +9,9 @@ is absent. Check the question, answer, source support, evidence selection,
 category, ambiguity, and visual dependence. A checked box means you completed
 that review; write corrections beside the item or send them by query ID.
 
-The five frozen-test labels may be checked for source correctness, but their
-retrieval results must stay sealed until configuration lock. This packet contains
-no model rankings or scores.
+Use the [source review guide](SOURCE_REVIEW_GUIDE.md) for the decision and
+source region for each row. Source corrections for the five frozen-test
+labels are for recordkeeping. The historical frozen run stays closed.
 
 ## Development (13)
 

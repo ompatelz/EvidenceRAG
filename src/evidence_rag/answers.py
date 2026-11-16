@@ -1,10 +1,11 @@
 """Bounded evidence packs and deterministic citation validation for local QA."""
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass
-from threading import BoundedSemaphore
+from threading import BoundedSemaphore, Event
+from time import monotonic
 from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
@@ -111,11 +112,20 @@ Reason = (
         "generator_unavailable",
         "generation_failed",
         "generation_timeout",
+        "generation_cancelled",
+        "generation_rate_limited",
+        "generation_budget_exceeded",
         "malformed_response",
         "missing_citation",
         "invalid_citation",
     ]
 )
+
+
+class GenerationError(Exception):
+    def __init__(self, reason: Reason) -> None:
+        super().__init__(reason)
+        self.reason = reason
 
 
 class AnswerResult(BaseModel):
@@ -128,6 +138,7 @@ class AnswerResult(BaseModel):
     supplied_evidence_ids: tuple[str, ...]
     excluded_evidence_ids: tuple[str, ...]
     policy_version: str | None = None
+    answer_source: Literal["atlas_demo", "openai"] | None = None
 
 
 class AnswerGenerator(Protocol):
@@ -287,6 +298,9 @@ class GroundedAnswerService:
         pages: PagePreviewManifest,
         units: Sequence[EvidenceUnit],
         hits: Sequence[RankedCandidate],
+        *,
+        generate: Callable[[str, EvidencePack], Mapping[str, Any] | DraftAnswer] | None = None,
+        cancelled: Event | None = None,
     ) -> AnswerResult:
         if manifest.state is not IngestionState.READY:
             raise ValueError("document version is not ready")
@@ -309,27 +323,50 @@ class GroundedAnswerService:
 
         if not pack.items:
             return insufficient("no_relevant_evidence")
-        if self.generator is None:
+        if generate is None and self.generator is not None:
+            generate = self.generator.generate
+        if generate is None:
             return insufficient("generator_unavailable")
+        if cancelled is not None and cancelled.is_set():
+            return insufficient("generation_cancelled")
         if not self._generation_slot.acquire(blocking=False):
             return insufficient("generation_timeout")
         pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="answer-generator")
         try:
-            future = pool.submit(self.generator.generate, question, pack)
+            future = pool.submit(generate, question, pack)
         except RuntimeError:
             self._generation_slot.release()
             pool.shutdown(wait=False, cancel_futures=True)
             return insufficient("generation_failed")
         future.add_done_callback(lambda _: self._generation_slot.release())
         try:
-            raw = future.result(timeout=self.config.timeout_ms / 1000)
+            deadline = monotonic() + self.config.timeout_ms / 1000
+            while True:
+                if cancelled is not None and cancelled.is_set():
+                    future.cancel()
+                    return insufficient("generation_cancelled")
+                remaining = deadline - monotonic()
+                if remaining <= 0:
+                    raise FutureTimeout
+                try:
+                    raw = future.result(timeout=min(remaining, 0.05) if cancelled else remaining)
+                    break
+                except FutureTimeout:
+                    if cancelled is None:
+                        raise
         except FutureTimeout:
+            if cancelled is not None:
+                cancelled.set()
             future.cancel()
             return insufficient("generation_timeout")
+        except GenerationError as exc:
+            return insufficient(exc.reason)
         except Exception:
             return insufficient("generation_failed")
         finally:
             pool.shutdown(wait=False, cancel_futures=True)
+        if cancelled is not None and cancelled.is_set():
+            return insufficient("generation_cancelled")
         try:
             draft = DraftAnswer.model_validate(raw)
         except ValidationError:

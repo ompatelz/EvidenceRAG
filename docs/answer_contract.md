@@ -83,3 +83,9 @@ ID was in the pack, matches the exact document/version and page, and resolves
 to an existing page preview. The API returns the claim and source-page asset.
 The 20-hertz answer and source label remain provisional pending owner review;
 the validator alone does not establish semantic support.
+
+## Live provider
+
+The optional [OpenAI adapter](live_answers.md) consumes the same bounded
+exact-version pack and draft schema. It requires per-query external consent
+and applies the local support policy before returning a cited answer.

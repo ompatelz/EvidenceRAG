@@ -2,6 +2,11 @@
 
 Updated: 2026-11-16
 
+The optional OpenAI answer path uses per-query consent and independent local
+grounding checks. The owned-fixture smoke needs provider authorization and
+credentials. All 31 evaluation labels await owner review. See the
+[live integration](live_answers.md) and [source review guide](../datasets/eval/SOURCE_REVIEW_GUIDE.md).
+
 Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
 at `c096832`. Visual evidence feasibility is a no-go on the current seed.
 The feasibility decision merged in [PR #7](https://github.com/ompatelz/EvidenceRAG/pull/7)

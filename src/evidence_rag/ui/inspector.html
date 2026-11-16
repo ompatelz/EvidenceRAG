@@ -42,6 +42,10 @@
         <label><input id="requires-visual" type="checkbox"> Requires reading a chart, diagram, or image</label>
         <p id="query-help" class="helper">Dense modes require locally cached models. No model is downloaded by this page.</p>
         <button id="query-button" type="submit" disabled>Find evidence</button>
+        <label id="external-answer-option" hidden>
+          <input id="external-answer-consent" type="checkbox">
+          Send this question, selected PDF text excerpts, and citation identifiers to OpenAI for this answer.
+        </label>
         <button id="sample-button" type="button" class="text-button" hidden>Use an Atlas example question</button>
       </form>
       <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
