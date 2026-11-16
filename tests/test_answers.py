@@ -141,6 +141,7 @@ def test_query_reports_semantic_assessment_for_cited_context(
     assert claim["rule_support"] == "not_assessed"
     assert claim["semantic_support"]["support"] == "supported"
     assert claim["semantic_support"]["model"] == "test-verifier"
+    assert claim["citations"][0]["semantic_support"] == "supported"
     assert premises == [unit["text"]]
 
 

@@ -40,6 +40,9 @@ Citation output uses stored provenance and never substitutes another source.
 Contradicted or insufficient table claims withhold the displayed answer.
 The API retains the checked claims and their valid citations as diagnostics.
 Free-form claims can still be displayed with `not_assessed` at this stage.
+If the optional verifier runs, its estimate is in `semantic_support` on the
+claim. Individual cited sources can also carry model estimates. The
+[opt-in policy](abstention.md) uses those signals to withhold unsupported drafts.
 
 ## Worked table example
 

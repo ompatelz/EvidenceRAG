@@ -15,7 +15,7 @@ from evidence_rag.documents.storage import ArtifactNotFoundError, LocalArtifactS
 from evidence_rag.evidence import AnchorPrecision, EvidenceUnit, TableStructure
 from evidence_rag.grounding import RuleSupport, assess_table_claim
 from evidence_rag.policy import AnswerPolicy, PolicyReason
-from evidence_rag.semantic import SemanticResult, SemanticVerifier
+from evidence_rag.semantic import SemanticResult, SemanticVerifier, Support
 
 
 class RankedCandidate(Protocol):
@@ -90,6 +90,7 @@ class Citation(BaseModel):
     page_index: int
     precision: AnchorPrecision
     preview_asset_id: str | None
+    semantic_support: Support | None = None
 
 
 class ValidatedClaim(BaseModel):
@@ -188,6 +189,7 @@ class AnswerConfig:
     max_pack_chars: int = 4000
     max_item_chars: int = 1200
     timeout_ms: int = 2000
+    assess_support: bool = True
 
     def __post_init__(self) -> None:
         if not (1 <= self.max_candidates <= 20):
@@ -255,6 +257,8 @@ class GroundedAnswerService:
         self.store = store
         self.generator = generator
         self.config = config or AnswerConfig()
+        if not self.config.assess_support and (verifier is not None or policy is not None):
+            raise ValueError("support checks must be enabled for verification and policy")
         self.verifier = verifier
         self.policy = policy
 
@@ -370,7 +374,7 @@ class GroundedAnswerService:
                             preview_asset_id=anchor.preview_asset_id,
                         )
                     )
-                    if unit.table is not None:
+                    if self.config.assess_support and unit.table is not None:
                         if packed.text == unit.text:
                             tables.append(unit.table)
                         else:
@@ -381,7 +385,9 @@ class GroundedAnswerService:
                         citations=tuple(citations),
                         rule_support=assess_table_claim(
                             claim.text, tables, truncated_table=truncated_table
-                        ),
+                        )
+                        if self.config.assess_support
+                        else "not_assessed",
                     )
                 )
         except (ValueError, KeyError, ArtifactNotFoundError, IntakeError):
@@ -403,8 +409,17 @@ class GroundedAnswerService:
                 pending.append((index, (claim_result.text, inputs, truncated)))
             assessed = self.verifier.assess([item for _, item in pending])
             for (index, _), assessment in zip(pending, assessed, strict=True):
-                validated[index] = validated[index].model_copy(
-                    update={"semantic_support": assessment}
+                checked_claim = validated[index]
+                citation_ids = dict.fromkeys(ref.evidence_id for ref in checked_claim.citations)
+                labels = dict(zip(citation_ids, assessment.passage_support, strict=False))
+                validated[index] = checked_claim.model_copy(
+                    update={
+                        "semantic_support": assessment,
+                        "citations": tuple(
+                            ref.model_copy(update={"semantic_support": labels.get(ref.evidence_id)})
+                            for ref in checked_claim.citations
+                        ),
+                    }
                 )
         if self.policy is not None:
             decision = self.policy.decide(validated, evidence_available=bool(pack.items))

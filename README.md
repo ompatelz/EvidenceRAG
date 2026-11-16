@@ -104,6 +104,16 @@ Implemented in Phase 2 and the current draft milestone:
 See [the inspector guide](docs/inspector.md) for the local demo and limits. A visual
 retrieval path remains deferred.
 
+### Claim support and abstention
+
+The answer service checks citations, deterministic table claims, and optionally
+semantic support. The inspector shows whether a source resolves, whether a
+rule or model supports a claim, and why a draft was withheld. Enable the local
+verifier and answer policy using the [setup guide](docs/abstention.md).
+The [controlled comparison](reports/ablation_study.md) records reduced coverage
+and fewer false answers on 13 saved-draft cases. Those labels await human
+review. The default local app still requires a configured generator to answer.
+
 ## Current limits
 
 OCR, scanned-page recovery, equation semantics, vector diagram understanding,

@@ -22,14 +22,22 @@ The optional local text verifier adds per-claim entailment, contradiction,
 insufficiency, and failure metadata. See [the verifier procedure](semantic_support.md).
 Its development and validation audit still needs human review.
 The opt-in [abstention policy](abstention.md) has a provisional threshold
-selected on 16 synthetic validation cases. Controlled answer-quality evaluation
-remains pending. The frozen test was not used for implementation or tuning.
+selected on 16 synthetic validation cases. The [paired evaluation](../reports/ablation_study.md)
+ran BM25 and fixed drafts on 13 development and validation cases. The checked
+arm emitted six answers and zero false answers on four unanswerable cases.
+The baseline emitted 12 answers and three false answers on those four cases.
+Both runs use provisional labels. The [error analysis](../reports/error_analysis.md)
+documents the remaining human review, which the owner deferred. The frozen test
+was not scored or used for tuning.
 
 Local verification passed lock and dependency checks, Ruff formatting and lint,
-strict mypy, 165 pytest tests and a separate live Qdrant test, deterministic
-fixture and evaluation-data validation, and the E0 and report smoke commands.
+strict mypy, 187 pytest tests, a separate live Qdrant test, deterministic
+fixture and evaluation-data validation, the E0 and report smoke commands,
+and the paired comparison smoke and inspector behavior tests.
 Compose validation and the candidate image build passed. The container reached
 healthy and ran as UID 10001.
+
+[PR #8](https://github.com/ompatelz/EvidenceRAG/pull/8) is the feature draft.
 
 ## Grounded QA milestone record
 

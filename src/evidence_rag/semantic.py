@@ -28,6 +28,7 @@ class SemanticResult(BaseModel):
     preprocessing: str = PREPROCESSING
     margin: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     conflicting: bool = False
+    passage_support: tuple[Support, ...] = ()
 
 
 class NLIScorer(Protocol):
@@ -106,7 +107,7 @@ class LocalDeberta:
 class SemanticVerifier:
     """Bound a whole draft assessment and keep provider errors out of results and logs."""
 
-    def __init__(self, scorer: NLIScorer, *, timeout_ms: int = 2000) -> None:
+    def __init__(self, scorer: NLIScorer, *, timeout_ms: int = 5000) -> None:
         if timeout_ms <= 0:
             raise ValueError("verifier timeout must be positive")
         self.scorer = scorer
@@ -120,6 +121,7 @@ class SemanticVerifier:
         *,
         margin: float | None = None,
         conflicting: bool = False,
+        passage_support: tuple[Support, ...] = (),
     ) -> SemanticResult:
         return SemanticResult(
             support=support,
@@ -128,6 +130,7 @@ class SemanticVerifier:
             revision=self.scorer.revision,
             margin=margin,
             conflicting=conflicting,
+            passage_support=passage_support,
         )
 
     def _assess(self, claim: str, passages: tuple[str, ...], truncated: bool) -> SemanticResult:
@@ -135,6 +138,7 @@ class SemanticVerifier:
             return self._result("truncated")
         premises = (*passages, "\n\n".join(passages)) if len(passages) > 1 else passages
         margins: dict[Support, float] = {}
+        passage_labels: list[Support] = []
         try:
             for premise in premises:
                 values = self.scorer.logits(premise, claim)
@@ -147,6 +151,7 @@ class SemanticVerifier:
                 labels: tuple[Support, ...] = ("contradicted", "supported", "insufficient")
                 label = labels[order[0]] if margin > 0 else "insufficient"
                 margins[label] = max(margin, margins.get(label, 0))
+                passage_labels.append(label)
         except EvidenceTooLongError:
             return self._result("truncated")
         except VerifierUnavailableError:
@@ -160,6 +165,7 @@ class SemanticVerifier:
                     label,
                     margin=margins[label],
                     conflicting="contradicted" in margins and "supported" in margins,
+                    passage_support=tuple(passage_labels[: len(passages)]),
                 )
         return self._result("failed")
 

@@ -16,6 +16,9 @@ the leading logit minus its nearest competitor. It is a model score.
 The verifier declines truncated context and oversize pairs rather than dropping
 lines. Missing weights or dependencies, timeouts, and malformed outputs are
 recorded using fixed statuses. No passage, claim, or exception message is logged.
+The application allows five seconds for a complete draft assessment, including
+the first local model load. A still-running verifier keeps its worker slot
+after a timeout, so subsequent requests cannot queue additional work behind it.
 
 This model was trained on sentence pairs. Combining PDF passages can change
 how it handles qualifiers, arithmetic, mutually exclusive numbers, units,

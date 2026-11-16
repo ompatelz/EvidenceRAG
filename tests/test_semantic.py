@@ -45,6 +45,7 @@ def test_joint_evidence_and_conflict() -> None:
     )
     assert (joint.status, joint.support, joint.margin) == ("assessed", "supported", 1.0)
     assert (conflict.support, conflict.conflicting) == ("contradicted", True)
+    assert conflict.passage_support == ("supported", "contradicted")
     assert joint.model == "fixture" and joint.revision == "v1"
 
 
