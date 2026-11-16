@@ -13,9 +13,9 @@ preflight fixture, model comparison, and conditions for reopening the milestone.
 
 ## Release readiness
 
-[Draft PR #9](https://github.com/ompatelz/EvidenceRAG/pull/9) tracks the
-local reliability, artifact checks, documentation, and final evaluation
-work. The first checkpoint passed 194 Python tests with live Qdrant
+[PR #9](https://github.com/ompatelz/EvidenceRAG/pull/9) merged into
+`main` at `78f498c` with local reliability, artifact checks, documentation,
+and the final evaluation. The first checkpoint passed 194 Python tests with live Qdrant
 and the deterministic inspector, data, and fixture checks. The
 [local smoke](reliability.md) verifies citation navigation and abstention.
 A local read-only Compose candidate reached healthy as UID 10001. The
@@ -26,6 +26,12 @@ A single authorized frozen run completed on the declared commit. See
 [raw results and scope](../reports/final_evaluation.md). Human label review
 remains open. This project currently
 supports a local prototype demonstration and provisional diagnostics.
+
+The release smoke now exercises the Compose candidate over loopback HTTP.
+It checks inspector assets, readiness, fixture ingestion, the cited Atlas
+answer and resolved PNG region, and abstention for an unsupported question.
+CI retains the smoke result alongside the image's build record. The fixture
+answer is opt-in and the default Compose configuration leaves it disabled.
 
 ## Claim support and abstention
 

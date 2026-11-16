@@ -8,8 +8,11 @@ after checkout, third-party actions are pinned to full commits, and the
 workflow has read-only repository access.
 
 A candidate image is built and smoke-tested in the runner. CI saves the
-image ID, platform, OCI revision, hashes of the lock and build inputs, and
-the installed runtime package versions. The verification record expires after
+image ID, platform, OCI revision, hashes of the lock and build inputs,
+installed runtime package versions, and the HTTP demo result. The smoke
+uploads the owned fixture to the running Compose service, checks the source
+region and PNG, and verifies an unsupported question abstains.
+The verification record expires after
 14 days. It is a build record, with no signature or vulnerability scan attestation.
 The project and PyMuPDF licensing review remains open for redistribution.
 
@@ -30,14 +33,16 @@ cd EvidenceRAG
 uv sync --locked --all-extras --dev
 uv run --locked python scripts/quality_gate.py
 docker compose config --quiet
-VCS_REF=$(git rev-parse HEAD) IMAGE_TAG=candidate docker compose up --build --wait
-curl --fail http://127.0.0.1:8000/health
-curl --fail http://127.0.0.1:8000/ready
+export IMAGE_TAG=candidate
+VCS_REF=$(git rev-parse HEAD) EVIDENCERAG_DEMO_ANSWERS=true docker compose up --build --wait --wait-timeout 45
+uv run --locked python scripts/measure_local.py --base-url http://127.0.0.1:8000 --output reports/generated/container-demo.json
 docker compose down
 ```
 
-On PowerShell set `$env:VCS_REF = git rev-parse HEAD` and
-`$env:IMAGE_TAG = 'candidate'` before `docker compose up --build --wait`.
+On PowerShell set `$env:VCS_REF = git rev-parse HEAD`,
+`$env:IMAGE_TAG = 'candidate'` and `$env:EVIDENCERAG_DEMO_ANSWERS = 'true'`
+before `docker compose up --build --wait --wait-timeout 45`. Clear the demo
+setting after the rehearsal to restore the default behavior.
 Use [the inspector guide](inspector.md) to run the answer demonstration
 from the Python environment. The base image has no optional model weights.
 The pinned revisions for optional models are defined in

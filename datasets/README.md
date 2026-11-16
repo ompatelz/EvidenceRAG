@@ -47,9 +47,9 @@ multi-page tables, and representative production layouts.
 Visual chart items use a page region with no `EvidenceUnit` ID because the parser emits
 the chart's labels and caption but not its bar geometry as a semantic figure. They are
 page/region judgments, not evidence-unit judgments; text-only E0/E1 comparisons must
-report them separately. The frozen chart family must not be used for implementation,
-model choice, or threshold tuning. Its question rows exist only to define the sealed
-split; do not run retrieval on them before configuration lock.
+report them separately. Keep the frozen chart family out of implementation, model
+choice, and threshold tuning. The [frozen report](../reports/final_evaluation.md)
+records the one authorized run after configuration lock.
 
 Validate source hashes and all parsed evidence references with:
 

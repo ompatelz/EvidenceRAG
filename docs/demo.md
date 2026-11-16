@@ -21,8 +21,10 @@ The paired support comparison fixes both retrieval and drafts.
 [Raw paired output](../reports/runs/grounding-comparison-v1.json).
 
 Rehearse the upload, answer, unsupported query and citation routes using
-`uv run --locked python scripts/measure_local.py --output reports/generated/demo-smoke.json`
-after creating `reports/generated`. The [saved smoke](../reports/runs/local-release-smoke.json)
+`uv run --locked python scripts/measure_local.py --output reports/generated/demo-smoke.json`.
+Add `--base-url http://127.0.0.1:8000` to check a running fixture-enabled
+instance, including the [Compose candidate](release.md). The
+[saved smoke](../reports/runs/local-release-smoke.json)
 contains the inspected citation ID, query outputs, and preview size.
 
 ## Browser evidence
