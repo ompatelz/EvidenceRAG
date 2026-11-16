@@ -172,6 +172,28 @@ def test_owned_table_preview_and_anchor_are_inspectable(
     assert anchor.json()["display_bbox"] == table["bbox"]
 
 
+def test_preview_url_requires_revalidation_across_render_profiles(tmp_path: Path) -> None:
+    settings = AppSettings(artifact_root=tmp_path, render_dpi=72)
+    with TestClient(create_app(settings)) as client:
+        uploaded, _, _ = prepare(client, make_pdf(), "fixture.pdf")
+        base = version_url(uploaded)
+        preview_url = base + "/pages/0/preview"
+        original = client.get(preview_url)
+
+    with TestClient(create_app(settings.model_copy(update={"render_dpi": 144}))) as client:
+        rebuilt = client.post(base + "/reindex")
+        assert rebuilt.status_code == 200
+        assert rebuilt.json()["state"] == "ready"
+        updated = client.get(preview_url)
+
+    assert original.status_code == updated.status_code == 200
+    assert (
+        original.headers["cache-control"] == updated.headers["cache-control"] == "private, no-cache"
+    )
+    assert original.headers["etag"] != updated.headers["etag"]
+    assert original.content != updated.content
+
+
 def test_known_table_region_contains_rendered_grid_pixels(
     rendering_client: TestClient,
 ) -> None:

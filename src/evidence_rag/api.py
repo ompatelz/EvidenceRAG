@@ -400,7 +400,7 @@ def create_app(
             path,
             media_type=page.media_type,
             headers={
-                "Cache-Control": "private, max-age=31536000, immutable",
+                "Cache-Control": "private, no-cache",
                 "ETag": f'"sha256:{page.content_sha256}"',
                 "X-Content-Type-Options": "nosniff",
             },

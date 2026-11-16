@@ -79,7 +79,8 @@ shrinks the source region through rounding.
 - Scope all lookups by allowlisted document ID, exact document hash/version, and validated
   zero-based page index.
 - Return opaque `asset:page:...` identifiers and PNG bytes; never return an absolute path.
-- Hash each PNG and return an immutable private-cache ETag.
+- Hash each PNG and return a content ETag. Browsers must revalidate the
+  preview URL because reindexing can replace the PNG for the same source hash.
 - Resolve an evidence ID only inside the evidence artifact belonging to the requested exact
   document version, preventing cross-document and stale-version access.
 
