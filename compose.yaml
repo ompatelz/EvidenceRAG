@@ -5,6 +5,8 @@ services:
       args:
         VCS_REF: ${VCS_REF:-local}
     image: evidencerag:${IMAGE_TAG:-local}
+    environment:
+      EVIDENCERAG_DEMO_ANSWERS: ${EVIDENCERAG_DEMO_ANSWERS:-false}
     init: true
     read_only: true
     tmpfs:
