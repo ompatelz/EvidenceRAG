@@ -9,7 +9,7 @@ requires no browser build or external JavaScript service.
 
 ```powershell
 $env:EVIDENCERAG_DEMO_ANSWERS = 'true'
-uv run uvicorn evidence_rag.api:create_app --factory
+uv run --locked uvicorn evidence_rag.api:create_app --factory --no-access-log
 ```
 
 Open `http://127.0.0.1:8000/inspector`. Choose
@@ -75,5 +75,5 @@ citation resolved to the owned Atlas evidence unit on page 1 and its real PNG
 preview (46,423 bytes). An unrelated question produced
 `unsupported_question`. The default container
 contains no model files, so its inspector supports BM25 and explicit answer
-abstention. No general generator, claim-support verifier, OCR, or visual
+abstention. The optional verifier is documented in [Semantic support](semantic_support.md). No general generator, OCR, or visual
 interpretation is included.

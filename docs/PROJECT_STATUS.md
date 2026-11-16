@@ -11,6 +11,20 @@ visual-dependent labels belong to the frozen test. See
 [ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md) for the owned
 preflight fixture, model comparison, and conditions for reopening the milestone.
 
+## Release readiness
+
+[Draft PR #9](https://github.com/ompatelz/EvidenceRAG/pull/9) tracks the
+local reliability, artifact checks, documentation, and final evaluation
+work. The first checkpoint passed 194 Python tests with live Qdrant
+and the deterministic inspector, data, and fixture checks. The
+[local smoke](reliability.md) verifies citation navigation and abstention.
+A local read-only Compose candidate reached healthy as UID 10001. The
+previous image reopened the same artifact volume and reused the exact
+owned PDF version after rollback. [Release procedure](release.md).
+
+The frozen test and human label review remain open. This project currently
+supports a local prototype demonstration and provisional diagnostics.
+
 ## Claim support and abstention
 
 The deterministic checkpoint requires the answer text to match its cited
@@ -37,7 +51,7 @@ and the paired comparison smoke and inspector behavior tests.
 Compose validation and the candidate image build passed. The container reached
 healthy and ran as UID 10001.
 
-[PR #8](https://github.com/ompatelz/EvidenceRAG/pull/8) is the feature draft.
+[PR #8](https://github.com/ompatelz/EvidenceRAG/pull/8) merged into main at `02299ee`.
 
 ## Grounded QA milestone record
 
