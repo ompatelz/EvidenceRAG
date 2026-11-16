@@ -21,8 +21,9 @@ citations or failed table checks. See [the answer contract](answer_contract.md).
 The optional local text verifier adds per-claim entailment, contradiction,
 insufficiency, and failure metadata. See [the verifier procedure](semantic_support.md).
 Its development and validation audit still needs human review.
-Validation-set policy selection and controlled answer-quality evaluation
-remain pending. The frozen test was not used for implementation or tuning.
+The opt-in [abstention policy](abstention.md) has a provisional threshold
+selected on 16 synthetic validation cases. Controlled answer-quality evaluation
+remains pending. The frozen test was not used for implementation or tuning.
 
 Local verification passed lock and dependency checks, Ruff formatting and lint,
 strict mypy, 165 pytest tests and a separate live Qdrant test, deterministic

@@ -14,6 +14,7 @@ from evidence_rag.documents.service import resolve_evidence_anchor
 from evidence_rag.documents.storage import ArtifactNotFoundError, LocalArtifactStore
 from evidence_rag.evidence import AnchorPrecision, EvidenceUnit, TableStructure
 from evidence_rag.grounding import RuleSupport, assess_table_claim
+from evidence_rag.policy import AnswerPolicy, PolicyReason
 from evidence_rag.semantic import SemanticResult, SemanticVerifier
 
 
@@ -101,19 +102,18 @@ class ValidatedClaim(BaseModel):
     semantic_support: SemanticResult | None = None
 
 
-Reason = Literal[
-    "answered",
-    "no_relevant_evidence",
-    "unsupported_question",
-    "generator_unavailable",
-    "generation_failed",
-    "generation_timeout",
-    "malformed_response",
-    "missing_citation",
-    "invalid_citation",
-    "contradicted_evidence",
-    "insufficient_claim_support",
-]
+Reason = (
+    PolicyReason
+    | Literal[
+        "unsupported_question",
+        "generator_unavailable",
+        "generation_failed",
+        "generation_timeout",
+        "malformed_response",
+        "missing_citation",
+        "invalid_citation",
+    ]
+)
 
 
 class AnswerResult(BaseModel):
@@ -125,6 +125,7 @@ class AnswerResult(BaseModel):
     claims: tuple[ValidatedClaim, ...]
     supplied_evidence_ids: tuple[str, ...]
     excluded_evidence_ids: tuple[str, ...]
+    policy_version: str | None = None
 
 
 class AnswerGenerator(Protocol):
@@ -249,11 +250,29 @@ class GroundedAnswerService:
         generator: AnswerGenerator | None,
         config: AnswerConfig | None = None,
         verifier: SemanticVerifier | None = None,
+        policy: AnswerPolicy | None = None,
     ) -> None:
         self.store = store
         self.generator = generator
         self.config = config or AnswerConfig()
         self.verifier = verifier
+        self.policy = policy
+
+    def abstain(
+        self,
+        reason: Reason,
+        pack: EvidencePack | None = None,
+        claims: tuple[ValidatedClaim, ...] = (),
+    ) -> AnswerResult:
+        return AnswerResult(
+            status="insufficient_evidence",
+            reason=reason,
+            answer=None,
+            claims=claims,
+            supplied_evidence_ids=tuple(item.evidence_id for item in pack.items) if pack else (),
+            excluded_evidence_ids=pack.excluded_ids if pack else (),
+            policy_version=self.policy.version if self.policy else None,
+        )
 
     def answer(
         self,
@@ -280,14 +299,7 @@ class GroundedAnswerService:
         )
 
         def insufficient(reason: Reason, claims: tuple[ValidatedClaim, ...] = ()) -> AnswerResult:
-            return AnswerResult(
-                status="insufficient_evidence",
-                reason=reason,
-                answer=None,
-                claims=claims,
-                supplied_evidence_ids=tuple(item.evidence_id for item in pack.items),
-                excluded_evidence_ids=pack.excluded_ids,
-            )
+            return self.abstain(reason, pack, claims)
 
         if not pack.items:
             return insufficient("no_relevant_evidence")
@@ -309,7 +321,9 @@ class GroundedAnswerService:
         except ValidationError:
             return insufficient("malformed_response")
         if draft.status == "insufficient_evidence":
-            return insufficient("unsupported_question")
+            return insufficient(
+                "insufficient_claim_support" if self.policy else "unsupported_question"
+            )
         if any(not claim.citations for claim in draft.claims):
             return insufficient("missing_citation")
         answer = " ".join(claim.text for claim in draft.claims)
@@ -392,6 +406,10 @@ class GroundedAnswerService:
                 validated[index] = validated[index].model_copy(
                     update={"semantic_support": assessment}
                 )
+        if self.policy is not None:
+            decision = self.policy.decide(validated, evidence_available=bool(pack.items))
+            if decision != "answered":
+                return insufficient(decision, tuple(validated))
         return AnswerResult(
             status="answered",
             reason="answered",
@@ -399,4 +417,5 @@ class GroundedAnswerService:
             claims=tuple(validated),
             supplied_evidence_ids=tuple(sorted(supplied)),
             excluded_evidence_ids=pack.excluded_ids,
+            policy_version=self.policy.version if self.policy else None,
         )

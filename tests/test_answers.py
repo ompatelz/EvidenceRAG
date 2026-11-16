@@ -3,6 +3,7 @@
 import io
 import time
 from collections.abc import Iterator, Mapping, Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -13,11 +14,12 @@ from reportlab.pdfgen import canvas
 from evidence_rag.answers import AnswerConfig, GroundedAnswerService, ScriptedGenerator, build_pack
 from evidence_rag.api import create_app
 from evidence_rag.config import AppSettings
+from evidence_rag.documents.models import IngestionStage, IngestionState
 from evidence_rag.documents.storage import LocalArtifactStore
 from evidence_rag.evidence import TableStructure
 from evidence_rag.grounding import assess_table_claim
-from evidence_rag.retrieval.bm25 import BM25Index
-from evidence_rag.semantic import SemanticVerifier
+from evidence_rag.retrieval.bm25 import BM25Index, SearchResult
+from evidence_rag.semantic import MODEL_NAME, MODEL_REVISION, SemanticVerifier
 
 
 @pytest.fixture
@@ -140,6 +142,95 @@ def test_query_reports_semantic_assessment_for_cited_context(
     assert claim["semantic_support"]["support"] == "supported"
     assert claim["semantic_support"]["model"] == "test-verifier"
     assert premises == [unit["text"]]
+
+
+@pytest.mark.parametrize(
+    ("score", "logits", "reason"),
+    [(999.0, (0.0, 0.0, 5.0), "insufficient_claim_support"), (0.001, (0.0, 5.0, 0.0), "answered")],
+)
+def test_policy_does_not_mix_raw_retrieval_and_verifier_scores(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    score: float,
+    logits: tuple[float, ...],
+    reason: str,
+) -> None:
+    client, ingested, responses = setup
+    request = payload(ingested)
+    hit = client.post(question_url(), json=request).json()["retrieval"][0]
+    responses[request["question"]] = scripted_answer(citation(ingested, hit))
+    search = BM25Index.search
+
+    def search_with_score(
+        index: BM25Index, question: str, *, k: int, versions: Sequence[tuple[str, str]]
+    ) -> SearchResult:
+        found = search(index, question, k=k, versions=versions)
+        return replace(found, hits=tuple(replace(hit, score=score) for hit in found.hits))
+
+    class Scorer:
+        model = MODEL_NAME
+        revision = MODEL_REVISION
+
+        def logits(self, premise: str, claim: str) -> Sequence[float]:
+            return logits
+
+    settings = AppSettings(
+        environment="test", artifact_root=tmp_path / "artifacts", abstention_policy="grounding-v1"
+    )
+    monkeypatch.setattr(BM25Index, "search", search_with_score)
+    with TestClient(
+        create_app(
+            settings,
+            answer_generator=ScriptedGenerator(responses),
+            semantic_verifier=SemanticVerifier(Scorer()),
+        )
+    ) as verified:
+        response = verified.post(question_url(), json=request).json()
+    assert response["retrieval"][0]["score"] == score
+    assert response["result"]["reason"] == reason
+    assert response["result"]["policy_version"] == "grounding-v1"
+
+
+def test_api_availability_and_modality_outcomes(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, ingested, _ = setup
+    settings = AppSettings(
+        environment="test", artifact_root=tmp_path / "artifacts", abstention_policy="grounding-v1"
+    )
+    request = payload(ingested)
+    app = create_app(settings)
+    with TestClient(app) as client:
+        visual = client.post(question_url(), json={**request, "requires_visual_evidence": True})
+        assert visual.json()["result"]["reason"] == "unsupported_modality"
+        empty = client.post(question_url(), json=payload(ingested, "zzznomatchzzz"))
+        assert empty.json()["result"]["reason"] == "no_relevant_evidence"
+
+        def broken_index(index: BM25Index, units: object) -> None:
+            raise RuntimeError("private index details")
+
+        with monkeypatch.context() as scoped:
+            scoped.setattr(BM25Index, "rebuild", broken_index)
+            broken = client.post(question_url(), json=request)
+        assert broken.json()["result"]["reason"] == "indexing_failed"
+        assert "private index" not in broken.text
+
+        store: LocalArtifactStore = app.state.ingestion_service.store
+        manifest = store.get_manifest(ingested["document_id"], ingested["document_sha256"])
+        failed = manifest.model_copy(
+            update={
+                "state": IngestionState.FAILED,
+                "failure_reason": "parse_failed",
+                "failure_stage": IngestionStage.PARSING,
+                "ready_at": None,
+            }
+        )
+        store.update_manifest(failed)
+        parse = client.post(question_url(), json=request)
+        assert parse.json()["result"]["reason"] == "parsing_failed"
 
 
 def test_default_api_abstains_without_generator(

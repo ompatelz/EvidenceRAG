@@ -19,6 +19,7 @@ from evidence_rag.answers import (
     FixtureDemoGenerator,
     GroundedAnswerService,
     RankedCandidate,
+    Reason,
 )
 from evidence_rag.config import AppSettings
 from evidence_rag.documents import (
@@ -43,7 +44,9 @@ from evidence_rag.documents import (
     PyMuPDFPageRenderer,
     PyMuPDFParser,
 )
-from evidence_rag.documents.storage import ArtifactNotFoundError
+from evidence_rag.documents.models import IngestionStage
+from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
+from evidence_rag.policy import AnswerPolicy
 from evidence_rag.retrieval.bm25 import BM25Index
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
 
@@ -76,6 +79,7 @@ class QueryRequest(BaseModel):
     document_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
     document_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     mode: Literal["bm25", "dense", "hybrid", "reranked"] = "bm25"
+    requires_visual_evidence: bool = False
 
 
 class QueryResponse(BaseModel):
@@ -126,8 +130,9 @@ def create_app(
     )
     if semantic_verifier is None and resolved_settings.semantic_verifier:
         semantic_verifier = SemanticVerifier(LocalDeberta(resolved_settings.model_cache_dir))
+    policy = AnswerPolicy() if resolved_settings.abstention_policy == "grounding-v1" else None
     answer_service = GroundedAnswerService(
-        artifact_store, chosen_generator, verifier=semantic_verifier
+        artifact_store, chosen_generator, verifier=semantic_verifier, policy=policy
     )
     app.state.intake_service = intake_service
     app.state.parsing_service = parsing_service
@@ -389,20 +394,42 @@ def create_app(
     @app.post("/api/v1/query", response_model=QueryResponse, tags=["query"])
     def query_document(request: QueryRequest) -> QueryResponse:
         """Search a ready exact version and return a checked answer or abstention."""
+        total_started = perf_counter()
+
+        def without_ranking(reason: Reason) -> QueryResponse:
+            return QueryResponse(
+                result=answer_service.abstain(reason),
+                retrieval=(),
+                mode=request.mode,
+                retrieval_status=reason,
+                timings_ms={"total": (perf_counter() - total_started) * 1000},
+            )
+
         try:
             manifest = artifact_store.get_manifest(request.document_id, request.document_sha256)
         except ArtifactNotFoundError as exc:
             raise IntakeError("document_not_found", "Document version not found.", 404) from exc
         if manifest.state is not IngestionState.READY:
+            if policy and manifest.state in (IngestionState.FAILED, IngestionState.PARTIAL):
+                reason: Reason = (
+                    "indexing_failed"
+                    if manifest.failure_stage
+                    in (IngestionStage.PERSISTENCE, IngestionStage.RENDERING)
+                    else "parsing_failed"
+                )
+                return without_ranking(reason)
             raise IntakeError("document_not_ready", "Document version is not ready.", 409)
+        if request.requires_visual_evidence:
+            return without_ranking("unsupported_modality")
         try:
             evidence = artifact_store.get_evidence(request.document_id, request.document_sha256)
             pages = artifact_store.get_page_manifest(request.document_id, request.document_sha256)
-        except ArtifactNotFoundError as exc:
+        except (ArtifactNotFoundError, StorageError) as exc:
+            if policy:
+                return without_ranking("indexing_failed")
             raise IntakeError(
                 "ready_artifacts_missing", "Ready document artifacts are missing.", 409
             ) from exc
-        total_started = perf_counter()
         scope = [(manifest.document_id, manifest.document_version)]
         timings: dict[str, float] = {}
         retrieval_status = "ok"
@@ -410,9 +437,14 @@ def create_app(
         if request.mode == "bm25":
             started = perf_counter()
             index = BM25Index()
-            index.rebuild(evidence.units)
-            timings["index_build"] = (perf_counter() - started) * 1000
-            ranking = index.search(request.question, k=5, versions=scope)
+            try:
+                index.rebuild(evidence.units)
+                timings["index_build"] = (perf_counter() - started) * 1000
+                ranking = index.search(request.question, k=5, versions=scope)
+            except Exception:
+                if policy:
+                    return without_ranking("indexing_failed")
+                raise
             hits = ranking.hits
             timings["bm25"] = ranking.search_ms
         else:
@@ -455,7 +487,12 @@ def create_app(
             try:
                 started = perf_counter()
                 dense = DenseIndex(client, embedder)
-                dense.rebuild(evidence.units)
+                try:
+                    dense.rebuild(evidence.units)
+                except Exception:
+                    if policy:
+                        return without_ranking("indexing_failed")
+                    raise
                 timings["index_build"] = (perf_counter() - started) * 1000
                 if request.mode == "dense":
                     result = dense.search(request.question, k=5, versions=scope)
@@ -535,6 +572,8 @@ def create_app(
             answer = answer_service.answer(request.question, manifest, pages, evidence.units, hits)
             timings["answer"] = (perf_counter() - started) * 1000
         except ValueError as exc:
+            if policy:
+                return without_ranking("indexing_failed")
             raise IntakeError(
                 "evidence_mismatch", "Document evidence is inconsistent.", 409
             ) from exc

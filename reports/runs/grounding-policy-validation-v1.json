@@ -1,0 +1,1358 @@
+{
+  "split": "validation",
+  "signal_source": "scripted synthetic cases, no model inference",
+  "input_sha256": "5a4c62115c21aacfb98500aa06cadd86e039a11d60f6a09436bf62dbb6a6f931",
+  "policy_version": "grounding-v1",
+  "selection_rule": "minimize wrong answers, then maximize correct answers, then lower margin",
+  "selected_margin": 1.0,
+  "inputs": [
+    {
+      "id": "strong",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": true,
+      "draft_correct": true,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 3.0,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "exact_boundary",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": true,
+      "draft_correct": true,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 1.0,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "weak_correct",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": true,
+      "draft_correct": true,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 0.6,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "strong_enough",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": true,
+      "draft_correct": true,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 1.7,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "table",
+      "split": "validation",
+      "category": "table",
+      "answerable": true,
+      "draft_correct": true,
+      "signal": {
+        "rule_support": "rule_supported",
+        "semantic_support": null
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "spurious_entailment",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": false,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 0.8,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "wrong_table",
+      "split": "validation",
+      "category": "table",
+      "answerable": true,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "contradicted",
+        "semantic_support": null
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "missing_table",
+      "split": "validation",
+      "category": "table",
+      "answerable": false,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "insufficient",
+        "semantic_support": null
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "neutral",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": false,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "insufficient",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 3.5,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "conflicting",
+      "split": "validation",
+      "category": "narrative",
+      "answerable": false,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "contradicted",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 3.0,
+          "conflicting": true
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "no_hits",
+      "split": "validation",
+      "category": "retrieval",
+      "answerable": false,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": null
+      },
+      "evidence_available": false,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "parser",
+      "split": "validation",
+      "category": "availability",
+      "answerable": true,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": null
+      },
+      "evidence_available": false,
+      "requires_visual": false,
+      "failure": "parsing_failed"
+    },
+    {
+      "id": "index",
+      "split": "validation",
+      "category": "availability",
+      "answerable": true,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": null
+      },
+      "evidence_available": false,
+      "requires_visual": false,
+      "failure": "indexing_failed"
+    },
+    {
+      "id": "visual",
+      "split": "validation",
+      "category": "visual",
+      "answerable": true,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": null
+      },
+      "evidence_available": true,
+      "requires_visual": true,
+      "failure": null
+    },
+    {
+      "id": "timeout",
+      "split": "validation",
+      "category": "availability",
+      "answerable": true,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "insufficient",
+          "status": "timeout",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": null,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    },
+    {
+      "id": "truncated",
+      "split": "validation",
+      "category": "availability",
+      "answerable": true,
+      "draft_correct": false,
+      "signal": {
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "insufficient",
+          "status": "truncated",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": null,
+          "conflicting": false
+        }
+      },
+      "evidence_available": true,
+      "requires_visual": false,
+      "failure": null
+    }
+  ],
+  "settings": [
+    {
+      "setting": 0.0,
+      "metrics": {
+        "queries": 16,
+        "answered": 6,
+        "correct_answers": 5,
+        "answerable": 11,
+        "coverage": 0.375,
+        "false_answers_on_unanswerable": 1,
+        "false_answer_rate_on_unanswerable": 0.2,
+        "false_abstentions": 6,
+        "false_abstention_rate": 0.5454545454545454,
+        "selective_accuracy": 0.8333333333333334
+      },
+      "categories": {
+        "narrative": {
+          "queries": 7,
+          "answered": 5,
+          "correct_answers": 4,
+          "answerable": 4,
+          "coverage": 0.7142857142857143,
+          "false_answers_on_unanswerable": 1,
+          "false_answer_rate_on_unanswerable": 0.3333333333333333,
+          "false_abstentions": 0,
+          "false_abstention_rate": 0.0,
+          "selective_accuracy": 0.8
+        },
+        "table": {
+          "queries": 3,
+          "answered": 1,
+          "correct_answers": 1,
+          "answerable": 2,
+          "coverage": 0.3333333333333333,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 1,
+          "false_abstention_rate": 0.5,
+          "selective_accuracy": 1.0
+        },
+        "retrieval": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 0,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": null,
+          "selective_accuracy": null
+        },
+        "availability": {
+          "queries": 4,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 4,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "visual": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 1,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 1,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        }
+      },
+      "decisions": [
+        {
+          "id": "strong",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "exact_boundary",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "weak_correct",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "strong_enough",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "table",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "spurious_entailment",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "wrong_table",
+          "decision": "contradicted_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "missing_table",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "neutral",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "conflicting",
+          "decision": "conflicting_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "no_hits",
+          "decision": "no_relevant_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "parser",
+          "decision": "parsing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "index",
+          "decision": "indexing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "visual",
+          "decision": "unsupported_modality",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "timeout",
+          "decision": "verifier_unavailable",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "truncated",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        }
+      ]
+    },
+    {
+      "setting": 0.5,
+      "metrics": {
+        "queries": 16,
+        "answered": 6,
+        "correct_answers": 5,
+        "answerable": 11,
+        "coverage": 0.375,
+        "false_answers_on_unanswerable": 1,
+        "false_answer_rate_on_unanswerable": 0.2,
+        "false_abstentions": 6,
+        "false_abstention_rate": 0.5454545454545454,
+        "selective_accuracy": 0.8333333333333334
+      },
+      "categories": {
+        "narrative": {
+          "queries": 7,
+          "answered": 5,
+          "correct_answers": 4,
+          "answerable": 4,
+          "coverage": 0.7142857142857143,
+          "false_answers_on_unanswerable": 1,
+          "false_answer_rate_on_unanswerable": 0.3333333333333333,
+          "false_abstentions": 0,
+          "false_abstention_rate": 0.0,
+          "selective_accuracy": 0.8
+        },
+        "table": {
+          "queries": 3,
+          "answered": 1,
+          "correct_answers": 1,
+          "answerable": 2,
+          "coverage": 0.3333333333333333,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 1,
+          "false_abstention_rate": 0.5,
+          "selective_accuracy": 1.0
+        },
+        "retrieval": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 0,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": null,
+          "selective_accuracy": null
+        },
+        "availability": {
+          "queries": 4,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 4,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "visual": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 1,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 1,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        }
+      },
+      "decisions": [
+        {
+          "id": "strong",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "exact_boundary",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "weak_correct",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "strong_enough",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "table",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "spurious_entailment",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "wrong_table",
+          "decision": "contradicted_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "missing_table",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "neutral",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "conflicting",
+          "decision": "conflicting_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "no_hits",
+          "decision": "no_relevant_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "parser",
+          "decision": "parsing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "index",
+          "decision": "indexing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "visual",
+          "decision": "unsupported_modality",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "timeout",
+          "decision": "verifier_unavailable",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "truncated",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        }
+      ]
+    },
+    {
+      "setting": 1.0,
+      "metrics": {
+        "queries": 16,
+        "answered": 4,
+        "correct_answers": 4,
+        "answerable": 11,
+        "coverage": 0.25,
+        "false_answers_on_unanswerable": 0,
+        "false_answer_rate_on_unanswerable": 0.0,
+        "false_abstentions": 7,
+        "false_abstention_rate": 0.6363636363636364,
+        "selective_accuracy": 1.0
+      },
+      "categories": {
+        "narrative": {
+          "queries": 7,
+          "answered": 3,
+          "correct_answers": 3,
+          "answerable": 4,
+          "coverage": 0.42857142857142855,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 1,
+          "false_abstention_rate": 0.25,
+          "selective_accuracy": 1.0
+        },
+        "table": {
+          "queries": 3,
+          "answered": 1,
+          "correct_answers": 1,
+          "answerable": 2,
+          "coverage": 0.3333333333333333,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 1,
+          "false_abstention_rate": 0.5,
+          "selective_accuracy": 1.0
+        },
+        "retrieval": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 0,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": null,
+          "selective_accuracy": null
+        },
+        "availability": {
+          "queries": 4,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 4,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "visual": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 1,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 1,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        }
+      },
+      "decisions": [
+        {
+          "id": "strong",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "exact_boundary",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "weak_correct",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "strong_enough",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "table",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "spurious_entailment",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "wrong_table",
+          "decision": "contradicted_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "missing_table",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "neutral",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "conflicting",
+          "decision": "conflicting_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "no_hits",
+          "decision": "no_relevant_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "parser",
+          "decision": "parsing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "index",
+          "decision": "indexing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "visual",
+          "decision": "unsupported_modality",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "timeout",
+          "decision": "verifier_unavailable",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "truncated",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        }
+      ]
+    },
+    {
+      "setting": 2.0,
+      "metrics": {
+        "queries": 16,
+        "answered": 2,
+        "correct_answers": 2,
+        "answerable": 11,
+        "coverage": 0.125,
+        "false_answers_on_unanswerable": 0,
+        "false_answer_rate_on_unanswerable": 0.0,
+        "false_abstentions": 9,
+        "false_abstention_rate": 0.8181818181818182,
+        "selective_accuracy": 1.0
+      },
+      "categories": {
+        "narrative": {
+          "queries": 7,
+          "answered": 1,
+          "correct_answers": 1,
+          "answerable": 4,
+          "coverage": 0.14285714285714285,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 3,
+          "false_abstention_rate": 0.75,
+          "selective_accuracy": 1.0
+        },
+        "table": {
+          "queries": 3,
+          "answered": 1,
+          "correct_answers": 1,
+          "answerable": 2,
+          "coverage": 0.3333333333333333,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 1,
+          "false_abstention_rate": 0.5,
+          "selective_accuracy": 1.0
+        },
+        "retrieval": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 0,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": null,
+          "selective_accuracy": null
+        },
+        "availability": {
+          "queries": 4,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 4,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "visual": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 1,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 1,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        }
+      },
+      "decisions": [
+        {
+          "id": "strong",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "exact_boundary",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "weak_correct",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "strong_enough",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "table",
+          "decision": "answered",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "spurious_entailment",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "wrong_table",
+          "decision": "contradicted_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "missing_table",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "neutral",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "conflicting",
+          "decision": "conflicting_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "no_hits",
+          "decision": "no_relevant_evidence",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "parser",
+          "decision": "parsing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "index",
+          "decision": "indexing_failed",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "visual",
+          "decision": "unsupported_modality",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "timeout",
+          "decision": "verifier_unavailable",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "truncated",
+          "decision": "insufficient_claim_support",
+          "answered": false,
+          "correct_answer_emitted": false
+        }
+      ]
+    },
+    {
+      "setting": "always_answer",
+      "metrics": {
+        "queries": 16,
+        "answered": 16,
+        "correct_answers": 5,
+        "answerable": 11,
+        "coverage": 1.0,
+        "false_answers_on_unanswerable": 5,
+        "false_answer_rate_on_unanswerable": 1.0,
+        "false_abstentions": 0,
+        "false_abstention_rate": 0.0,
+        "selective_accuracy": 0.3125
+      },
+      "categories": {
+        "narrative": {
+          "queries": 7,
+          "answered": 7,
+          "correct_answers": 4,
+          "answerable": 4,
+          "coverage": 1.0,
+          "false_answers_on_unanswerable": 3,
+          "false_answer_rate_on_unanswerable": 1.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": 0.0,
+          "selective_accuracy": 0.5714285714285714
+        },
+        "table": {
+          "queries": 3,
+          "answered": 3,
+          "correct_answers": 1,
+          "answerable": 2,
+          "coverage": 1.0,
+          "false_answers_on_unanswerable": 1,
+          "false_answer_rate_on_unanswerable": 1.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": 0.0,
+          "selective_accuracy": 0.3333333333333333
+        },
+        "retrieval": {
+          "queries": 1,
+          "answered": 1,
+          "correct_answers": 0,
+          "answerable": 0,
+          "coverage": 1.0,
+          "false_answers_on_unanswerable": 1,
+          "false_answer_rate_on_unanswerable": 1.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": null,
+          "selective_accuracy": 0.0
+        },
+        "availability": {
+          "queries": 4,
+          "answered": 4,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 1.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 0,
+          "false_abstention_rate": 0.0,
+          "selective_accuracy": 0.0
+        },
+        "visual": {
+          "queries": 1,
+          "answered": 1,
+          "correct_answers": 0,
+          "answerable": 1,
+          "coverage": 1.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 0,
+          "false_abstention_rate": 0.0,
+          "selective_accuracy": 0.0
+        }
+      },
+      "decisions": [
+        {
+          "id": "strong",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "exact_boundary",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "weak_correct",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "strong_enough",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "table",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": true
+        },
+        {
+          "id": "spurious_entailment",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "wrong_table",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "missing_table",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "neutral",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "conflicting",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "no_hits",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "parser",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "index",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "visual",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "timeout",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "truncated",
+          "decision": "always_answer",
+          "answered": true,
+          "correct_answer_emitted": false
+        }
+      ]
+    },
+    {
+      "setting": "always_abstain",
+      "metrics": {
+        "queries": 16,
+        "answered": 0,
+        "correct_answers": 0,
+        "answerable": 11,
+        "coverage": 0.0,
+        "false_answers_on_unanswerable": 0,
+        "false_answer_rate_on_unanswerable": 0.0,
+        "false_abstentions": 11,
+        "false_abstention_rate": 1.0,
+        "selective_accuracy": null
+      },
+      "categories": {
+        "narrative": {
+          "queries": 7,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 4,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "table": {
+          "queries": 3,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 2,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 2,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "retrieval": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 0,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": 0.0,
+          "false_abstentions": 0,
+          "false_abstention_rate": null,
+          "selective_accuracy": null
+        },
+        "availability": {
+          "queries": 4,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 4,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 4,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        },
+        "visual": {
+          "queries": 1,
+          "answered": 0,
+          "correct_answers": 0,
+          "answerable": 1,
+          "coverage": 0.0,
+          "false_answers_on_unanswerable": 0,
+          "false_answer_rate_on_unanswerable": null,
+          "false_abstentions": 1,
+          "false_abstention_rate": 1.0,
+          "selective_accuracy": null
+        }
+      },
+      "decisions": [
+        {
+          "id": "strong",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "exact_boundary",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "weak_correct",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "strong_enough",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "table",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "spurious_entailment",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "wrong_table",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "missing_table",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "neutral",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "conflicting",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "no_hits",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "parser",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "index",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "visual",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "timeout",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        },
+        {
+          "id": "truncated",
+          "decision": "always_abstain",
+          "answered": false,
+          "correct_answer_emitted": false
+        }
+      ]
+    }
+  ]
+}
