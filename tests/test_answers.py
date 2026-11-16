@@ -2,7 +2,8 @@
 
 import io
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, Sequence
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -13,8 +14,12 @@ from reportlab.pdfgen import canvas
 from evidence_rag.answers import AnswerConfig, GroundedAnswerService, ScriptedGenerator, build_pack
 from evidence_rag.api import create_app
 from evidence_rag.config import AppSettings
+from evidence_rag.documents.models import IngestionStage, IngestionState
 from evidence_rag.documents.storage import LocalArtifactStore
-from evidence_rag.retrieval.bm25 import BM25Index
+from evidence_rag.evidence import TableStructure
+from evidence_rag.grounding import assess_table_claim
+from evidence_rag.retrieval.bm25 import BM25Index, SearchResult
+from evidence_rag.semantic import MODEL_NAME, MODEL_REVISION, SemanticVerifier
 
 
 @pytest.fixture
@@ -77,6 +82,8 @@ def test_supported_answer_cites_supplied_real_page(
     assert result.status_code == 200
     answer = result.json()["result"]
     assert answer["status"] == "answered"
+    assert answer["claims"][0]["citation_status"] == "valid"
+    assert answer["claims"][0]["rule_support"] == "not_assessed"
     cited = answer["claims"][0]["citations"][0]
     assert cited["evidence_id"] == hit["evidence_id"]
     assert cited["page_index"] == hit["page_index"]
@@ -98,6 +105,133 @@ def test_empty_and_unsupported_questions(
     responses["Atlas sampling rate"] = {"status": "insufficient_evidence"}
     unsupported = client.post(question_url(), json=payload(ingested))
     assert unsupported.json()["result"]["reason"] == "unsupported_question"
+
+
+def test_query_reports_semantic_assessment_for_cited_context(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]], tmp_path: Path
+) -> None:
+    client, ingested, responses = setup
+    request = payload(ingested)
+    evidence = client.get(
+        f"/api/v1/documents/{ingested['document_id']}/versions/"
+        f"{ingested['document_sha256']}/evidence"
+    ).json()
+    unit = next(unit for unit in evidence["units"] if "20 hertz" in unit["text"])
+    responses[request["question"]] = scripted_answer(citation(ingested, unit))
+    premises = []
+
+    class Scorer:
+        model = "test-verifier"
+        revision = "1"
+
+        def logits(self, premise: str, claim: str) -> Sequence[float]:
+            premises.append(premise)
+            return (0.0, 3.0, 1.0)
+
+    settings = AppSettings(environment="test", artifact_root=tmp_path / "artifacts")
+    with TestClient(
+        create_app(
+            settings,
+            answer_generator=ScriptedGenerator(responses),
+            semantic_verifier=SemanticVerifier(Scorer()),
+        )
+    ) as verified:
+        result = verified.post(question_url(), json=request).json()["result"]
+    claim = result["claims"][0]
+    assert claim["rule_support"] == "not_assessed"
+    assert claim["semantic_support"]["support"] == "supported"
+    assert claim["semantic_support"]["model"] == "test-verifier"
+    assert claim["citations"][0]["semantic_support"] == "supported"
+    assert premises == [unit["text"]]
+
+
+@pytest.mark.parametrize(
+    ("score", "logits", "reason"),
+    [(999.0, (0.0, 0.0, 5.0), "insufficient_claim_support"), (0.001, (0.0, 5.0, 0.0), "answered")],
+)
+def test_policy_does_not_mix_raw_retrieval_and_verifier_scores(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    score: float,
+    logits: tuple[float, ...],
+    reason: str,
+) -> None:
+    client, ingested, responses = setup
+    request = payload(ingested)
+    hit = client.post(question_url(), json=request).json()["retrieval"][0]
+    responses[request["question"]] = scripted_answer(citation(ingested, hit))
+    search = BM25Index.search
+
+    def search_with_score(
+        index: BM25Index, question: str, *, k: int, versions: Sequence[tuple[str, str]]
+    ) -> SearchResult:
+        found = search(index, question, k=k, versions=versions)
+        return replace(found, hits=tuple(replace(hit, score=score) for hit in found.hits))
+
+    class Scorer:
+        model = MODEL_NAME
+        revision = MODEL_REVISION
+
+        def logits(self, premise: str, claim: str) -> Sequence[float]:
+            return logits
+
+    settings = AppSettings(
+        environment="test", artifact_root=tmp_path / "artifacts", abstention_policy="grounding-v1"
+    )
+    monkeypatch.setattr(BM25Index, "search", search_with_score)
+    with TestClient(
+        create_app(
+            settings,
+            answer_generator=ScriptedGenerator(responses),
+            semantic_verifier=SemanticVerifier(Scorer()),
+        )
+    ) as verified:
+        response = verified.post(question_url(), json=request).json()
+    assert response["retrieval"][0]["score"] == score
+    assert response["result"]["reason"] == reason
+    assert response["result"]["policy_version"] == "grounding-v1"
+
+
+def test_api_availability_and_modality_outcomes(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, ingested, _ = setup
+    settings = AppSettings(
+        environment="test", artifact_root=tmp_path / "artifacts", abstention_policy="grounding-v1"
+    )
+    request = payload(ingested)
+    app = create_app(settings)
+    with TestClient(app) as client:
+        visual = client.post(question_url(), json={**request, "requires_visual_evidence": True})
+        assert visual.json()["result"]["reason"] == "unsupported_modality"
+        empty = client.post(question_url(), json=payload(ingested, "zzznomatchzzz"))
+        assert empty.json()["result"]["reason"] == "no_relevant_evidence"
+
+        def broken_index(index: BM25Index, units: object) -> None:
+            raise RuntimeError("private index details")
+
+        with monkeypatch.context() as scoped:
+            scoped.setattr(BM25Index, "rebuild", broken_index)
+            broken = client.post(question_url(), json=request)
+        assert broken.json()["result"]["reason"] == "indexing_failed"
+        assert "private index" not in broken.text
+
+        store: LocalArtifactStore = app.state.ingestion_service.store
+        manifest = store.get_manifest(ingested["document_id"], ingested["document_sha256"])
+        failed = manifest.model_copy(
+            update={
+                "state": IngestionState.FAILED,
+                "failure_reason": "parse_failed",
+                "failure_stage": IngestionStage.PARSING,
+                "ready_at": None,
+            }
+        )
+        store.update_manifest(failed)
+        parse = client.post(question_url(), json=request)
+        assert parse.json()["result"]["reason"] == "parsing_failed"
 
 
 def test_default_api_abstains_without_generator(
@@ -149,6 +283,24 @@ def test_bad_citations_rejected(
     assert answer["claims"] == []
 
 
+def test_evidence_id_from_previous_document_version(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
+) -> None:
+    client, old, responses = setup
+    old_hit = client.post(question_url(), json=payload(old)).json()["retrieval"][0]
+    pdf = Path("datasets/fixtures/atlas-narrative.pdf").read_bytes() + b"\n% new version\n"
+    current = client.post(
+        "/api/v1/ingestions", files={"file": ("atlas-narrative.pdf", pdf, "application/pdf")}
+    ).json()
+    assert current["document_id"] == old["document_id"]
+    assert current["document_version"] != old["document_version"]
+    request = payload(current)
+    responses[request["question"]] = scripted_answer(citation(current, old_hit))
+    result = client.post(question_url(), json=request).json()["result"]
+    assert result["reason"] == "invalid_citation"
+    assert result["claims"] == []
+
+
 def test_malformed_generator_and_unready_version(
     setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
 ) -> None:
@@ -186,6 +338,105 @@ def test_missing_preview_rejects_citation(
     ).unlink()
     answer = client.post(question_url(), json=request).json()["result"]
     assert answer["reason"] == "invalid_citation"
+    assert answer["claims"] == []
+
+
+@pytest.mark.parametrize(
+    "case", ["omitted", "empty", "uncited_answer_sentence", "uncited_second_claim"]
+)
+def test_missing_citations_withhold_whole_answer(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]], case: str
+) -> None:
+    client, ingested, responses = setup
+    request = payload(ingested)
+    hit = client.post(question_url(), json=request).json()["retrieval"][0]
+    draft = scripted_answer(citation(ingested, hit))
+    if case == "omitted":
+        del draft["claims"][0]["citations"]
+    elif case == "empty":
+        draft["claims"][0]["citations"] = []
+    else:
+        extra = "It also samples at 100 hertz at night."
+        draft["answer"] += f" {extra}"
+        if case == "uncited_second_claim":
+            draft["claims"].append({"text": extra, "citations": []})
+    responses[request["question"]] = draft
+    result = client.post(question_url(), json=request).json()["result"]
+    assert result["reason"] == "missing_citation"
+    assert result["answer"] is None
+    assert result["claims"] == []
+
+
+@pytest.mark.parametrize(
+    ("second_claim", "reason", "support"),
+    [
+        ('table_value("Dense", "Recall") = 0.8', "answered", "rule_supported"),
+        ('table_value("Dense", "Recall") = 0.84', "contradicted_evidence", "contradicted"),
+        ('table_value("Dense", "Latency") = 90', "insufficient_claim_support", "insufficient"),
+        (
+            'table_value("Hybrid", "Recall") - table_value("Dense", "Recall") = 0.04',
+            "answered",
+            "rule_supported",
+        ),
+        (
+            'table_value("Hybrid", "Recall") - table_value("Dense", "Recall") = 0.4',
+            "contradicted_evidence",
+            "contradicted",
+        ),
+        (
+            'table_value("Hybrid", "Recall") + table_value("Dense", "Recall") = 1.64',
+            "answered",
+            "rule_supported",
+        ),
+        ("Dense improves recall by 90 percent.", "answered", "not_assessed"),
+    ],
+)
+def test_cited_table_and_arithmetic_claims(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]],
+    second_claim: str,
+    reason: str,
+    support: str,
+) -> None:
+    client, _, responses = setup
+    pdf = Path("datasets/fixtures/retrieval-table.pdf").read_bytes()
+    ingested = client.post(
+        "/api/v1/ingestions", files={"file": ("retrieval-table.pdf", pdf, "application/pdf")}
+    ).json()
+    request = payload(ingested, "Hybrid Dense Recall")
+    retrieval = client.post(question_url(), json=request).json()["retrieval"]
+    evidence = client.get(
+        f"/api/v1/documents/{ingested['document_id']}/versions/"
+        f"{ingested['document_sha256']}/evidence"
+    ).json()
+    table = next(unit for unit in evidence["units"] if unit["element_type"] == "table")
+    assert table["evidence_id"] in {hit["evidence_id"] for hit in retrieval}
+    ref = citation(ingested, table)
+    first_claim = 'table_value("Hybrid", "Recall") = 0.84'
+    responses[request["question"]] = {
+        "status": "answered",
+        "answer": f"{first_claim} {second_claim}",
+        "claims": [{"text": claim, "citations": [ref]} for claim in (first_claim, second_claim)],
+    }
+    result = client.post(question_url(), json=request).json()["result"]
+    assert result["reason"] == reason
+    assert (result["answer"] is not None) == (reason == "answered")
+    assert [claim["rule_support"] for claim in result["claims"]] == ["rule_supported", support]
+    assert all(claim["citation_status"] == "valid" for claim in result["claims"])
+
+
+def test_table_rule_requires_complete_and_unambiguous_evidence() -> None:
+    table = TableStructure(
+        row_count=1,
+        column_count=2,
+        headers=["Method", "Recall"],
+        rows=[["Dense", "0.80"]],
+        header_external=True,
+    )
+    competing = table.model_copy(update={"rows": [["Dense", "0.84"]]})
+    claim = 'table_value("Dense", "Recall") = 0.80'
+    assert assess_table_claim(claim, [table, competing], truncated_table=False) == "contradicted"
+    assert assess_table_claim(claim, [table], truncated_table=True) == "insufficient"
+    assert assess_table_claim(claim, [], truncated_table=False) == "insufficient"
 
 
 def test_timeout_and_generator_failure(

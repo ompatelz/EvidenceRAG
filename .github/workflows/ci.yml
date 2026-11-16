@@ -62,6 +62,11 @@ jobs:
       - name: Verify deterministic cited-answer flow
         run: uv run pytest tests/test_answers.py -q
 
+      - name: Verify paired claim-support smoke and inspector decisions
+        run: |
+          uv run python -m evidence_rag.eval.claim_comparison --smoke --output reports/generated/claim-comparison-ci.json
+          node --test tests/inspector_ui.test.cjs
+
       - name: Verify deterministic PDF fixtures
         run: uv run python scripts/generate_fixtures.py --check
 

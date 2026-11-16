@@ -8,9 +8,14 @@ from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from evidence_rag.documents.errors import IntakeError
 from evidence_rag.documents.models import IngestionManifest, IngestionState, PagePreviewManifest
+from evidence_rag.documents.service import resolve_evidence_anchor
 from evidence_rag.documents.storage import ArtifactNotFoundError, LocalArtifactStore
-from evidence_rag.evidence import AnchorPrecision, EvidenceUnit
+from evidence_rag.evidence import AnchorPrecision, EvidenceUnit, TableStructure
+from evidence_rag.grounding import RuleSupport, assess_table_claim
+from evidence_rag.policy import AnswerPolicy, PolicyReason
+from evidence_rag.semantic import SemanticResult, SemanticVerifier, Support
 
 
 class RankedCandidate(Protocol):
@@ -54,10 +59,10 @@ class DraftCitation(BaseModel):
 
 
 class DraftClaim(BaseModel):
-    model_config = ConfigDict(frozen=True, extra="forbid")
+    model_config = ConfigDict(frozen=True, extra="forbid", str_strip_whitespace=True)
 
     text: str = Field(min_length=1, max_length=1000)
-    citations: tuple[DraftCitation, ...] = Field(min_length=1, max_length=5)
+    citations: tuple[DraftCitation, ...] = Field(default=(), max_length=5)
 
 
 class DraftAnswer(BaseModel):
@@ -85,6 +90,7 @@ class Citation(BaseModel):
     page_index: int
     precision: AnchorPrecision
     preview_asset_id: str | None
+    semantic_support: Support | None = None
 
 
 class ValidatedClaim(BaseModel):
@@ -92,38 +98,35 @@ class ValidatedClaim(BaseModel):
 
     text: str
     citations: tuple[Citation, ...]
+    citation_status: Literal["valid"] = "valid"
+    rule_support: RuleSupport
+    semantic_support: SemanticResult | None = None
+
+
+Reason = (
+    PolicyReason
+    | Literal[
+        "unsupported_question",
+        "generator_unavailable",
+        "generation_failed",
+        "generation_timeout",
+        "malformed_response",
+        "missing_citation",
+        "invalid_citation",
+    ]
+)
 
 
 class AnswerResult(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     status: Literal["answered", "insufficient_evidence"]
-    reason: Literal[
-        "answered",
-        "no_relevant_evidence",
-        "unsupported_question",
-        "generator_unavailable",
-        "generation_failed",
-        "generation_timeout",
-        "malformed_response",
-        "invalid_citation",
-    ]
+    reason: Reason
     answer: str | None
     claims: tuple[ValidatedClaim, ...]
     supplied_evidence_ids: tuple[str, ...]
     excluded_evidence_ids: tuple[str, ...]
-
-
-Reason = Literal[
-    "answered",
-    "no_relevant_evidence",
-    "unsupported_question",
-    "generator_unavailable",
-    "generation_failed",
-    "generation_timeout",
-    "malformed_response",
-    "invalid_citation",
-]
+    policy_version: str | None = None
 
 
 class AnswerGenerator(Protocol):
@@ -186,6 +189,7 @@ class AnswerConfig:
     max_pack_chars: int = 4000
     max_item_chars: int = 1200
     timeout_ms: int = 2000
+    assess_support: bool = True
 
     def __post_init__(self) -> None:
         if not (1 <= self.max_candidates <= 20):
@@ -247,10 +251,32 @@ class GroundedAnswerService:
         store: LocalArtifactStore,
         generator: AnswerGenerator | None,
         config: AnswerConfig | None = None,
+        verifier: SemanticVerifier | None = None,
+        policy: AnswerPolicy | None = None,
     ) -> None:
         self.store = store
         self.generator = generator
         self.config = config or AnswerConfig()
+        if not self.config.assess_support and (verifier is not None or policy is not None):
+            raise ValueError("support checks must be enabled for verification and policy")
+        self.verifier = verifier
+        self.policy = policy
+
+    def abstain(
+        self,
+        reason: Reason,
+        pack: EvidencePack | None = None,
+        claims: tuple[ValidatedClaim, ...] = (),
+    ) -> AnswerResult:
+        return AnswerResult(
+            status="insufficient_evidence",
+            reason=reason,
+            answer=None,
+            claims=claims,
+            supplied_evidence_ids=tuple(item.evidence_id for item in pack.items) if pack else (),
+            excluded_evidence_ids=pack.excluded_ids if pack else (),
+            policy_version=self.policy.version if self.policy else None,
+        )
 
     def answer(
         self,
@@ -276,15 +302,8 @@ class GroundedAnswerService:
             config=self.config,
         )
 
-        def insufficient(reason: Reason) -> AnswerResult:
-            return AnswerResult(
-                status="insufficient_evidence",
-                reason=reason,
-                answer=None,
-                claims=(),
-                supplied_evidence_ids=tuple(item.evidence_id for item in pack.items),
-                excluded_evidence_ids=pack.excluded_ids,
-            )
+        def insufficient(reason: Reason, claims: tuple[ValidatedClaim, ...] = ()) -> AnswerResult:
+            return self.abstain(reason, pack, claims)
 
         if not pack.items:
             return insufficient("no_relevant_evidence")
@@ -306,54 +325,112 @@ class GroundedAnswerService:
         except ValidationError:
             return insufficient("malformed_response")
         if draft.status == "insufficient_evidence":
-            return insufficient("unsupported_question")
-        supplied = {item.evidence_id for item in pack.items}
+            return insufficient(
+                "insufficient_claim_support" if self.policy else "unsupported_question"
+            )
+        if any(not claim.citations for claim in draft.claims):
+            return insufficient("missing_citation")
+        answer = " ".join(claim.text for claim in draft.claims)
+        if " ".join((draft.answer or "").split()) != " ".join(answer.split()):
+            return insufficient("missing_citation")
+        supplied = {item.evidence_id: item for item in pack.items}
         validated: list[ValidatedClaim] = []
         try:
             for claim in draft.claims:
                 citations = []
+                tables: list[TableStructure] = []
+                truncated_table = False
                 for ref in claim.citations:
-                    if ref.evidence_id not in supplied:
-                        raise ValueError("citation was not supplied")
+                    packed = supplied[ref.evidence_id]
                     unit = unit_map[ref.evidence_id]
-                    if (ref.document_id, ref.document_version, ref.page_index) != (
-                        unit.document_id,
-                        unit.document_version,
-                        unit.page_index,
-                    ) or (unit.document_id, unit.document_version) != (
-                        manifest.document_id,
-                        manifest.document_version,
+                    if (
+                        (ref.document_id, ref.document_version, ref.page_index)
+                        != (
+                            unit.document_id,
+                            unit.document_version,
+                            unit.page_index,
+                        )
+                        or (unit.document_id, unit.document_version)
+                        != (
+                            manifest.document_id,
+                            manifest.document_version,
+                        )
+                        or unit.document_sha256 != manifest.document_sha256
                     ):
                         raise ValueError("citation provenance mismatch")
-                    if unit.page_index >= len(pages.pages):
-                        raise ValueError("citation page missing")
-                    if unit.anchor_precision is AnchorPrecision.UNAVAILABLE:
+                    anchor = resolve_evidence_anchor(unit, pages)
+                    if anchor.precision is AnchorPrecision.UNAVAILABLE:
                         raise ValueError("citation location unavailable")
-                    try:
-                        self.store.preview_path(
-                            manifest.document_id, manifest.document_sha256, unit.page_index
-                        )
-                    except ArtifactNotFoundError as exc:
-                        raise ValueError("citation preview missing") from exc
-                    preview = pages.pages[unit.page_index]
+                    self.store.preview_path(
+                        manifest.document_id, manifest.document_sha256, unit.page_index
+                    )
                     citations.append(
                         Citation(
                             evidence_id=unit.evidence_id,
                             document_id=unit.document_id,
                             document_version=unit.document_version,
                             page_index=unit.page_index,
-                            precision=unit.anchor_precision,
-                            preview_asset_id=preview.asset_id,
+                            precision=anchor.precision,
+                            preview_asset_id=anchor.preview_asset_id,
                         )
                     )
-                validated.append(ValidatedClaim(text=claim.text, citations=tuple(citations)))
-        except (ValueError, KeyError):
+                    if self.config.assess_support and unit.table is not None:
+                        if packed.text == unit.text:
+                            tables.append(unit.table)
+                        else:
+                            truncated_table = True
+                validated.append(
+                    ValidatedClaim(
+                        text=claim.text,
+                        citations=tuple(citations),
+                        rule_support=assess_table_claim(
+                            claim.text, tables, truncated_table=truncated_table
+                        )
+                        if self.config.assess_support
+                        else "not_assessed",
+                    )
+                )
+        except (ValueError, KeyError, ArtifactNotFoundError, IntakeError):
             return insufficient("invalid_citation")
+        if any(claim.rule_support == "contradicted" for claim in validated):
+            return insufficient("contradicted_evidence", tuple(validated))
+        if any(claim.rule_support == "insufficient" for claim in validated):
+            return insufficient("insufficient_claim_support", tuple(validated))
+        if self.verifier is not None:
+            pending = []
+            for index, claim_result in enumerate(validated):
+                if claim_result.rule_support != "not_assessed":
+                    continue
+                ids = tuple(dict.fromkeys(ref.evidence_id for ref in claim_result.citations))
+                inputs = tuple(supplied[evidence_id].text for evidence_id in ids)
+                truncated = any(
+                    supplied[evidence_id].text != unit_map[evidence_id].text for evidence_id in ids
+                )
+                pending.append((index, (claim_result.text, inputs, truncated)))
+            assessed = self.verifier.assess([item for _, item in pending])
+            for (index, _), assessment in zip(pending, assessed, strict=True):
+                checked_claim = validated[index]
+                citation_ids = dict.fromkeys(ref.evidence_id for ref in checked_claim.citations)
+                labels = dict(zip(citation_ids, assessment.passage_support, strict=False))
+                validated[index] = checked_claim.model_copy(
+                    update={
+                        "semantic_support": assessment,
+                        "citations": tuple(
+                            ref.model_copy(update={"semantic_support": labels.get(ref.evidence_id)})
+                            for ref in checked_claim.citations
+                        ),
+                    }
+                )
+        if self.policy is not None:
+            decision = self.policy.decide(validated, evidence_available=bool(pack.items))
+            if decision != "answered":
+                return insufficient(decision, tuple(validated))
         return AnswerResult(
             status="answered",
             reason="answered",
-            answer=draft.answer,
+            answer=answer,
             claims=tuple(validated),
             supplied_evidence_ids=tuple(sorted(supplied)),
             excluded_evidence_ids=pack.excluded_ids,
+            policy_version=self.policy.version if self.policy else None,
         )

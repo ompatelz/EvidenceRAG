@@ -100,20 +100,6 @@
     box.append(node("p", "result-label", result.status === "answered" ? "Cited answer" : "Insufficient evidence"));
     if (result.status === "answered") {
       box.append(node("h3", "", result.answer));
-      const claims = node("ul");
-      for (const claim of result.claims) {
-        const item = node("li");
-        item.append(document.createTextNode(claim.text));
-        for (const citation of claim.citations) {
-          const button = node("button", "citation-button", `Source · p. ${citation.page_index + 1}`);
-          button.type = "button";
-          button.addEventListener("click", () => openEvidence(citation.evidence_id));
-          item.append(button);
-        }
-        claims.append(item);
-      }
-      box.append(claims);
-      box.append(node("p", "helper", "Citation IDs and pages are checked. Claim support still needs human review."));
     } else {
       const reasons = {
         no_relevant_evidence: "No matching evidence was retrieved. Try a more specific question.",
@@ -122,11 +108,55 @@
         generation_timeout: "Answer generation timed out. The retrieved evidence remains available below.",
         generation_failed: "Answer generation failed. The retrieved evidence remains available below.",
         malformed_response: "The answer response was invalid, so it was withheld.",
+        missing_citation: "Part of the answer lacked a citation, so it was withheld.",
         invalid_citation: "An answer cited invalid source evidence, so it was withheld.",
+        contradicted_evidence: "The evidence check found a contradiction in a draft claim.",
+        conflicting_evidence: "The verifier found both support and contradiction in the cited evidence.",
+        insufficient_claim_support: "The cited material provided too little support for an answer.",
+        parsing_failed: "Document parsing failed. Retry ingestion before asking a question.",
+        indexing_failed: "The search index or its source artifacts could not be loaded. Retry ingestion.",
+        unsupported_modality: "This question requires inspecting pixels. This workspace reads extracted text and tables.",
+        verifier_unavailable: "The verifier could not complete its assessment. The draft answer was withheld.",
+        policy_version_mismatch: "The verifier's model version did not match the active answer policy.",
         search_unavailable: "Search could not complete. Check the message beside the form and try again."
       };
       box.append(node("p", "", reasons[result.reason] || "No supported answer is available."));
     }
+    if (!result.claims?.length) return;
+    if (result.status !== "answered") box.append(node("h3", "", "Withheld draft claims"));
+    const claims = node("ul");
+    const ruleLabels = {
+      rule_supported: "Table rule passed",
+      contradicted: "Table rule found a contradiction",
+      insufficient: "Table rule lacked usable values",
+      not_assessed: "Support not assessed"
+    };
+    const modelLabels = {
+      supported: "Verifier estimates support",
+      contradicted: "Verifier estimates contradiction",
+      insufficient: "Verifier found insufficient support"
+    };
+    for (const claim of result.claims) {
+      const item = node("li", "", claim.text);
+      const semantic = claim.semantic_support;
+      let support = ruleLabels[claim.rule_support];
+      if (semantic?.conflicting) support = "Verifier found conflicting evidence";
+      else if (semantic?.status === "assessed") support = modelLabels[semantic.support];
+      else if (semantic) support = "Verifier assessment incomplete";
+      item.append(node("span", "helper", ` · ${support}`));
+      if (claim.citation_status === "valid") {
+        for (const citation of claim.citations) {
+          const label = citation.semantic_support === "contradicted" ? "Estimated contradiction"
+            : citation.semantic_support === "supported" ? "Estimated support" : "Source";
+          const button = node("button", "citation-button", `${label} · p. ${citation.page_index + 1}`);
+          button.type = "button";
+          button.addEventListener("click", () => openEvidence(citation.evidence_id));
+          item.append(button);
+        }
+      }
+      claims.append(item);
+    }
+    box.append(claims);
   }
 
   function formatScore(value) {
@@ -225,6 +255,7 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: $("question").value.trim(), mode: $("mode").value,
+          requires_visual_evidence: $("requires-visual").checked,
           document_id: state.document.document_id,
           document_sha256: state.document.document_sha256
         })

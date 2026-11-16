@@ -4,10 +4,40 @@ Updated: 2026-11-16
 
 Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
 at `c096832`. Visual evidence feasibility is a no-go on the current seed.
+The feasibility decision merged in [PR #7](https://github.com/ompatelz/EvidenceRAG/pull/7)
+at `efa55d4`. The runtime can display page and region previews and has no pixel interpreter.
 There are zero visual-dependent development or validation questions. The two
 visual-dependent labels belong to the frozen test. See
 [ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md) for the owned
 preflight fixture, model comparison, and conditions for reopening the milestone.
+
+## Claim support and abstention
+
+The deterministic checkpoint requires the answer text to match its cited
+claims. The query API checks exact-version citation scope, supplied evidence
+membership, and resolvable source locations. It reports table rule support
+separately from citation validity and withholds drafts with missing or invalid
+citations or failed table checks. See [the answer contract](answer_contract.md).
+The optional local text verifier adds per-claim entailment, contradiction,
+insufficiency, and failure metadata. See [the verifier procedure](semantic_support.md).
+Its development and validation audit still needs human review.
+The opt-in [abstention policy](abstention.md) has a provisional threshold
+selected on 16 synthetic validation cases. The [paired evaluation](../reports/ablation_study.md)
+ran BM25 and fixed drafts on 13 development and validation cases. The checked
+arm emitted six answers and zero false answers on four unanswerable cases.
+The baseline emitted 12 answers and three false answers on those four cases.
+Both runs use provisional labels. The [error analysis](../reports/error_analysis.md)
+documents the remaining human review, which the owner deferred. The frozen test
+was not scored or used for tuning.
+
+Local verification passed lock and dependency checks, Ruff formatting and lint,
+strict mypy, 187 pytest tests, a separate live Qdrant test, deterministic
+fixture and evaluation-data validation, the E0 and report smoke commands,
+and the paired comparison smoke and inspector behavior tests.
+Compose validation and the candidate image build passed. The container reached
+healthy and ran as UID 10001.
+
+[PR #8](https://github.com/ompatelz/EvidenceRAG/pull/8) is the feature draft.
 
 ## Grounded QA milestone record
 
