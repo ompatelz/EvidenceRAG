@@ -39,3 +39,14 @@ correctness, claim support, and the expected page and region against the
 corresponding owned fixture. Preserve any unresolved label as uncertain.
 Record the reviewer and corrections before interpreting the comparison as
 human-verified. The frozen chart family is outside both runs.
+
+## Frozen BM25 observations
+
+The single authorized held-out run used the default generator-disabled
+runtime. The two flagged chart questions abstained on modality. For the
+unanswerable failure-count query, the retriever still returned five
+units and ranked the experiment ID first. The page states how many
+requests were processed and gives no failure count. This is an example
+of lexical overlap returning context that cannot support an answer.
+The generator-unavailable outcome offers no evidence of semantic
+abstention accuracy. See [the frozen report](final_evaluation.md).

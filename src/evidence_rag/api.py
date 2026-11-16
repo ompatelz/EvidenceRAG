@@ -1,8 +1,11 @@
 """FastAPI application factory and synchronous evidence-preserving ingestion."""
 
+import json
+import logging
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import asdict
 from pathlib import Path
+from tempfile import TemporaryFile
 from time import perf_counter
 from typing import Annotated, Literal
 from uuid import uuid4
@@ -51,6 +54,7 @@ from evidence_rag.retrieval.bm25 import BM25Index
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
 
 CallNext = Callable[[Request], Awaitable[Response]]
+LOGGER = logging.getLogger("evidence_rag.requests")
 
 
 class HealthResponse(BaseModel):
@@ -150,16 +154,33 @@ def create_app(
     async def request_id_middleware(request: Request, call_next: CallNext) -> Response:
         """Assign one generated trace ID without trusting caller input."""
         request.state.request_id = f"req_{uuid4().hex}"
+        started = perf_counter()
         response = await call_next(request)
         response.headers["X-Request-ID"] = request.state.request_id
+        route = request.scope.get("route")
+        LOGGER.info(
+            json.dumps(
+                {
+                    "event": "request_completed",
+                    "request_id": request.state.request_id,
+                    "route": getattr(route, "path", None),
+                    "status": response.status_code,
+                    "elapsed_ms": round((perf_counter() - started) * 1000, 3),
+                    **getattr(request.state, "query_summary", {}),
+                }
+            )
+        )
         return response
 
     @app.exception_handler(IntakeError)
-    async def intake_error_handler(_request: Request, exc: IntakeError) -> JSONResponse:
+    async def intake_error_handler(request: Request, exc: IntakeError) -> JSONResponse:
         """Return bounded errors without leaking private storage details."""
         return JSONResponse(
             status_code=exc.status_code,
-            content={"error": {"code": exc.code, "message": exc.message}},
+            content={
+                "error": {"code": exc.code, "message": exc.message},
+                "request_id": request.state.request_id,
+            },
         )
 
     @app.get("/health", response_model=HealthResponse, tags=["operations"])
@@ -194,6 +215,13 @@ def create_app(
     def ready(response: Response) -> ReadinessResponse:
         """Report whether required local application configuration is usable."""
         if not resolved_settings.ready:
+            response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+            return ReadinessResponse(status="not_ready")
+        try:
+            resolved_settings.artifact_root.mkdir(parents=True, exist_ok=True)
+            with TemporaryFile(dir=resolved_settings.artifact_root):
+                pass
+        except OSError:
             response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
             return ReadinessResponse(status="not_ready")
         return ReadinessResponse(status="ready")
@@ -392,17 +420,27 @@ def create_app(
         return rendering_service.anchor(document_id, document_sha256, evidence_id)
 
     @app.post("/api/v1/query", response_model=QueryResponse, tags=["query"])
-    def query_document(request: QueryRequest) -> QueryResponse:
+    def query_document(request: QueryRequest, http_request: Request) -> QueryResponse:
         """Search a ready exact version and return a checked answer or abstention."""
         total_started = perf_counter()
 
+        def record(result: QueryResponse) -> QueryResponse:
+            http_request.state.query_summary = {
+                "mode": result.mode,
+                "outcome": result.result.reason or result.result.status,
+                "stage_ms": result.timings_ms,
+            }
+            return result
+
         def without_ranking(reason: Reason) -> QueryResponse:
-            return QueryResponse(
-                result=answer_service.abstain(reason),
-                retrieval=(),
-                mode=request.mode,
-                retrieval_status=reason,
-                timings_ms={"total": (perf_counter() - total_started) * 1000},
+            return record(
+                QueryResponse(
+                    result=answer_service.abstain(reason),
+                    retrieval=(),
+                    mode=request.mode,
+                    retrieval_status=reason,
+                    timings_ms={"total": (perf_counter() - total_started) * 1000},
+                )
             )
 
         try:
@@ -441,10 +479,10 @@ def create_app(
                 index.rebuild(evidence.units)
                 timings["index_build"] = (perf_counter() - started) * 1000
                 ranking = index.search(request.question, k=5, versions=scope)
-            except Exception:
+            except Exception as exc:
                 if policy:
                     return without_ranking("indexing_failed")
-                raise
+                raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
             hits = ranking.hits
             timings["bm25"] = ranking.search_ms
         else:
@@ -483,16 +521,16 @@ def create_app(
                     "model_load_failed", "The local embedding model could not load.", 503
                 ) from exc
             timings["model_load"] = (perf_counter() - started) * 1000
-            client = QdrantClient(":memory:")
+            try:
+                client = QdrantClient(":memory:")
+            except Exception as exc:
+                if policy:
+                    return without_ranking("indexing_failed")
+                raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
             try:
                 started = perf_counter()
                 dense = DenseIndex(client, embedder)
-                try:
-                    dense.rebuild(evidence.units)
-                except Exception:
-                    if policy:
-                        return without_ranking("indexing_failed")
-                    raise
+                dense.rebuild(evidence.units)
                 timings["index_build"] = (perf_counter() - started) * 1000
                 if request.mode == "dense":
                     result = dense.search(request.question, k=5, versions=scope)
@@ -564,6 +602,12 @@ def create_app(
                         hits = reranked.hits
                         retrieval_status = reranked.status
                         timings["rerank"] = reranked.rerank_ms
+            except IntakeError:
+                raise
+            except Exception as exc:
+                if policy:
+                    return without_ranking("indexing_failed")
+                raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
             finally:
                 client.close()
         timings["retrieval_total"] = (perf_counter() - total_started) * 1000
@@ -578,12 +622,14 @@ def create_app(
                 "evidence_mismatch", "Document evidence is inconsistent.", 409
             ) from exc
         timings["total"] = (perf_counter() - total_started) * 1000
-        return QueryResponse(
-            result=answer,
-            retrieval=tuple(asdict(hit) for hit in hits),
-            mode=request.mode,
-            retrieval_status=retrieval_status,
-            timings_ms=timings,
+        return record(
+            QueryResponse(
+                result=answer,
+                retrieval=tuple(asdict(hit) for hit in hits),
+                mode=request.mode,
+                retrieval_status=retrieval_status,
+                timings_ms=timings,
+            )
         )
 
     return app

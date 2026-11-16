@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -35,62 +37,23 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
-      - name: Verify lockfile
-        run: uv lock --check
-
       - name: Install project and development dependencies
-        run: uv sync --all-extras --dev
+        run: uv sync --locked --all-extras --dev
 
-      - name: Lint
-        run: uv run ruff check .
-
-      - name: Check formatting
-        run: uv run ruff format --check .
-
-      - name: Type check
-        run: uv run mypy src tests
-
-      - name: Test
-        run: uv run pytest
-
-      - name: Verify deterministic hybrid fusion fixtures
-        run: uv run pytest tests/test_hybrid.py -q
-
-      - name: Verify optional reranker behavior without model weights
-        run: uv run pytest tests/test_rerank.py -q
-
-      - name: Verify deterministic cited-answer flow
-        run: uv run pytest tests/test_answers.py -q
-
-      - name: Verify paired claim-support smoke and inspector decisions
+      - name: Run complete quality gate
+        shell: bash
         run: |
-          uv run python -m evidence_rag.eval.claim_comparison --smoke --output reports/generated/claim-comparison-ci.json
-          node --test tests/inspector_ui.test.cjs
+          mkdir -p reports/generated
+          uv run --locked python scripts/quality_gate.py 2>&1 | tee reports/generated/quality.log
 
-      - name: Verify deterministic PDF fixtures
-        run: uv run python scripts/generate_fixtures.py --check
-
-      - name: Validate committed evaluation data
-        run: >-
-          uv run python -m evidence_rag.eval.validate
-          --manifest datasets/manifests/fixtures.json
-          datasets/eval/fixture_items.jsonl
-
-      - name: Validate Phase 2 seed against parsed evidence
-        run: >-
-          uv run python -m evidence_rag.eval.validate
-          --manifest datasets/manifests/fixtures.json
-          --verify-evidence datasets/eval/phase2_seed.jsonl
-
-      - name: Run bounded shared benchmark smoke
-        run: >-
-          uv run python -m evidence_rag.eval.benchmark
-          --config configs/phase2-e0.json
-
-      - name: Validate saved baselines and regenerate report
-        run: >-
-          uv run python -m evidence_rag.eval.report
-          --output reports/generated/baselines-ci.md
+      - name: Save verification logs
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: quality-python-${{ matrix.python-version }}
+          path: reports/generated/quality.log
+          if-no-files-found: warn
+          retention-days: 14
 
   ingestion-e2e:
     name: Ingestion end-to-end
@@ -100,6 +63,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -110,7 +75,7 @@ jobs:
           cache-dependency-glob: uv.lock
 
       - name: Install locked project and development dependencies
-        run: uv sync --all-extras --dev
+        run: uv sync --locked --all-extras --dev
 
       - name: Run bounded owned-fixture ingestion lifecycle
         run: uv run pytest tests/test_lifecycle.py -q
@@ -130,6 +95,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
@@ -140,7 +107,7 @@ jobs:
           cache-dependency-glob: uv.lock
 
       - name: Install locked dependencies without downloading a model
-        run: uv sync --all-extras --dev
+        run: uv sync --locked --all-extras --dev
 
       - name: Wait for Qdrant health
         shell: bash
@@ -165,25 +132,24 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Validate Compose configuration
         run: docker compose config --quiet
 
       - name: Build commit-traceable candidate image
-        run: >-
-          docker build
-          --build-arg VCS_REF=${{ github.sha }}
-          --label org.opencontainers.image.revision=${{ github.sha }}
-          --tag evidencerag:pr
-          .
+        run: docker build --build-arg "VCS_REF=$GITHUB_SHA" --tag evidencerag:ci .
 
       - name: Verify container health and runtime user
         shell: bash
         run: |
-          docker run --detach --name evidencerag-ci evidencerag:pr
+          docker run --detach --name evidencerag-ci --read-only \
+            --security-opt=no-new-privileges \
+            --mount type=volume,destination=/app/artifacts evidencerag:ci
           cleanup() {
             docker logs evidencerag-ci || true
-            docker rm --force evidencerag-ci || true
+            docker rm --force --volumes evidencerag-ci || true
           }
           trap cleanup EXIT
           for attempt in {1..15}; do
@@ -195,3 +161,23 @@ jobs:
           done
           test "${state:-missing}" = "healthy"
           test "$(docker exec evidencerag-ci id -u)" = "10001"
+          docker exec evidencerag-ci python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=2).read()"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' evidencerag:ci)" = "$GITHUB_SHA"
+
+      - name: Record build provenance and runtime package inventory
+        shell: bash
+        run: |
+          mkdir -p build/verification
+          docker image inspect --format '{{.Id}} {{.Os}}/{{.Architecture}} {{json .Config.Labels}}' \
+            evidencerag:ci > build/verification/image.txt
+          sha256sum uv.lock Dockerfile pyproject.toml > build/verification/inputs.sha256
+          docker run --rm evidencerag:ci python -c 'from importlib.metadata import distributions; print("\n".join(sorted("{}=={}".format(d.metadata["Name"], d.version) for d in distributions())))' \
+            > build/verification/runtime-packages.txt
+
+      - name: Save artifact verification record
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: candidate-verification-${{ github.sha }}
+          path: build/verification/
+          if-no-files-found: error
+          retention-days: 14

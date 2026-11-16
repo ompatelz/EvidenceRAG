@@ -180,6 +180,8 @@ class EvidenceArtifact(BaseModel):
     @model_validator(mode="after")
     def validate_unit_provenance(self) -> Self:
         """Prevent a persisted artifact from mixing document versions."""
+        if self.document_version != f"sha256:{self.document_sha256}":
+            raise ValueError("document_version must equal sha256:<document_sha256>")
         for unit in self.units:
             if unit.document_id != self.document_id:
                 raise ValueError("evidence document_id must match its artifact")

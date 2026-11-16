@@ -1,7 +1,6 @@
 """Confined local artifact storage with atomic publication and cleanup."""
 
 import hashlib
-import json
 import os
 import re
 import shutil
@@ -10,7 +9,7 @@ from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import BinaryIO, cast
+from typing import BinaryIO
 
 from pydantic import BaseModel, ValidationError
 
@@ -119,7 +118,7 @@ class LocalArtifactStore:
         for manifest_path in candidates:
             try:
                 manifest = self._read_manifest(manifest_path)
-            except (OSError, ValidationError, json.JSONDecodeError):
+            except (OSError, ValidationError):
                 continue
             identity = manifest.document_id, manifest.document_sha256
             if identity in visited:
@@ -138,9 +137,12 @@ class LocalArtifactStore:
             raise ArtifactNotFoundError
         manifest_path = self._version_path(document_id, document_sha256) / "manifest.json"
         try:
-            return self._read_manifest(manifest_path)
-        except (OSError, ValidationError, json.JSONDecodeError) as exc:
+            manifest = self._read_manifest(manifest_path)
+        except (OSError, ValidationError) as exc:
             raise ArtifactNotFoundError from exc
+        if (manifest.document_id, manifest.document_sha256) != (document_id, document_sha256):
+            raise ArtifactNotFoundError
+        return manifest
 
     def get_manifest_or_recover(self, document_id: str, document_sha256: str) -> IngestionManifest:
         """Recover a missing mutable manifest from its immutable intake snapshot."""
@@ -152,7 +154,7 @@ class LocalArtifactStore:
         source = version_dir / "source.pdf"
         try:
             intake = self._read_manifest(version_dir / "intake.json")
-        except (OSError, ValidationError, json.JSONDecodeError) as exc:
+        except (OSError, ValidationError) as exc:
             raise ArtifactNotFoundError from exc
         if (
             intake.state is not IngestionState.RECEIVED
@@ -202,9 +204,12 @@ class LocalArtifactStore:
             raise ArtifactNotFoundError
         path = self._version_path(document_id, document_sha256) / "evidence.json"
         try:
-            return EvidenceArtifact.model_validate_json(path.read_text(encoding="utf-8"))
+            artifact = EvidenceArtifact.model_validate_json(path.read_bytes())
         except (OSError, ValidationError) as exc:
             raise ArtifactNotFoundError from exc
+        if (artifact.document_id, artifact.document_sha256) != (document_id, document_sha256):
+            raise ArtifactNotFoundError
+        return artifact
 
     @contextmanager
     def stage_page_previews(self, document_id: str, document_sha256: str) -> Iterator[Path]:
@@ -247,9 +252,12 @@ class LocalArtifactStore:
             raise ArtifactNotFoundError
         path = self._version_path(document_id, document_sha256) / "pages" / "manifest.json"
         try:
-            return PagePreviewManifest.model_validate_json(path.read_text(encoding="utf-8"))
+            artifact = PagePreviewManifest.model_validate_json(path.read_bytes())
         except (OSError, ValidationError) as exc:
             raise ArtifactNotFoundError from exc
+        if (artifact.document_id, artifact.document_sha256) != (document_id, document_sha256):
+            raise ArtifactNotFoundError
+        return artifact
 
     def preview_path(self, document_id: str, document_sha256: str, page_index: int) -> Path:
         """Resolve one manifest-backed PNG without accepting path fragments."""
@@ -287,7 +295,7 @@ class LocalArtifactStore:
         except FileExistsError:
             try:
                 return self._read_manifest(version_dir / "manifest.json")
-            except (OSError, ValidationError, json.JSONDecodeError) as exc:
+            except (OSError, ValidationError) as exc:
                 raise StorageError("artifact version exists without a valid manifest") from exc
 
         try:
@@ -319,8 +327,7 @@ class LocalArtifactStore:
 
     @staticmethod
     def _read_manifest(path: Path) -> IngestionManifest:
-        raw = cast(object, json.loads(path.read_text(encoding="utf-8")))
-        return IngestionManifest.model_validate(raw)
+        return IngestionManifest.model_validate_json(path.read_bytes())
 
     @staticmethod
     def _file_sha256(path: Path) -> str:

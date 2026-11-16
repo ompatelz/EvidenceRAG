@@ -1,0 +1,212 @@
+{
+  "platform": "Windows-11-10.0.26300-SP0",
+  "cpu": "13th Gen Intel(R) Core(TM) i7-13700H",
+  "logical_cpus": 20,
+  "concurrency": 1,
+  "cache": "fresh application and artifact store; OS file cache uncontrolled",
+  "transport": "in-process ASGI requests",
+  "ingest_wall_ms": 173.20870000003197,
+  "cpu_ms": 281.25,
+  "ingestion": {
+    "document_id": "doc_cedee38ab4152274426cf3f8",
+    "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+    "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+    "state": "ready",
+    "attempt_count": 1,
+    "last_request_id": "req_e5a63b8df87f4b088d89bfb25b7e5f84",
+    "evidence_count": 6,
+    "page_count": 1,
+    "failure_reason": null,
+    "failure_stage": null,
+    "stage_timings": [
+      {
+        "stage": "validation",
+        "duration_ms": 2.232499999990978
+      },
+      {
+        "stage": "parsing",
+        "duration_ms": 17.06800000010844
+      },
+      {
+        "stage": "rendering",
+        "duration_ms": 47.88189999999304
+      },
+      {
+        "stage": "persistence",
+        "duration_ms": 14.818499999819323
+      },
+      {
+        "stage": "total",
+        "duration_ms": 95.98090000054071
+      }
+    ],
+    "ready_at": "2026-11-16T15:30:23.402441Z",
+    "duplicate": false
+  },
+  "queries": [
+    {
+      "wall_ms": 12.236999999913678,
+      "result": {
+        "status": "answered",
+        "reason": "answered",
+        "answer": "The Atlas sensor's calibration sampling rate is 20 hertz.",
+        "claims": [
+          {
+            "text": "The Atlas sensor's calibration sampling rate is 20 hertz.",
+            "citations": [
+              {
+                "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                "semantic_support": null
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": null
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": null
+      },
+      "retrieval": [
+        {
+          "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "rank": 1,
+          "score": 3.355221351205551,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.11638258,
+            "x1": 0.53177598,
+            "y1": 0.13546591
+          }
+        },
+        {
+          "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "rank": 2,
+          "score": 1.8498255844642482,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.05883838,
+            "x1": 0.3697059,
+            "y1": 0.09361111
+          }
+        },
+        {
+          "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "rank": 3,
+          "score": 1.294877909124974,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.11437908,
+            "y0": 0.33244948,
+            "x1": 0.53573514,
+            "y1": 0.34954545
+          }
+        },
+        {
+          "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "rank": 4,
+          "score": 0.5554468885793636,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.17378269,
+            "y0": 0.27806818,
+            "x1": 0.82544768,
+            "y1": 0.29719318
+          }
+        }
+      ],
+      "mode": "bm25",
+      "retrieval_status": "ok",
+      "timings_ms": {
+        "index_build": 0.4331999998612446,
+        "bm25": 0.09970000064640772,
+        "retrieval_total": 4.037200000311714,
+        "answer": 2.226600000540202,
+        "total": 6.265699999858043
+      }
+    },
+    {
+      "wall_ms": 6.977499999266001,
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "unsupported_question",
+        "answer": null,
+        "claims": [],
+        "supplied_evidence_ids": [
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_c395759200fd36e917985b8e305bb305"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": null
+      },
+      "retrieval": [
+        {
+          "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "rank": 1,
+          "score": 2.1336384180687835,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.11638258,
+            "x1": 0.53177598,
+            "y1": 0.13546591
+          }
+        },
+        {
+          "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "rank": 2,
+          "score": 0.9060650871194194,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.11437908,
+            "y0": 0.33244948,
+            "x1": 0.53573514,
+            "y1": 0.34954545
+          }
+        }
+      ],
+      "mode": "bm25",
+      "retrieval_status": "ok",
+      "timings_ms": {
+        "index_build": 0.5498000000443426,
+        "bm25": 0.07389999973383965,
+        "retrieval_total": 2.7312000001984416,
+        "answer": 0.5102999994051061,
+        "total": 3.2430000001113513
+      }
+    }
+  ],
+  "preview_bytes": 46423,
+  "artifact_bytes": 61125
+}

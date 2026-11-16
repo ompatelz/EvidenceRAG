@@ -1,56 +1,25 @@
 # Architecture
 
-## Current implemented architecture
+## Current application
 
-The current draft connects reliable ingestion to version-scoped retrieval,
-bounded answers, and browser inspection:
-
-```text
-FastAPI /health + /ready
-           |
-    application factory ---- injectable settings
-
-EvidenceUnit ---- document hash/version + page + honest anchor precision
-     |
-normalized bbox + parser/representation versions + opaque asset reference
-
-All boundaries ---- Ruff + mypy + pytest in CI
-
-Evaluation JSONL ---- typed validator ---- document manifest ---- hashed owned PDFs
-
-multipart upload ---- raw body limit ---- spooled UploadFile
-                                      |
-                    chunked write + streamed SHA-256
-                                      |
-              bounded PDF markers + safe logical identity
-                                      |
-              confined version directory + atomic manifest
-                                      |
-            received metadata/status with opaque asset ID
-                                      |
-                  explicit bounded PyMuPDF parse
-                                      |
-          text + tables + reliable caption relationships
-                                      |
-       versioned evidence.json + parsed/partial/failed state
-                                      |
-             explicit bounded crop-box PNG rendering
-                                      |
-       atomic pages/ manifest + opaque page asset IDs
-                                      |
-        rotation-aware evidence-to-pixel anchor resolution
-                                      |
-               complete evidence + complete page set
-                                      |
-                      atomic `ready` manifest
-                                      |
-              persisted evidence -> BM25 / dense Qdrant
-                                      |
-                       RRF -> optional CPU reranker
-                                      |
-                   bounded evidence pack -> answer checks
-                                      |
-               query API -> inspector -> anchor -> PNG page
+```mermaid
+flowchart LR
+    PDF[Local PDF] --> Upload[Bounded upload and SHA-256]
+    Upload --> Parse[PyMuPDF evidence and page renders]
+    Parse --> Store[(Versioned files and ready manifest)]
+    Browser[Inspector] --> Query[Exact-version query]
+    Store --> Query
+    Query --> Search[BM25 or optional dense Qdrant / RRF / reranking]
+    Search --> Pack[Bounded evidence pack]
+    Pack --> Generator[Optional generator]
+    Generator --> Grounding[Citation checks and table rules]
+    Grounding --> Policy[Optional NLI and abstention policy]
+    Policy --> Browser
+    Browser --> Anchor[Scoped anchor and PNG endpoints]
+    Store --> Anchor
+    Anchor --> Browser
+    Data[Owned PDFs and versioned labels] --> Eval[Offline controlled experiments]
+    Eval --> Runs[Raw JSON and reports]
 ```
 
 The package exposes operational HTTP endpoints and validates evidence objects.
@@ -124,7 +93,7 @@ interrupted attempt from the source.
 one of four retrieval modes. The answer service receives only the bounded
 retrieved pack and checks every returned citation against its evidence ID,
 document/version/page identity, and real preview asset. It withholds invalid
-answers and reports a reason. These checks cannot establish that the prose
+answers and reports a reason. Identity validation alone cannot establish that the prose
 claim is semantically supported. No generator is configured by default. An
 opt-in Atlas fixture generator exists solely for deterministic local demos.
 

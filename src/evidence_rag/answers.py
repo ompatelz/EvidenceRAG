@@ -4,6 +4,7 @@ from collections.abc import Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass
+from threading import BoundedSemaphore
 from typing import Any, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
@@ -256,6 +257,7 @@ class GroundedAnswerService:
     ) -> None:
         self.store = store
         self.generator = generator
+        self._generation_slot = BoundedSemaphore()
         self.config = config or AnswerConfig()
         if not self.config.assess_support and (verifier is not None or policy is not None):
             raise ValueError("support checks must be enabled for verification and policy")
@@ -309,8 +311,16 @@ class GroundedAnswerService:
             return insufficient("no_relevant_evidence")
         if self.generator is None:
             return insufficient("generator_unavailable")
+        if not self._generation_slot.acquire(blocking=False):
+            return insufficient("generation_timeout")
         pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="answer-generator")
-        future = pool.submit(self.generator.generate, question, pack)
+        try:
+            future = pool.submit(self.generator.generate, question, pack)
+        except RuntimeError:
+            self._generation_slot.release()
+            pool.shutdown(wait=False, cancel_futures=True)
+            return insufficient("generation_failed")
+        future.add_done_callback(lambda _: self._generation_slot.release())
         try:
             raw = future.result(timeout=self.config.timeout_ms / 1000)
         except FutureTimeout:
