@@ -5,6 +5,8 @@ published port to loopback. The query path loads the requested immutable
 document version and rejects an artifact whose embedded identity disagrees
 with its storage location. Page previews also verify their content hash.
 Re-ingestion can regenerate missing derived files from the original PDF.
+Preview URLs are stable across reindexing, so browsers must revalidate cached
+PNGs before displaying them with newly loaded anchors.
 
 | Failure | What the caller sees |
 | --- | --- |
@@ -29,10 +31,17 @@ because Python cannot interrupt a running native or network call safely.
 The verifier and reranker also have bounded waits. In-process PDF parsing
 and dense model loading have resource limits but no hard wall-clock
 preemption. Uploads and queries have no automatic service-level retry.
+The PDF limits cap upload bytes, pages, evidence units and rendered pixels.
+Native PDF parsing shares the app process and has no separate CPU, memory or
+decompression sandbox. Use the local demo with PDFs you trust.
 Document contents can contain instructions. The built-in fixture adapter
 uses a fixed response and scoped evidence, and citation validation runs
 for injected adapters. General generator injection resistance remains
 unmeasured.
+The packaged runtime keeps document processing local. An injected generator
+receives the question and selected evidence and can forward both. Its operator
+must decide which data may leave the machine and verify the provider's access
+and retention settings before using private PDFs.
 
 ## Measured local smoke
 
