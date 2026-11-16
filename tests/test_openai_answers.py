@@ -153,6 +153,7 @@ def test_owned_pdf_live_query(
         payload = requests[0]
         assert payload["store"] is False and payload["max_output_tokens"] == MAX_OUTPUT_TOKENS
         assert payload["model"] == MODEL and payload["text"]["format"]["strict"] is True
+        assert payload["reasoning"] == {"effort": "none"}
         assert not {"tools", "previous_response_id", "background"} & payload.keys()
         data = json.loads(payload["input"])
         assert len(data["evidence"]) <= 5

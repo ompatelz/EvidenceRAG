@@ -19,7 +19,7 @@ Atlas demo.
 
 Live generation logs one redacted JSON event under `evidence_rag.openai`
 at INFO level. Configure that logger in the host process to collect those
-events. Its fields include the model snapshot, prompt revision, latency,
+events. Its fields include requested and reported model IDs, prompt revision, latency,
 attempt count, outcome, observed token usage and estimated cost when usage
 is returned. The query result records the final local policy decision.
 Read [the decision record](decisions/ADR-0011-openai-live-answers.md) for
@@ -55,4 +55,5 @@ development and validation examples. Save the raw outcomes by category and
 record the exact command/config, reviewed dataset and corpus hashes, Git SHA,
 model and prompt revisions, and cost. For a live comparison, fix retrieval,
 evidence budgets, prompt, model, and generation parameters and review each
-generated claim and citation manually.
+generated claim and citation manually. Record the provider's returned model
+ID and disclose if it identifies only a rolling alias.

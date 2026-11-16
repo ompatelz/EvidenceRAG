@@ -2,6 +2,7 @@
 
 import json
 import logging
+import re
 from collections.abc import Callable
 from http.client import HTTPException, HTTPSConnection
 from threading import Event
@@ -10,7 +11,8 @@ from typing import Any
 
 from evidence_rag.answers import DraftAnswer, EvidencePack, GenerationError
 
-MODEL = "gpt-4.1-mini-2025-04-14"
+MODEL = "gpt-6-luna"
+MODEL_ID_PATTERN = re.compile(r"gpt-6-luna(?:-[0-9]{4}-[0-9]{2}-[0-9]{2})?")
 PROMPT_VERSION = "openai-grounded-v1"
 TIMEOUT_SECONDS = 10.0
 MAX_REQUEST_BYTES = 16_000
@@ -42,7 +44,8 @@ def response_schema() -> dict[str, Any]:
 
 
 def estimate_cost(input_tokens: int, output_tokens: int) -> float:
-    return (0.40 * input_tokens + 1.60 * output_tokens) / 1_000_000
+    # Charge every input token at the higher cache-write rate for the estimate.
+    return (0.125 * input_tokens + 0.50 * output_tokens) / 1_000_000
 
 
 def check_deadline(deadline: float, cancelled: Event) -> float:
@@ -105,6 +108,7 @@ class OpenAIAnswerGenerator:
         started = monotonic()
         deadline = started + TIMEOUT_SECONDS
         outcome = "generation_failed"
+        reported_model = None
         input_tokens = output_tokens = None
         attempted = False
         try:
@@ -133,6 +137,7 @@ class OpenAIAnswerGenerator:
                     },
                     "store": False,
                     "max_output_tokens": MAX_OUTPUT_TOKENS,
+                    "reasoning": {"effort": "none"},
                     "temperature": 0,
                     "truncation": "disabled",
                     "service_tier": "default",
@@ -160,14 +165,16 @@ class OpenAIAnswerGenerator:
                 counts = usage["input_tokens"], usage["output_tokens"]
                 if any(type(count) is not int or count < 0 for count in counts):
                     raise ValueError("invalid usage")
-                input_tokens, output_tokens = counts
-                if (
-                    input_tokens > MAX_INPUT_TOKENS_ESTIMATE
-                    or output_tokens > MAX_OUTPUT_TOKENS
-                    or estimate_cost(input_tokens, output_tokens) > COST_CEILING_USD
-                ):
+                if counts[0] > MAX_INPUT_TOKENS_ESTIMATE or counts[1] > MAX_OUTPUT_TOKENS:
                     raise GenerationError("generation_budget_exceeded")
-                if response["model"] != MODEL or response["status"] != "completed":
+                input_tokens, output_tokens = counts
+                if estimate_cost(input_tokens, output_tokens) > COST_CEILING_USD:
+                    raise GenerationError("generation_budget_exceeded")
+                model = response["model"]
+                if not isinstance(model, str) or not MODEL_ID_PATTERN.fullmatch(model):
+                    raise ValueError("unexpected response model")
+                reported_model = model
+                if response["status"] != "completed":
                     raise ValueError("unexpected response model or status")
                 (message,) = response["output"]
                 (content,) = message["content"]
@@ -190,6 +197,7 @@ class OpenAIAnswerGenerator:
                         "event": "answer_generation",
                         "provider": "openai",
                         "model": MODEL,
+                        "reported_model": reported_model,
                         "prompt_version": PROMPT_VERSION,
                         "latency_ms": round((monotonic() - started) * 1000, 3),
                         "attempts": int(attempted),
