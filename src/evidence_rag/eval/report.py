@@ -157,7 +157,8 @@ def render_report(
     reproducibility = (
         [
             "- Regenerate E0 through E3 using "
-            "`python scripts/reviewed_retrieval.py --output-dir reports/generated/answer-benchmark` "
+            "`python scripts/reviewed_retrieval.py --output-dir "
+            "reports/generated/answer-benchmark` "
             "with the pinned local model cache."
         ]
         if seed_path.name == "reviewed_labels.jsonl"
