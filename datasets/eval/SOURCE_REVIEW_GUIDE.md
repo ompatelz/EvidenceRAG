@@ -20,7 +20,7 @@ Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navig
 | `p2_retry_total`<br>For three chunks, how many payload bytes are sent without headers? | Answerable — 12288 bytes | [Checksum and Retry Protocol Note](../fixtures/checksum-retry.pdf), p. 1, region `0.09, 0.32, 0.51, 0.34`. Confirm 3 × 4096 = 12,288 payload bytes, with headers excluded. |
 | `p2_retry_attempts`<br>How many attempts per chunk are allowed including the initial send? | Answerable — 3 attempts | [Checksum and Retry Protocol Note](../fixtures/checksum-retry.pdf), p. 2, region `0.09, 0.17, 0.55, 0.18`. Confirm the initial send is included in the three attempts. |
 | `p2_retry_second_backoff`<br>How long is the wait before the second retry? | Answerable — 100 ms | [Checksum and Retry Protocol Note](../fixtures/checksum-retry.pdf), p. 2, region `0.09, 0.36, 0.36, 0.37`. Confirm attempt 3 is the second retry and waits 100 ms. |
-| `p2_retry_loss`<br>What measured packet-loss percentage does the experiment report? | Unanswerable | [Checksum and Retry Protocol Note](../fixtures/checksum-retry.pdf), entire PDF. Check both pages for a measured packet-loss percentage. |
+| `p2_retry_loss`<br>What measured packet-loss percentage does the experiment report? | Unanswerable | [Checksum and Retry Protocol Note](../fixtures/checksum-retry.pdf), p. 2, final note, and entire PDF. Confirm the note gives no measured packet-loss percentage. |
 
 ## Validation
 
@@ -33,12 +33,12 @@ Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navig
 | `p2_cache_study_id`<br>What study ID identifies the cache experiment? | Answerable — CA-09 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.17, 0.51, 0.18`. Confirm CA-09 is the study ID. |
 | `p2_cache_capacity`<br>What is the cache capacity? | Answerable — 64 MiB | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.20, 0.31, 0.21`. Confirm the capacity is 64 MiB. |
 | `p2_cache_formula`<br>What equation defines hit ratio in the study? | Answerable — hits / (hits + misses) | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.26, 0.40, 0.28`. Confirm hits divided by the sum of hits and misses. |
-| `p2_cache_ratio`<br>What hit ratio follows from 800 hits and 200 misses? | Answerable — 0.80 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.23, 0.52, 0.25`; p. 1, region `0.09, 0.26, 0.40, 0.28`. Confirm 800 / (800 + 200) = 0.80 and both passages are needed. |
+| `p2_cache_ratio`<br>What hit ratio follows from 800 hits and 200 misses? | Answerable — 0.80 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.23, 0.52, 0.25`; p. 1, region `0.09, 0.26, 0.40, 0.28`. Confirm 800 / (800 + 200) = 0.80. Decide whether the adjacent line giving 0.80 also counts as evidence. |
 | `p2_cache_limit`<br>What is the largest object size permitted by admission? | Answerable — 8 MiB | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.32, 0.43, 0.34`. Confirm 8 MiB is inclusive. |
 | `p2_cache_eviction`<br>When does the cache evict an object? | Answerable — When admission would exceed capacity. | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.36, 0.56, 0.37`. Confirm eviction happens when admitting an object would exceed capacity. |
 | `p2_cache_best_hit`<br>Which policy has the highest synthetic hit ratio? | Answerable — TinyLFU at 0.84 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 2, region `0.09, 0.20, 0.23, 0.21`; p. 2, region `0.09, 0.23, 0.21, 0.25`; p. 2, region `0.09, 0.26, 0.25, 0.28`. Compare all three hit-ratio cells and confirm TinyLFU at 0.84. |
 | `p2_cache_lru_latency`<br>What median lookup latency is listed for LRU? | Answerable — 9 ms | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 2, region `0.09, 0.23, 0.21, 0.25`. Confirm 9 ms is median lookup latency on the LRU row. |
-| `p2_cache_energy`<br>How much energy did the cache experiment consume? | Unanswerable | [Cache Admission Study Note](../fixtures/cache-admission.pdf), entire PDF. Check both pages for energy consumption. |
+| `p2_cache_energy`<br>How much energy did the cache experiment consume? | Unanswerable | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 2, final note, and entire PDF. Confirm the note says energy was not measured and gives no value. |
 
 ## Frozen source record
 
