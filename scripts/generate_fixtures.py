@@ -14,6 +14,8 @@ FIXTURE_NAMES = (
     "queue-chart.pdf",
     "checksum-retry.pdf",
     "cache-admission.pdf",
+    "library-loans.pdf",
+    "garden-map.pdf",
 )
 
 
@@ -244,6 +246,64 @@ def generate_cache_admission(path: Path) -> None:
     canvas.save()
 
 
+def generate_library(path: Path) -> None:
+    """Create a two-page service schedule with a table and a cross-page rule."""
+    canvas = _canvas(path, "Harbor Library Loan Schedule")
+    canvas.setFont("Helvetica-Bold", 19)
+    canvas.drawString(54, 718, "Harbor Library Loan Schedule")
+    canvas.setFont("Helvetica", 11)
+    canvas.drawString(54, 680, "Loan limits apply to each membership account.")
+    rows = (
+        ("Membership", "Loan limit", "Loan period"),
+        ("Day pass", "2 items", "7 days"),
+        ("Resident", "6 items", "21 days"),
+        ("Partner", "10 items", "28 days"),
+    )
+    for row_index, row in enumerate(rows):
+        y = 630 - 24 * row_index
+        for x, value in zip((60, 230, 370), row, strict=True):
+            canvas.drawString(x, y, value)
+        canvas.line(54, y - 8, 490, y - 8)
+    for x in (54, 220, 360, 490):
+        canvas.line(x, 550, x, 646)
+    canvas.showPage()
+    _note_page(
+        canvas,
+        "Harbor Library Loan Schedule",
+        "Renewals",
+        (
+            "Residents may renew eligible items once.",
+            "A renewal adds 14 days to the original loan period.",
+            "An item with a pending reservation cannot be renewed.",
+        ),
+        2,
+    )
+    canvas.save()
+
+
+def generate_garden(path: Path) -> None:
+    """Create a map in which spatial relations have no prose equivalent."""
+    canvas = _canvas(path, "Juniper Garden Visitor Map")
+    canvas.setFont("Helvetica-Bold", 19)
+    canvas.drawString(54, 718, "Juniper Garden Visitor Map")
+    canvas.setFont("Helvetica", 11)
+    canvas.drawString(54, 680, "Figure 1. Site plan with north at the top.")
+    for x, y, label in (
+        (130, 510, "Orchard"),
+        (345, 510, "Pond"),
+        (130, 330, "Greenhouse"),
+        (345, 330, "Meadow"),
+    ):
+        canvas.setFillColor(colors.HexColor("#EAF2E3"))
+        canvas.rect(x, y, 125, 76, fill=1, stroke=1)
+        canvas.setFillColor(colors.black)
+        canvas.drawCentredString(x + 62.5, y + 34, label)
+    canvas.line(300, 368, 300, 548)
+    canvas.line(255, 548, 345, 548)
+    canvas.line(255, 368, 345, 368)
+    canvas.save()
+
+
 def generate_all(output_dir: Path) -> None:
     """Generate every fixture into an existing or new directory."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -252,6 +312,8 @@ def generate_all(output_dir: Path) -> None:
     generate_chart(output_dir / FIXTURE_NAMES[2])
     generate_checksum_retry(output_dir / FIXTURE_NAMES[3])
     generate_cache_admission(output_dir / FIXTURE_NAMES[4])
+    generate_library(output_dir / FIXTURE_NAMES[5])
+    generate_garden(output_dir / FIXTURE_NAMES[6])
 
 
 def check_committed(output_dir: Path) -> bool:

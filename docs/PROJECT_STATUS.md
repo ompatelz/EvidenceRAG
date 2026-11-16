@@ -2,10 +2,13 @@
 
 Updated: 2026-11-16
 
-The optional OpenAI answer path uses per-query consent and independent local
-grounding checks. The owned-fixture smoke needs provider authorization and
-credentials. All 31 evaluation labels await owner review. See the
-[live integration](live_answers.md) and [source review guide](../datasets/eval/SOURCE_REVIEW_GUIDE.md).
+The current benchmark has 36 candidate questions from seven owned PDFs.
+Four original Atlas labels have owner decisions. The remaining 27 original
+labels and five expansion labels await source review. The new retrieval
+comparison is provisional, including its small owner-verified subset.
+The historical frozen run remains closed. Live calls, claim judgments,
+and live answer metrics are pending. See the [current retrieval comparison](../reports/reviewed-answer-benchmark/retrieval-ablation.md)
+and [live evaluation workflow](live_answers.md#reviewed-benchmark-workflow).
 
 Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
 at `c096832`. Visual evidence feasibility is a no-go on the current seed.

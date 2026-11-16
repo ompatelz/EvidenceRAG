@@ -50,3 +50,14 @@ requests were processed and gives no failure count. This is an example
 of lexical overlap returning context that cannot support an answer.
 The generator-unavailable outcome offers no evidence of semantic
 abstention accuracy. See [the frozen report](final_evaluation.md).
+
+## Current retrieval snapshot
+
+The Atlas path label is now owner verified. Its caption remains at rank 2
+in both BM25 and dense, so the rank-1 miss persists with confirmed evidence.
+The added library renewal case needs passages on both pages. A hit on any
+one passage gives Hit@K credit, while Recall@K measures the fraction of
+the three proposed evidence units retrieved. The garden map question is
+excluded from text-ranking scores and awaits visual-label review. Claim
+support and false-abstention performance from live answers remain pending.
+[Current retrieval comparison](reviewed-answer-benchmark/retrieval-ablation.md)

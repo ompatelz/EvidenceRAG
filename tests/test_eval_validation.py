@@ -208,3 +208,39 @@ def test_phase2_seed_resolves_real_evidence_and_rejects_unknown_id(tmp_path: Pat
     broken.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
     with pytest.raises(DatasetValidationError, match="unknown evidence ID"):
         validate_dataset(manifest, [broken], verify_evidence=True)
+
+
+def test_distinct_pdfs_in_same_family_cannot_cross_splits(tmp_path: Path) -> None:
+    first = item_data()
+    second = item_data(
+        query_id="q2",
+        question="What was the speed of the second trial?",
+        split="validation",
+        answerable=False,
+        category="unanswerable",
+        gold_answers=[],
+        gold_evidence=[],
+    )
+    manifest, eval_path = write_dataset(tmp_path, [first, second])
+    raw = json.loads(manifest.read_text(encoding="utf-8"))
+    entry = raw["documents"][0]
+    entry["document_family"] = "same-family"
+    other_bytes = b"second version from the same family"
+    other_digest = hashlib.sha256(other_bytes).hexdigest()
+    other_path = "datasets/fixtures/second.pdf"
+    (tmp_path / other_path).write_bytes(other_bytes)
+    raw["documents"].append(
+        {
+            **entry,
+            "document_id": "doc2",
+            "document_version": f"sha256:{other_digest}",
+            "sha256": other_digest,
+            "local_fixture_path": other_path,
+        }
+    )
+    manifest.write_text(json.dumps(raw), encoding="utf-8")
+    rows = [json.loads(line) for line in eval_path.read_text(encoding="utf-8").splitlines()]
+    rows[1]["documents"] = [{"document_id": "doc2", "document_version": f"sha256:{other_digest}"}]
+    eval_path.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
+    with pytest.raises(DatasetValidationError, match="split conflict for same-family"):
+        validate_dataset(manifest, [eval_path])

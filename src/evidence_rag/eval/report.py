@@ -121,19 +121,22 @@ def render_report(
         raise ValueError("run query IDs do not match the selected evaluation set")
     if e0["corpus_versions"] != e1["corpus_versions"]:
         raise ValueError("E0/E1 corpus versions differ")
-    for a, b in zip(a_rows, b_rows, strict=True):
-        for field in (
-            "query_id",
-            "split",
-            "category",
-            "review_status",
-            "answerable",
-            "requires_visual_evidence",
-            "scope",
-            "gold_evidence_ids",
-        ):
-            if a[field] != b[field]:
-                raise ValueError(f"E0/E1 row contract differs: {field}")
+    for item, a, b in zip(selected, a_rows, b_rows, strict=True):
+        expected = {
+            "query_id": item.query_id,
+            "split": item.split.value,
+            "category": item.category,
+            "review_status": item.review_status.value,
+            "answerable": item.answerable,
+            "requires_visual_evidence": item.requires_visual_evidence,
+            "scope": sorted([ref.document_id, ref.document_version] for ref in item.documents),
+            "gold_evidence_ids": sorted(
+                {ref.evidence_id for ref in item.gold_evidence if ref.evidence_id}
+            ),
+        }
+        for field, value in expected.items():
+            if a[field] != value or b[field] != value:
+                raise ValueError(f"run row differs from evaluation label: {item.query_id}: {field}")
     verified = sum(item.review_status.value == "verified" for item in items)
     scored = sum(row["metrics"] is not None for row in a_rows)
     wins: dict[str, list[str]] = {"E0": [], "E1": [], "both_miss_at_5": []}
@@ -151,8 +154,22 @@ def render_report(
         elif ar is None or br < ar:
             wins["E1"].append(a["query_id"])
 
+    reproducibility = (
+        [
+            "- Regenerate E0 through E3 using "
+            "`python scripts/reviewed_retrieval.py --output-dir reports/generated/answer-benchmark` "
+            "with the pinned local model cache."
+        ]
+        if seed_path.name == "reviewed_labels.jsonl"
+        else [
+            "- Run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e0.json`.",
+            "- With the pinned model cached, run "
+            "`uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e1.json`.",
+            "- Generate this report with `uv run python -m evidence_rag.eval.report`.",
+        ]
+    )
     lines = [
-        "# Phase 2 search baselines — provisional gate report",
+        "# Search baselines — provisional gate report",
         "",
         "## Provenance and reproduction",
         "",
@@ -169,12 +186,7 @@ def render_report(
         f"`{str(e1['source_tree_uncommitted_at_run']).lower()}`.",
         "- Both runs use the same canonical evidence units, exact document versions, "
         "query IDs, evidence-unit binary relevance, and K=1/3/5.",
-        "- Run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e0.json`.",
-        "- With the pinned model cached, run "
-        "`uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e1.json`. "
-        "For the first download, set `download_model` to `true` in a copy of that "
-        "config; ordinary CI never downloads model weights.",
-        "- Generate this report with `uv run python -m evidence_rag.eval.report`.",
+        *reproducibility,
         "- Timings are exploratory single cold-process observations without warmup; "
         "E1 separates query embedding from vector search. They are not latency "
         "benchmarks. Peak memory was not measured.",
@@ -237,7 +249,7 @@ def render_report(
         "- Both miss relevant evidence within K=5: "
         f"{', '.join(wins['both_miss_at_5']) or 'none observed'}.",
         (
-            f"- `{both_late[0][0]}` has its provisional relevant unit at rank "
+            f"- `{both_late[0][0]}` has its labeled relevant unit at rank "
             f"{both_late[0][1]} in E0 and {both_late[0][2]} in E1; both miss at "
             "K=1 (taxonomy d)."
             if both_late
@@ -251,9 +263,8 @@ def render_report(
         "Interpretation (e), citation support (f), and security (h) "
         "are outside this retrieval evaluation; document/version isolation has "
         "separate tests.",
-        "- Visual chart questions stay in the frozen family. Their parsing and "
-        "annotation quality cannot be inferred from this run. All provisional "
-        "labels could change after source-page review.",
+        "- Frozen-family chart questions are outside this run. Pending labels could "
+        "change after source-page review.",
         f"- Recorded query failures: E0={len(e0['failures'])}, "
         f"E1={len(e1['failures'])}; any future partial failures are saved per "
         "query and excluded from scored denominators.",

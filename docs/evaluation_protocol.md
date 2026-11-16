@@ -60,3 +60,37 @@ answer/citation evaluation work.
 Metric reports must state corpus revision, split, relevance unit, K, hardware, model and
 index versions, configuration, git SHA, and uncertainty. Model judges are diagnostics, not
 proof of correctness.
+
+## Current label snapshot and optional live evaluation
+
+Keep the historical seed and frozen run artifacts immutable. Record each
+owner response verbatim in the [decision ledger](../datasets/eval/owner_decisions.json).
+Record any approved field replacement and its reason in that entry.
+Generate the current snapshot with
+`python -m evidence_rag.eval.owner_review`. In the existing schema,
+`verified` means human verified. Unconfirmed labels remain `needs_review`.
+CI rebuilds the snapshot in memory, compares the committed content and validates
+source hashes, parser evidence IDs, anchors, page bounds, family isolation
+and exact versions. Numeric tolerances remain unset unless the owner approves
+one for the question and unit.
+
+The added library family belongs to development and the added garden family
+belongs to validation. Future test data needs a family-disjoint split manifest
+and dataset hash declared before any model results are inspected. Exclude the
+opened historical test from settings selection. Preserve historical runs
+alongside any fresh diagnostics and identify the cohort in each table.
+
+Use the [optional live workflow](live_answers.md#reviewed-benchmark-workflow)
+only for explicitly authorized source excerpts and reviewed queries. Save
+the raw result before source-page judgment. The answer scorer reports correct
+emitted answers over emitted answers, supporting citation-to-claim links over
+all links, and claims with at least one independently supporting link over
+all claims. Record compound claims as separate verifiable propositions when
+possible. Review multi-source inferences jointly and report them separately
+when no single citation suffices. Page and region accuracy each use the
+links with an applicable gold anchor at that precision. Unsupported-answer
+rate counts emitted answers with an uncovered claim. False abstention is
+abstentions over answerable queries. Coverage is emitted answers over all
+queries. Latency uses nearest-rank p50 and p95. A zero denominator leaves a
+metric unmeasured. Small, family-clustered subsets are descriptive and carry
+no population-level inference.

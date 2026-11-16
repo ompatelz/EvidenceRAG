@@ -1,6 +1,6 @@
 # Owner source review guide
 
-Open the linked source at the indicated page. For each ID, return **confirm** or **correct** with the replacement answerability, answer, page/region, category, or visual-dependence flag as applicable. For full-document checks, confirm the requested fact is absent. The [review packet](REVIEW_PACKET.md) has evidence IDs and notes fields. Every decision is pending. Review of the frozen source labels is for recordkeeping only. The prior frozen run stays closed.
+Open the linked source at the indicated page. For each ID, return **confirm** or **correct** with the replacement answerability, answer, page/region, category, or visual-dependence flag as applicable. For full-document checks, confirm the requested fact is absent. The [review packet](REVIEW_PACKET.md) has evidence IDs and notes fields. The [decision ledger](owner_decisions.json) records completed decisions. Review of the frozen source labels is for recordkeeping only. The prior frozen run stays closed.
 
 Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navigation.
 
@@ -49,3 +49,13 @@ Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navig
 | `p2_chart_tallest`<br>Which scheduler mode has the greatest median queue wait in Figure 1? | Answerable — FIFO (visual) | [Queue Scheduling Note](../fixtures/queue-chart.pdf), p. 1, region `0.18, 0.30, 0.84, 0.62`. Confirm FIFO is tallest and the label requires visually associating bars and categories. |
 | `p2_chart_shortest`<br>Which scheduler mode has the shortest bar in Figure 1? | Answerable — Priority (visual) | [Queue Scheduling Note](../fixtures/queue-chart.pdf), p. 1, region `0.18, 0.30, 0.84, 0.62`. Confirm Priority is shortest and the label requires visually associating bars and categories. |
 | `p2_chart_errors`<br>How many requests failed in the queue experiment? | Unanswerable | [Queue Scheduling Note](../fixtures/queue-chart.pdf), entire PDF. Check the full page for failures distinct from the number processed. |
+
+## Expansion candidates
+
+| ID and question | Proposal | Source and decision |
+| --- | --- | --- |
+| `harbor_partner_limit` How many items can a Partner account borrow at once? | Answerable, 10 items | [Harbor Library](../fixtures/library-loans.pdf), p. 1, table region (0.09, 0.21, 0.80, 0.31). Confirm Partner and Loan limit intersect at 10 items. |
+| `harbor_renewed_period` What is the total loan period for an eligible Resident item after one renewal? | Answerable, 35 days | [Harbor Library](../fixtures/library-loans.pdf), p. 1, table region (0.09, 0.21, 0.80, 0.31), and p. 2 (0.09, 0.16, 0.46, 0.22). Confirm 21 + 14 days, one renewal and the eligibility qualifier. |
+| `harbor_overdue_fee` What daily overdue fee does the schedule charge a Resident account? | Unanswerable | [Harbor Library](../fixtures/library-loans.pdf), both pages. Confirm no fee is given. |
+| `juniper_north_meadow` Which feature is directly north of the Meadow in Figure 1? | Answerable, Pond, visual | [Juniper Garden](../fixtures/garden-map.pdf), p. 1, map region (0.19, 0.25, 0.79, 0.60). Confirm the layout establishes north of Meadow and the caption gives only orientation. |
+| `juniper_closing_time` At what time does Juniper Garden close to visitors? | Unanswerable | [Juniper Garden](../fixtures/garden-map.pdf), entire page. Confirm no hours appear. |

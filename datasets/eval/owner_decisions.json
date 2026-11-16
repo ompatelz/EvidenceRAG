@@ -1,0 +1,38 @@
+[
+  {
+    "query_id": "p2_atlas_rate",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_atlas_path",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_atlas_filter",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_atlas_weight",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  }
+]

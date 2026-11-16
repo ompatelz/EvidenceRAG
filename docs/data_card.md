@@ -1,6 +1,6 @@
 # EvidenceRAG evaluation data card
 
-The evaluation pilot uses five deterministic, repository-authored technical
+The historical evaluation pilot used five deterministic, repository-authored technical
 PDF families. The [fixture manifest](../datasets/manifests/fixtures.json)
 records each source, creation date, SHA-256 and redistribution terms. The PDFs
 contain synthetic technical content and are dedicated under
@@ -16,7 +16,7 @@ The [candidate labels](../datasets/eval/phase2_seed.jsonl) include five
 unanswerable questions and two questions that require interpreting bar heights.
 Each row records its exact document version, answerability, acceptable answers,
 and evidence anchors where applicable. The visual labels use page regions.
-All 31 rows remain `needs_review`. The
+The original snapshot records all 31 rows as `needs_review`. The
 [review packet](../datasets/eval/REVIEW_PACKET.md) links source pages and asks
 the reviewer to check answerability, supporting evidence and region precision.
 
@@ -31,3 +31,23 @@ The corpus omits external documents, scans, representative production layouts
 and multi-page tables. The five frozen questions belong to one chart PDF.
 The reported retrieval and abstention results describe this pilot's workloads
 and provisional annotations.
+
+## Current benchmark snapshot
+
+| Split | Families | Questions | Owner verified | Pending |
+| --- | ---: | ---: | ---: | ---: |
+| Development | 3 | 16 | 4 | 12 |
+| Validation | 3 | 15 | 0 | 15 |
+| Historical frozen test | 1 | 5 | 0 | 5 |
+| Total | 7 | 36 | 4 | 32 |
+
+The current corpus has 29 answerable questions, seven unanswerable questions,
+and three visual-dependent questions. The added Harbor Library schedule
+provides a grid table, a two-page renewal calculation, and an absent fee.
+The Juniper Garden site map provides a spatial question and an absent
+closing time. Both PDFs are original synthetic fixtures and available under
+CC0-1.0. Their provenance and exact versions are recorded in the
+[current manifest](../datasets/manifests/answer-benchmark.json).
+The benchmark now covers more layouts and subject matter. Scans, naturally
+authored documents, diverse held-out families and production workloads remain
+gaps. All five expansion labels are pending. No new test family was declared.

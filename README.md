@@ -83,3 +83,14 @@ two of two eligible text queries. Both flagged pixel-dependent queries
 returned an unsupported-modality outcome. The labels are provisional
 and the generator was disabled. See [the frozen report](reports/final_evaluation.md)
 and [raw run](reports/runs/release-frozen-bm25.json).
+
+## Reviewed answer benchmark progress
+
+The benchmark snapshot has 36 candidate questions across seven synthetic
+PDF families. The owner confirmed four Atlas labels. The other 32 labels
+await source-page decisions. The current report separates the four-method
+development and validation diagnostics from the owner-verified subset.
+Live answer and claim metrics are pending.
+[Source review](datasets/eval/SOURCE_REVIEW_GUIDE.md) ·
+[Current baseline](reports/reviewed-answer-benchmark/baselines.md) ·
+[Retrieval ablation](reports/reviewed-answer-benchmark/retrieval-ablation.md)

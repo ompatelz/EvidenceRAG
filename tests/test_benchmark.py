@@ -134,3 +134,11 @@ def test_report_rejects_cross_document_hit() -> None:
     altered["queries"][0]["ranking"][0]["document_id"] = "unrelated"
     with pytest.raises(ValueError, match="scope"):
         validate_run(altered, "E0", e0["dataset_sha256"], e0["manifest_sha256"])
+
+
+def test_report_rejects_agreeing_runs_with_wrong_review_status() -> None:
+    e0, e1 = _runs()
+    for run in (e0, e1):
+        run["queries"][0]["review_status"] = "verified"
+    with pytest.raises(ValueError, match="run row differs.*review_status"):
+        render_report(e0, e1, e0_path=E0, e1_path=E1, seed_path=SEED, manifest_path=MANIFEST)

@@ -27,3 +27,13 @@ frozen test under provisional labels. Its two eligible text retrieval
 queries and two caller-flagged visual refusals support the narrowly
 worded README observation. Keep the resume metric template until the
 human-reviewed benchmark gate is met.
+
+## Current benchmark boundary
+
+The refreshed E0–E3 comparison has 24 scored candidate questions.
+Only three scoreable development questions have owner-verified gold
+labels, all from Atlas. The verified validation and live answer
+denominators remain empty. The added cases establish coverage of specific
+document formats in the corpus. They provide no estimate of deployment
+performance.
+[Current ablation](../reports/reviewed-answer-benchmark/retrieval-ablation.md)

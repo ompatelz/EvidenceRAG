@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "document_id": "doc_cedee38ab4152274426cf3f8",
+      "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+      "source_url": "repo://datasets/fixtures/atlas-narrative.pdf",
+      "title": "Atlas Sensor Note",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-10-29",
+      "sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/atlas-narrative.pdf"
+    },
+    {
+      "document_id": "doc_66624dfc102d650e04560cc4",
+      "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+      "source_url": "repo://datasets/fixtures/retrieval-table.pdf",
+      "title": "Retrieval Baseline Fixture",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-10-29",
+      "sha256": "38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/retrieval-table.pdf"
+    },
+    {
+      "document_id": "doc_270441bcf0dd0c279db4aa8f",
+      "document_version": "sha256:8ef8df167424ff466ac7d94a8cec9480ed7675fce14ca3123e791cb8084344b7",
+      "source_url": "repo://datasets/fixtures/queue-chart.pdf",
+      "title": "Queue Scheduling Note",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-04",
+      "sha256": "8ef8df167424ff466ac7d94a8cec9480ed7675fce14ca3123e791cb8084344b7",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/queue-chart.pdf"
+    },
+    {
+      "document_id": "doc_62011f65f1a9915d192ca10e",
+      "document_version": "sha256:6ee5240f9196b2f470a242eabcb88e8b21129efa51f6a7203a2e72f052933f0d",
+      "source_url": "repo://datasets/fixtures/checksum-retry.pdf",
+      "title": "Checksum and Retry Protocol Note",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-04",
+      "sha256": "6ee5240f9196b2f470a242eabcb88e8b21129efa51f6a7203a2e72f052933f0d",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/checksum-retry.pdf"
+    },
+    {
+      "document_id": "doc_396f50d2663f57ae4de9d506",
+      "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+      "source_url": "repo://datasets/fixtures/cache-admission.pdf",
+      "title": "Cache Admission Study Note",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-04",
+      "sha256": "03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/cache-admission.pdf"
+    },
+    {
+      "document_id": "doc_c8797437052fd23adea34e6f",
+      "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+      "source_url": "repo://datasets/fixtures/library-loans.pdf",
+      "title": "Harbor Library Loan Schedule",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-16",
+      "sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/library-loans.pdf",
+      "document_family": "harbor-library"
+    },
+    {
+      "document_id": "doc_c3249f16049fe48fd02173ba",
+      "document_version": "sha256:c4f5aca34846906bcad7e9f07845d340fb82ef7952ba3c9430ee2f6ed1ea27bd",
+      "source_url": "repo://datasets/fixtures/garden-map.pdf",
+      "title": "Juniper Garden Visitor Map",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-16",
+      "sha256": "c4f5aca34846906bcad7e9f07845d340fb82ef7952ba3c9430ee2f6ed1ea27bd",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/garden-map.pdf",
+      "document_family": "juniper-garden"
+    }
+  ]
+}

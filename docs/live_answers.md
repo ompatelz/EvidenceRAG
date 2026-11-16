@@ -57,3 +57,30 @@ model and prompt revisions, and cost. For a live comparison, fix retrieval,
 evidence budgets, prompt, model, and generation parameters and review each
 generated claim and citation manually. Record the provider's returned model
 ID and disclose if it identifies only a rolling alias.
+
+## Reviewed benchmark workflow
+
+The benchmark runner is an explicit local workflow. It stays outside CI.
+After choosing reviewed development or validation IDs, authorize the selected
+excerpts, inject the key from a secret store, and prepare the pinned offline
+verifier. Set a total estimated ceiling. For example, an authorization for
+a single Atlas query would use:
+
+```powershell
+uv run --locked --all-extras python scripts/reviewed_live_answers.py --query-id p2_atlas_rate --send-selected-excerpts-to-openai --max-estimated-usd 0.01 --output reports/generated/live-atlas-reviewed.jsonl
+```
+
+Each selected ID reserves the adapter's USD 0.01 estimate. The runner
+requires exact committed CC0 fixture bytes and a current owner decision
+before sending. It uses one attempt, exact-version BM25 K=5, the adapter's
+fixed evidence limits and prompt, temperature zero, and local grounding-v1
+checks. It writes request evidence, raw provider output, final answer or
+abstention, citations, timing, usage, returned model ID and provenance.
+Store the output under the ignored local reports directory.
+
+Compare the raw provider draft and final decision on the same query and
+evidence pack. Have the owner judge answer correctness and each claim-link
+against the exact rendered page before scoring either arm. Report provider
+failures separately from semantic abstention. A locally withheld draft can
+be inspected for the counterfactual but did not reach the user. Live
+results, usage, and human claim judgments are currently pending.
