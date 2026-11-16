@@ -2,12 +2,12 @@
 
 ## Provenance and reproduction
 
-- Dataset SHA-256: `bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71`; manifest SHA-256: `fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec`.
-- Dataset and source text hashes normalize line endings to LF so Windows and Linux checkouts have the same identity.
-- E0 raw run: `reports/reviewed-answer-benchmark/runs/e0.json`; run Git SHA `63027696198c9bfa1d656108d02b5c3ba08621a7`; index `sha256:04957b073c73ce311bf4671e141d7d25768e246a089c0e983dee017158301db6`.
-- E0 source SHA-256 `a3a7c48dbde51f7505e70eeaee0edd6f9666a2dc2d7e511f974441322c331724`; source uncommitted at run: `false`.
-- E1 raw run: `reports/reviewed-answer-benchmark/runs/e1.json`; run Git SHA `63027696198c9bfa1d656108d02b5c3ba08621a7`; index `sha256:97577d6709c2154e404e18659f52caf7de1d3f7a663331dcfcf55b66399604c7`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
-- E1 source SHA-256 `60c23e8516a9c1219f9771128908486b184a36c8b56a4c127dc3b9e144e1fc8c`; source uncommitted at run: `false`.
+- Dataset SHA-256: `bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71`; manifest SHA-256: `cc45582fa7ccbfe05e4e52707f51e54ccdf86022f02a268a05c6ee8fa2e3a1b8`.
+- Dataset, manifest and source text hashes normalize line endings to LF so Windows and Linux checkouts have the same identity.
+- E0 raw run: `reports/reviewed-answer-benchmark/runs/e0.json`; run Git SHA `2cd1a9f2388d5c914ca74427a1cf1d639a06e35f`; index `sha256:04957b073c73ce311bf4671e141d7d25768e246a089c0e983dee017158301db6`.
+- E0 source SHA-256 `d3a0712e7d8043cc7c382304c00127bec8c1ecfb97066a823a1c877f0ee8eae6`; source uncommitted at run: `false`.
+- E1 raw run: `reports/reviewed-answer-benchmark/runs/e1.json`; run Git SHA `2cd1a9f2388d5c914ca74427a1cf1d639a06e35f`; index `sha256:97577d6709c2154e404e18659f52caf7de1d3f7a663331dcfcf55b66399604c7`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
+- E1 source SHA-256 `553b8b950f1a829644a15108374b269d266b1eb4f24198fbea0ee706c6b11948`; source uncommitted at run: `false`.
 - Both runs use the same canonical evidence units, exact document versions, query IDs, evidence-unit binary relevance, and K=1/3/5.
 - Regenerate E0 through E3 using `python scripts/reviewed_retrieval.py --output-dir reports/generated/answer-benchmark` with the pinned local model cache.
 - Timings are exploratory single cold-process observations without warmup; E1 separates query embedding from vector search. They are not latency benchmarks. Peak memory was not measured.

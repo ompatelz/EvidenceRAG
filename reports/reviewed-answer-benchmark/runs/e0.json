@@ -1,11 +1,11 @@
 {
   "experiment": "E0",
   "status": "owner_reviewed_retrieval_only",
-  "git_sha_at_run": "63027696198c9bfa1d656108d02b5c3ba08621a7",
+  "git_sha_at_run": "2cd1a9f2388d5c914ca74427a1cf1d639a06e35f",
   "source_tree_uncommitted_at_run": false,
-  "source_sha256": "a3a7c48dbde51f7505e70eeaee0edd6f9666a2dc2d7e511f974441322c331724",
+  "source_sha256": "d3a0712e7d8043cc7c382304c00127bec8c1ecfb97066a823a1c877f0ee8eae6",
   "dataset_sha256": "bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71",
-  "manifest_sha256": "fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec",
+  "manifest_sha256": "cc45582fa7ccbfe05e4e52707f51e54ccdf86022f02a268a05c6ee8fa2e3a1b8",
   "corpus_versions": [
     [
       "doc_396f50d2663f57ae4de9d506",
@@ -65,8 +65,8 @@
     "logical_cpus": 20
   },
   "timing": {
-    "corpus_preparation_ms": 530.9620000007271,
-    "index_build_ms": 3.7496000004466623,
+    "corpus_preparation_ms": 555.2072999998927,
+    "index_build_ms": 2.795200000036857,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -460,7 +460,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.16730000061215833
+      "search_ms": 0.1654999996389961
     },
     {
       "query_id": "p2_atlas_path",
@@ -576,7 +576,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.11089999861724209
+      "search_ms": 0.10870000005525071
     },
     {
       "query_id": "p2_atlas_filter",
@@ -662,7 +662,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.09549999958835542
+      "search_ms": 0.09140000111074187
     },
     {
       "query_id": "p2_atlas_weight",
@@ -742,7 +742,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.09380000119563192
+      "search_ms": 0.09309999950346537
     },
     {
       "query_id": "p2_table_best",
@@ -858,7 +858,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.10800000018207356
+      "search_ms": 0.09580000005371403
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -914,7 +914,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.06279999979597051
+      "search_ms": 0.06070000017643906
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -1015,7 +1015,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.11240000094403513
+      "search_ms": 0.11150000136694871
     },
     {
       "query_id": "p2_table_latency",
@@ -1050,7 +1050,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.06960000064282212
+      "search_ms": 0.06630000098084565
     },
     {
       "query_id": "p2_retry_protocol",
@@ -1166,7 +1166,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.15270000039890874
+      "search_ms": 0.14370000099006575
     },
     {
       "query_id": "p2_retry_digest",
@@ -1282,7 +1282,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.15530000018770806
+      "search_ms": 0.14689999989059288
     },
     {
       "query_id": "p2_retry_chunk_bytes",
@@ -1398,7 +1398,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.2922000003309222
+      "search_ms": 0.15410000014526304
     },
     {
       "query_id": "p2_retry_ack",
@@ -1514,7 +1514,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.26419999994686805
+      "search_ms": 0.16400000095018186
     },
     {
       "query_id": "p2_retry_formula",
@@ -1630,7 +1630,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.31599999965692405
+      "search_ms": 0.14709999959450215
     },
     {
       "query_id": "p2_retry_total",
@@ -1746,7 +1746,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.20899999981338624
+      "search_ms": 0.17210000078193843
     },
     {
       "query_id": "p2_retry_attempts",
@@ -1862,7 +1862,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.2007000002777204
+      "search_ms": 0.17810000099416357
     },
     {
       "query_id": "p2_retry_second_backoff",
@@ -1978,7 +1978,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1644000003580004
+      "search_ms": 0.21610000112559646
     },
     {
       "query_id": "p2_retry_loss",
@@ -2073,7 +2073,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.2550999997765757
+      "search_ms": 0.2336999987164745
     },
     {
       "query_id": "p2_cache_study_id",
@@ -2189,7 +2189,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.14869999904476572
+      "search_ms": 0.13179999950807542
     },
     {
       "query_id": "p2_cache_capacity",
@@ -2305,7 +2305,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1401999998051906
+      "search_ms": 0.10970000039378647
     },
     {
       "query_id": "p2_cache_formula",
@@ -2421,7 +2421,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.25040000036824495
+      "search_ms": 0.13939999917056412
     },
     {
       "query_id": "p2_cache_ratio",
@@ -2539,7 +2539,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1745000008668285
+      "search_ms": 0.15669999993406236
     },
     {
       "query_id": "p2_cache_limit",
@@ -2655,7 +2655,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1632999992580153
+      "search_ms": 0.15209999946819153
     },
     {
       "query_id": "p2_cache_eviction",
@@ -2771,7 +2771,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1385000014124671
+      "search_ms": 0.1295000001846347
     },
     {
       "query_id": "p2_cache_best_hit",
@@ -2889,7 +2889,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1505999989603879
+      "search_ms": 0.1951000012923032
     },
     {
       "query_id": "p2_cache_lru_latency",
@@ -2990,7 +2990,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.1396000006934628
+      "search_ms": 0.1412999990861863
     },
     {
       "query_id": "p2_cache_energy",
@@ -3085,7 +3085,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.14600000031350646
+      "search_ms": 0.14519999967887998
     },
     {
       "query_id": "harbor_partner_limit",
@@ -3201,7 +3201,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.12489999971876387
+      "search_ms": 0.13889999900129624
     },
     {
       "query_id": "harbor_renewed_period",
@@ -3319,7 +3319,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.14649999866378494
+      "search_ms": 0.1422000004822621
     },
     {
       "query_id": "harbor_overdue_fee",
@@ -3414,7 +3414,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.12900000001536682
+      "search_ms": 0.12570000035339035
     },
     {
       "query_id": "juniper_north_meadow",
@@ -3464,7 +3464,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.07480000022042077
+      "search_ms": 0.07200000072771218
     },
     {
       "query_id": "juniper_closing_time",
@@ -3514,7 +3514,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.06519999988086056
+      "search_ms": 0.06209999992279336
     }
   ]
 }

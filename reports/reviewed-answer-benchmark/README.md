@@ -37,7 +37,7 @@ uv run --locked --all-extras python scripts/reviewed_retrieval.py --output-dir r
 
 UTF-8 text hashes normalize line endings to LF.
 
-- `e0.json` · `2c071a57459f5610ebe6b819c0d84ddae4183e2095d70548c9ec4c5631b4e566`
-- `e1.json` · `d7c87fafcde83680a2fa61ff3d34b8a49d8dda608e441ee19e4a63dba3d080e4`
-- `e2.json` · `2b4fadc48aa04fb1062a18e7dfd0e7e4c5fdc6ed461a2ae8aebbceae82c93fe1`
-- `e3.json` · `4ac31ea6e93c3db3a31d0370eab5bdf15bdd9be247b5abd87c5bc2ab524a7364`
+- `e0.json` · `3947675cd6b44014b1da831bb647ed56f4c08417caaa4b143f70077a71f30aaf`
+- `e1.json` · `b71af90160c50d643a6e5590af7c85e4b0c646cb987100173ed1c552eadd37ba`
+- `e2.json` · `fc48b97d0c676d21e7f4afa10c8f89e75d9ce5bc4dc627ab68de439ee27a7105`
+- `e3.json` · `c27fe875e5f7ebd4da4da72df24fb47b44237af2c468ca87b380dd2f2eab8a53`

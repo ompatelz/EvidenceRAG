@@ -1,11 +1,11 @@
 {
   "experiment": "E3",
   "status": "owner_reviewed_retrieval_only",
-  "git_sha_at_run": "63027696198c9bfa1d656108d02b5c3ba08621a7",
+  "git_sha_at_run": "2cd1a9f2388d5c914ca74427a1cf1d639a06e35f",
   "source_tree_uncommitted_at_run": false,
-  "source_sha256": "c5eeacea8c216f67d60c83d92874132661c4422f7534e39571e4672dbda47440",
+  "source_sha256": "d115deee4e9ba3477fda6e2be67f6fb27625455b4b1bd092ac22b97172ac2ba8",
   "dataset_sha256": "bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71",
-  "manifest_sha256": "fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec",
+  "manifest_sha256": "cc45582fa7ccbfe05e4e52707f51e54ccdf86022f02a268a05c6ee8fa2e3a1b8",
   "corpus_versions": [
     [
       "doc_396f50d2663f57ae4de9d506",
@@ -529,9 +529,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 14.252400002078502,
-      "rerank_ms": 70.94330000109039,
-      "total_ms": 85.1957000031689,
+      "retrieval_ms": 15.051999998831889,
+      "rerank_ms": 92.89800000078685,
+      "total_ms": 107.94999999961874,
       "rerank_status": "reranked"
     },
     {
@@ -683,9 +683,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 13.718899999730638,
-      "rerank_ms": 64.04400000064925,
-      "total_ms": 77.76290000037989,
+      "retrieval_ms": 13.778000000456814,
+      "rerank_ms": 66.23810000019148,
+      "total_ms": 80.0161000006483,
       "rerank_status": "reranked"
     },
     {
@@ -837,9 +837,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 13.578599999163998,
-      "rerank_ms": 66.6479999999865,
-      "total_ms": 80.2265999991505,
+      "retrieval_ms": 13.935400000264053,
+      "rerank_ms": 64.72439999924973,
+      "total_ms": 78.65979999951378,
       "rerank_status": "reranked"
     },
     {
@@ -970,9 +970,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 14.280699997470947,
-      "rerank_ms": 70.65549999970244,
-      "total_ms": 84.93619999717339,
+      "retrieval_ms": 13.165000000299187,
+      "rerank_ms": 63.24289999975008,
+      "total_ms": 76.40790000004927,
       "rerank_status": "reranked"
     },
     {
@@ -1124,9 +1124,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 13.510900000255788,
-      "rerank_ms": 171.55759999877773,
-      "total_ms": 185.06849999903352,
+      "retrieval_ms": 13.207099997089244,
+      "rerank_ms": 159.5459000000119,
+      "total_ms": 172.75299999710114,
       "rerank_status": "reranked"
     },
     {
@@ -1278,9 +1278,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 13.037799999437993,
-      "rerank_ms": 136.12859999921056,
-      "total_ms": 149.16639999864856,
+      "retrieval_ms": 12.137800003984012,
+      "rerank_ms": 151.31640000072366,
+      "total_ms": 163.45420000470767,
       "rerank_status": "reranked"
     },
     {
@@ -1432,9 +1432,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 16.628599998512072,
-      "rerank_ms": 144.11000000109198,
-      "total_ms": 160.73859999960405,
+      "retrieval_ms": 16.797800000858842,
+      "rerank_ms": 168.50420000082522,
+      "total_ms": 185.30200000168406,
       "rerank_status": "reranked"
     },
     {
@@ -1565,9 +1565,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 16.489200001160498,
-      "rerank_ms": 163.42140000051586,
-      "total_ms": 179.91060000167636,
+      "retrieval_ms": 16.57849999901373,
+      "rerank_ms": 160.40020000036748,
+      "total_ms": 176.9786999993812,
       "rerank_status": "reranked"
     },
     {
@@ -1719,9 +1719,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 14.641199999459786,
-      "rerank_ms": 78.17270000123244,
-      "total_ms": 92.81390000069223,
+      "retrieval_ms": 16.80099999794038,
+      "rerank_ms": 59.79039999874658,
+      "total_ms": 76.59139999668696,
       "rerank_status": "reranked"
     },
     {
@@ -1873,9 +1873,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 14.589000000341912,
-      "rerank_ms": 81.50459999887971,
-      "total_ms": 96.09359999922162,
+      "retrieval_ms": 12.345800001639873,
+      "rerank_ms": 66.50300000001153,
+      "total_ms": 78.8488000016514,
       "rerank_status": "reranked"
     },
     {
@@ -2027,9 +2027,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 14.089099999182508,
-      "rerank_ms": 75.82779999938793,
-      "total_ms": 89.91689999857044,
+      "retrieval_ms": 12.441299999409239,
+      "rerank_ms": 72.4952000000485,
+      "total_ms": 84.93649999945774,
       "rerank_status": "reranked"
     },
     {
@@ -2181,9 +2181,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 14.841300002444768,
-      "rerank_ms": 76.54980000006617,
-      "total_ms": 91.39110000251094,
+      "retrieval_ms": 12.215200000355253,
+      "rerank_ms": 72.85210000009101,
+      "total_ms": 85.06730000044627,
       "rerank_status": "reranked"
     },
     {
@@ -2335,9 +2335,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 15.831000000616768,
-      "rerank_ms": 60.68779999986873,
-      "total_ms": 76.5188000004855,
+      "retrieval_ms": 12.256600000910112,
+      "rerank_ms": 73.58530000055907,
+      "total_ms": 85.84190000146918,
       "rerank_status": "reranked"
     },
     {
@@ -2489,9 +2489,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 18.011199997999938,
-      "rerank_ms": 70.56449999981851,
-      "total_ms": 88.57569999781845,
+      "retrieval_ms": 14.280500001405017,
+      "rerank_ms": 88.69969999977911,
+      "total_ms": 102.98020000118413,
       "rerank_status": "reranked"
     },
     {
@@ -2643,9 +2643,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 18.30559999871184,
-      "rerank_ms": 62.292999999044696,
-      "total_ms": 80.59859999775654,
+      "retrieval_ms": 13.816099997711717,
+      "rerank_ms": 81.7112000004272,
+      "total_ms": 95.52729999813891,
       "rerank_status": "reranked"
     },
     {
@@ -2797,9 +2797,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 17.760499998985324,
-      "rerank_ms": 50.59559999972407,
-      "total_ms": 68.3560999987094,
+      "retrieval_ms": 13.013300000238814,
+      "rerank_ms": 66.09299999945506,
+      "total_ms": 79.10629999969387,
       "rerank_status": "reranked"
     },
     {
@@ -2930,9 +2930,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 17.407199999070144,
-      "rerank_ms": 56.11000000135391,
-      "total_ms": 73.51720000042405,
+      "retrieval_ms": 15.063099997860263,
+      "rerank_ms": 73.7662999999884,
+      "total_ms": 88.82939999784867,
       "rerank_status": "reranked"
     },
     {
@@ -3084,9 +3084,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 15.691499998865766,
-      "rerank_ms": 44.86729999916861,
-      "total_ms": 60.558799998034374,
+      "retrieval_ms": 12.196200001199031,
+      "rerank_ms": 64.80929999997898,
+      "total_ms": 77.005500001178,
       "rerank_status": "reranked"
     },
     {
@@ -3238,9 +3238,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 16.11310000407684,
-      "rerank_ms": 38.60229999918374,
-      "total_ms": 54.715400003260584,
+      "retrieval_ms": 10.497899998881621,
+      "rerank_ms": 57.792699999481556,
+      "total_ms": 68.29059999836318,
       "rerank_status": "reranked"
     },
     {
@@ -3392,9 +3392,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 17.18539999819768,
-      "rerank_ms": 50.13849999886588,
-      "total_ms": 67.32389999706356,
+      "retrieval_ms": 11.46810000136611,
+      "rerank_ms": 66.72339999931864,
+      "total_ms": 78.19150000068475,
       "rerank_status": "reranked"
     },
     {
@@ -3548,9 +3548,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 18.800200001351186,
-      "rerank_ms": 59.28270000003977,
-      "total_ms": 78.08290000139095,
+      "retrieval_ms": 13.412899999821093,
+      "rerank_ms": 71.06569999996282,
+      "total_ms": 84.47859999978391,
       "rerank_status": "reranked"
     },
     {
@@ -3702,9 +3702,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 19.852299999911338,
-      "rerank_ms": 62.58720000005269,
-      "total_ms": 82.43949999996403,
+      "retrieval_ms": 11.746800000764779,
+      "rerank_ms": 66.73859999864362,
+      "total_ms": 78.4853999994084,
       "rerank_status": "reranked"
     },
     {
@@ -3856,9 +3856,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 18.873700000767712,
-      "rerank_ms": 58.88830000003509,
-      "total_ms": 77.7620000008028,
+      "retrieval_ms": 12.036299998726463,
+      "rerank_ms": 58.99989999852551,
+      "total_ms": 71.03619999725197,
       "rerank_status": "reranked"
     },
     {
@@ -4012,9 +4012,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 17.883200001961086,
-      "rerank_ms": 71.18640000044252,
-      "total_ms": 89.0696000024036,
+      "retrieval_ms": 15.55749999897671,
+      "rerank_ms": 64.92029999935767,
+      "total_ms": 80.47779999833438,
       "rerank_status": "reranked"
     },
     {
@@ -4166,9 +4166,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 20.160099998975056,
-      "rerank_ms": 79.56860000012966,
-      "total_ms": 99.72869999910472,
+      "retrieval_ms": 15.769100000397884,
+      "rerank_ms": 63.46370000028401,
+      "total_ms": 79.23280000068189,
       "rerank_status": "reranked"
     },
     {
@@ -4299,9 +4299,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 17.309499999100808,
-      "rerank_ms": 65.12710000060906,
-      "total_ms": 82.43659999970987,
+      "retrieval_ms": 14.607999997679144,
+      "rerank_ms": 53.78100000052655,
+      "total_ms": 68.38899999820569,
       "rerank_status": "reranked"
     },
     {
@@ -4453,9 +4453,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 19.006000000445056,
-      "rerank_ms": 153.46660000068368,
-      "total_ms": 172.47260000112874,
+      "retrieval_ms": 15.5815000016446,
+      "rerank_ms": 123.54679999953078,
+      "total_ms": 139.12830000117538,
       "rerank_status": "reranked"
     },
     {
@@ -4609,9 +4609,9 @@
         }
       },
       "failure": null,
-      "retrieval_ms": 18.488299998352886,
-      "rerank_ms": 175.52749999958905,
-      "total_ms": 194.01579999794194,
+      "retrieval_ms": 16.272600001684623,
+      "rerank_ms": 132.83140000021376,
+      "total_ms": 149.10400000189838,
       "rerank_status": "reranked"
     },
     {
@@ -4742,9 +4742,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 16.478599998663412,
-      "rerank_ms": 82.99489999990328,
-      "total_ms": 99.4734999985667,
+      "retrieval_ms": 14.302299998234957,
+      "rerank_ms": 64.35760000022128,
+      "total_ms": 78.65989999845624,
       "rerank_status": "reranked"
     },
     {
@@ -4853,9 +4853,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 15.70269999865559,
-      "rerank_ms": 90.28179999950225,
-      "total_ms": 105.98449999815784,
+      "retrieval_ms": 13.65810000061174,
+      "rerank_ms": 75.14760000049137,
+      "total_ms": 88.8057000011031,
       "rerank_status": "reranked"
     },
     {
@@ -4964,9 +4964,9 @@
       ],
       "metrics": null,
       "failure": null,
-      "retrieval_ms": 15.268799999830662,
-      "rerank_ms": 83.18650000001071,
-      "total_ms": 98.45529999984137,
+      "retrieval_ms": 15.140199999223114,
+      "rerank_ms": 66.38999999995576,
+      "total_ms": 81.53019999917888,
       "rerank_status": "reranked"
     }
   ]

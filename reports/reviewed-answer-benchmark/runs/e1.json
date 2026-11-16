@@ -1,11 +1,11 @@
 {
   "experiment": "E1",
   "status": "owner_reviewed_retrieval_only",
-  "git_sha_at_run": "63027696198c9bfa1d656108d02b5c3ba08621a7",
+  "git_sha_at_run": "2cd1a9f2388d5c914ca74427a1cf1d639a06e35f",
   "source_tree_uncommitted_at_run": false,
-  "source_sha256": "60c23e8516a9c1219f9771128908486b184a36c8b56a4c127dc3b9e144e1fc8c",
+  "source_sha256": "553b8b950f1a829644a15108374b269d266b1eb4f24198fbea0ee706c6b11948",
   "dataset_sha256": "bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71",
-  "manifest_sha256": "fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec",
+  "manifest_sha256": "cc45582fa7ccbfe05e4e52707f51e54ccdf86022f02a268a05c6ee8fa2e3a1b8",
   "corpus_versions": [
     [
       "doc_396f50d2663f57ae4de9d506",
@@ -81,8 +81,8 @@
     "peak_memory": "not measured"
   },
   "timing": {
-    "corpus_preparation_ms": 468.175699999847,
-    "embedding_and_index_ms": 1174.8058000011952,
+    "corpus_preparation_ms": 693.8645999998698,
+    "embedding_and_index_ms": 1591.1493000003247,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -491,8 +491,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.292700000311015,
-      "vector_search_ms": 6.780900001103873
+      "embedding_ms": 11.038599999665166,
+      "vector_search_ms": 9.730199999467004
     },
     {
       "query_id": "p2_atlas_path",
@@ -608,8 +608,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.791199999905075,
-      "vector_search_ms": 4.715300001407741
+      "embedding_ms": 9.909299998980714,
+      "vector_search_ms": 6.133200000476791
     },
     {
       "query_id": "p2_atlas_filter",
@@ -725,8 +725,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.474500000171247,
-      "vector_search_ms": 4.254199999195407
+      "embedding_ms": 9.55439999961527,
+      "vector_search_ms": 5.327100001522922
     },
     {
       "query_id": "p2_atlas_weight",
@@ -821,8 +821,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 6.84230000115349,
-      "vector_search_ms": 4.090899999937392
+      "embedding_ms": 9.467899999435758,
+      "vector_search_ms": 5.059499999333639
     },
     {
       "query_id": "p2_table_best",
@@ -938,8 +938,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.585999999719206,
-      "vector_search_ms": 4.516299999522744
+      "embedding_ms": 9.77959999909217,
+      "vector_search_ms": 5.4555999995500315
     },
     {
       "query_id": "p2_table_dense_recall",
@@ -1055,8 +1055,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.762999999613385,
-      "vector_search_ms": 4.3582000016613165
+      "embedding_ms": 8.054800000536488,
+      "vector_search_ms": 5.3597999994963175
     },
     {
       "query_id": "p2_table_f1_gap",
@@ -1172,8 +1172,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.875099999087979,
-      "vector_search_ms": 4.202100000838982
+      "embedding_ms": 13.215799999670708,
+      "vector_search_ms": 5.3805999996257015
     },
     {
       "query_id": "p2_table_latency",
@@ -1268,8 +1268,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 10.003700001107063,
-      "vector_search_ms": 4.49799999842071
+      "embedding_ms": 11.046900001019822,
+      "vector_search_ms": 4.820899999685935
     },
     {
       "query_id": "p2_retry_protocol",
@@ -1385,8 +1385,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.256200000483659,
-      "vector_search_ms": 4.583500000080676
+      "embedding_ms": 9.53299999855517,
+      "vector_search_ms": 5.808600000818842
     },
     {
       "query_id": "p2_retry_digest",
@@ -1502,8 +1502,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.30269999965094,
-      "vector_search_ms": 4.18809999973746
+      "embedding_ms": 7.605699998748605,
+      "vector_search_ms": 4.806699998880504
     },
     {
       "query_id": "p2_retry_chunk_bytes",
@@ -1619,8 +1619,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.650699999227072,
-      "vector_search_ms": 4.472200000236626
+      "embedding_ms": 7.942600001115352,
+      "vector_search_ms": 5.566699999690172
     },
     {
       "query_id": "p2_retry_ack",
@@ -1736,8 +1736,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.783599999835133,
-      "vector_search_ms": 4.41309999951045
+      "embedding_ms": 8.098700000118697,
+      "vector_search_ms": 5.327400000169291
     },
     {
       "query_id": "p2_retry_formula",
@@ -1853,8 +1853,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.536700000651763,
-      "vector_search_ms": 4.232999999658205
+      "embedding_ms": 7.725999999820488,
+      "vector_search_ms": 4.824600000574719
     },
     {
       "query_id": "p2_retry_total",
@@ -1970,8 +1970,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.856200000082026,
-      "vector_search_ms": 4.223500000080094
+      "embedding_ms": 9.727599999678205,
+      "vector_search_ms": 6.251299999348703
     },
     {
       "query_id": "p2_retry_attempts",
@@ -2087,8 +2087,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.999199999176199,
-      "vector_search_ms": 4.559899998639594
+      "embedding_ms": 10.070500000438187,
+      "vector_search_ms": 5.390399999669171
     },
     {
       "query_id": "p2_retry_second_backoff",
@@ -2204,8 +2204,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.3546000003261724,
-      "vector_search_ms": 4.971799999111681
+      "embedding_ms": 8.881600000677281,
+      "vector_search_ms": 5.40039999941655
     },
     {
       "query_id": "p2_retry_loss",
@@ -2300,8 +2300,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 7.376800000201911,
-      "vector_search_ms": 4.69869999869843
+      "embedding_ms": 9.575800000675372,
+      "vector_search_ms": 5.103000001327018
     },
     {
       "query_id": "p2_cache_study_id",
@@ -2417,8 +2417,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.592799998543342,
-      "vector_search_ms": 4.170899999735411
+      "embedding_ms": 7.830700000340585,
+      "vector_search_ms": 4.832499998883577
     },
     {
       "query_id": "p2_cache_capacity",
@@ -2534,8 +2534,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 5.8303000005253125,
-      "vector_search_ms": 4.462599999897066
+      "embedding_ms": 7.944499999211985,
+      "vector_search_ms": 5.6517000011808705
     },
     {
       "query_id": "p2_cache_formula",
@@ -2651,8 +2651,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.771599999614409,
-      "vector_search_ms": 4.266099998858408
+      "embedding_ms": 7.729900000413181,
+      "vector_search_ms": 5.4412999998021405
     },
     {
       "query_id": "p2_cache_ratio",
@@ -2770,8 +2770,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.9531000010319985,
-      "vector_search_ms": 4.665499998736777
+      "embedding_ms": 9.151199999905657,
+      "vector_search_ms": 5.105399999592919
     },
     {
       "query_id": "p2_cache_limit",
@@ -2887,8 +2887,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.279100000028848,
-      "vector_search_ms": 4.174900001089554
+      "embedding_ms": 8.452599999145605,
+      "vector_search_ms": 4.895399999440997
     },
     {
       "query_id": "p2_cache_eviction",
@@ -3004,8 +3004,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.382200001098681,
-      "vector_search_ms": 4.283400001440896
+      "embedding_ms": 7.56080000064685,
+      "vector_search_ms": 5.316599999787286
     },
     {
       "query_id": "p2_cache_best_hit",
@@ -3123,8 +3123,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 6.422899999961373,
-      "vector_search_ms": 4.27529999979015
+      "embedding_ms": 9.759600001416402,
+      "vector_search_ms": 5.181800001082593
     },
     {
       "query_id": "p2_cache_lru_latency",
@@ -3240,8 +3240,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.880500001192559,
-      "vector_search_ms": 4.37430000056338
+      "embedding_ms": 9.769100000994513,
+      "vector_search_ms": 6.031900000380119
     },
     {
       "query_id": "p2_cache_energy",
@@ -3336,8 +3336,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 6.923499999174965,
-      "vector_search_ms": 4.751300000862102
+      "embedding_ms": 8.615400000053342,
+      "vector_search_ms": 4.80989999960002
     },
     {
       "query_id": "harbor_partner_limit",
@@ -3453,8 +3453,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.91599999886239,
-      "vector_search_ms": 4.7814999998081475
+      "embedding_ms": 8.773900000960566,
+      "vector_search_ms": 4.974199999196571
     },
     {
       "query_id": "harbor_renewed_period",
@@ -3572,8 +3572,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.983499998270418,
-      "vector_search_ms": 4.681499998696381
+      "embedding_ms": 10.73779999933322,
+      "vector_search_ms": 5.081199999040109
     },
     {
       "query_id": "harbor_overdue_fee",
@@ -3668,8 +3668,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 8.747300000322866,
-      "vector_search_ms": 5.058599999756552
+      "embedding_ms": 8.859899999151821,
+      "vector_search_ms": 4.666900000302121
     },
     {
       "query_id": "juniper_north_meadow",
@@ -3749,8 +3749,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 8.599999999205465,
-      "vector_search_ms": 4.838099999687984
+      "embedding_ms": 9.70679999954882,
+      "vector_search_ms": 4.82200000078592
     },
     {
       "query_id": "juniper_closing_time",
@@ -3830,8 +3830,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 8.35929999993823,
-      "vector_search_ms": 4.9914999999600695
+      "embedding_ms": 8.181100000001607,
+      "vector_search_ms": 4.6184000002540415
     }
   ]
 }
