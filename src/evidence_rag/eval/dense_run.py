@@ -23,6 +23,7 @@ from evidence_rag.eval.runner import (
     development_items,
     evaluate_queries,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import RankedEvidence
@@ -48,6 +49,7 @@ def run(
 ) -> dict[str, Any]:
     """Save raw E1 rankings; refuse E0/E1 evaluation contract drift."""
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
+    manifest_hash = normalized_text_sha256(manifest_path)
     items = development_items(load_evaluation_jsonl(seed_path))
     selected = sorted(
         {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
@@ -56,6 +58,7 @@ def run(
     e0 = json.loads(e0_path.read_text(encoding="utf-8"))
     if (
         e0.get("dataset_sha256") != dataset_hash
+        or e0.get("manifest_sha256") != manifest_hash
         or e0.get("corpus_versions") != [list(pair) for pair in selected]
         or e0.get("config", {}).get("cutoffs") != list(CUTOFFS)
         or e0.get("relevance_unit") != "evidence_unit"
@@ -104,7 +107,7 @@ def run(
             source_hash.update(path.read_text(encoding="utf-8").encode("utf-8"))
         payload: dict[str, Any] = {
             "experiment": "E1",
-            "status": "partial_failure" if failures else "provisional_unreviewed_labels",
+            "status": retrieval_status(rows, failed=bool(failures)),
             "git_sha_at_run": subprocess.check_output(
                 ["git", "rev-parse", "HEAD"], text=True
             ).strip(),
@@ -124,7 +127,7 @@ def run(
             ),
             "source_sha256": source_hash.hexdigest(),
             "dataset_sha256": dataset_hash,
-            "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+            "manifest_sha256": manifest_hash,
             "corpus_versions": selected,
             "index_id": index.index_id,
             "index_version": INDEX_VERSION,

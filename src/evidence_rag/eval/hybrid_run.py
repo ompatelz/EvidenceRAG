@@ -19,6 +19,7 @@ from evidence_rag.eval.runner import (
     development_items,
     evaluate_queries,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import BM25Index
@@ -38,6 +39,7 @@ def run(
 ) -> dict[str, Any]:
     """Save all trials and choose one configuration using validation only."""
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
+    manifest_hash = normalized_text_sha256(manifest_path)
     items = development_items(load_evaluation_jsonl(seed_path))
     selected = sorted(
         {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
@@ -47,6 +49,7 @@ def run(
     for baseline in baselines:
         if (
             baseline.get("dataset_sha256") != dataset_hash
+            or baseline.get("manifest_sha256") != manifest_hash
             or baseline.get("corpus_versions") != [list(pair) for pair in selected]
             or baseline.get("config", {}).get("cutoffs") != list(CUTOFFS)
             or baseline.get("relevance_unit") != "evidence_unit"
@@ -128,7 +131,7 @@ def run(
             source_hash.update(path.read_bytes())
         payload: dict[str, Any] = {
             "experiment": "E2",
-            "status": "provisional_unreviewed_labels",
+            "status": retrieval_status(selected_trial["queries"], failed=False),
             "git_sha_at_run": subprocess.check_output(
                 ["git", "rev-parse", "HEAD"], text=True
             ).strip(),
@@ -148,7 +151,7 @@ def run(
             ),
             "source_sha256": source_hash.hexdigest(),
             "dataset_sha256": dataset_hash,
-            "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+            "manifest_sha256": manifest_hash,
             "corpus_versions": selected,
             "relevance_unit": "evidence_unit",
             "metric_denominator": "answerable nonvisual candidate questions only",

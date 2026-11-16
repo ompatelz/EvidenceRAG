@@ -1,0 +1,338 @@
+[
+  {
+    "query_id": "p2_atlas_rate",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_atlas_path",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_atlas_filter",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_atlas_weight",
+    "owner_reply": "Confirm all four as proposed",
+    "reason": "Owner confirmed the proposed label in Atlas source review batch 1.",
+    "changes": {
+      "annotator_notes": "Owner confirmed the label against Atlas Sensor Note, page 1.",
+      "ambiguity": "Resolved by owner source-page review."
+    }
+  },
+  {
+    "query_id": "p2_retry_protocol",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 2."
+  },
+  {
+    "query_id": "p2_retry_digest",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 2."
+  },
+  {
+    "query_id": "p2_retry_chunk_bytes",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 2."
+  },
+  {
+    "query_id": "p2_retry_ack",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 2."
+  },
+  {
+    "query_id": "p2_retry_formula",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 3."
+  },
+  {
+    "query_id": "p2_retry_total",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 3."
+  },
+  {
+    "query_id": "p2_retry_attempts",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 3."
+  },
+  {
+    "query_id": "p2_retry_second_backoff",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 3."
+  },
+  {
+    "query_id": "p2_retry_loss",
+    "owner_reply": "Confirm all four, including the F1 wording change",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 4."
+  },
+  {
+    "query_id": "p2_table_best",
+    "owner_reply": "Confirm all four, including the F1 wording change",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 4."
+  },
+  {
+    "query_id": "p2_table_dense_recall",
+    "owner_reply": "Confirm all four, including the F1 wording change",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 4."
+  },
+  {
+    "query_id": "p2_table_f1_gap",
+    "owner_reply": "Confirm all four, including the F1 wording change",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review.",
+      "question": "What is Hybrid F1 minus Lexical F1 on the table’s 0–1 scale?",
+      "annotator_notes": "Hybrid F1 0.86 minus Lexical F1 0.75 gives 0.11 on the 0-1 scale."
+    },
+    "reason": "Owner approved a question wording change to specify the F1 scale and avoid ambiguity about points."
+  },
+  {
+    "query_id": "p2_table_latency",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 5."
+  },
+  {
+    "query_id": "p2_cache_study_id",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 5."
+  },
+  {
+    "query_id": "p2_cache_capacity",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 5."
+  },
+  {
+    "query_id": "p2_cache_formula",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 5."
+  },
+  {
+    "query_id": "p2_cache_ratio",
+    "owner_reply": "Confirm all four and add the cache result region",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review.",
+      "gold_evidence": [
+        {
+          "document_id": "doc_396f50d2663f57ae4de9d506",
+          "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+          "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
+          "page_index": 0,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.22885101,
+            "x1": 0.51870902,
+            "y1": 0.2461995
+          }
+        },
+        {
+          "document_id": "doc_396f50d2663f57ae4de9d506",
+          "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+          "evidence_id": "ev_ace047e2a9ec126336deb5074eed1f3d",
+          "page_index": 0,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.26041667,
+            "x1": 0.39700976,
+            "y1": 0.27776516
+          }
+        },
+        {
+          "document_id": "doc_396f50d2663f57ae4de9d506",
+          "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+          "evidence_id": "ev_15cc234bb2d5b403549b3314becf1a4b",
+          "page_index": 0,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.29198232,
+            "x1": 0.39932996,
+            "y1": 0.30933082
+          }
+        }
+      ],
+      "annotator_notes": "Counts and formula support the derivation. The adjacent result line explicitly reports 800 / 1000 = 0.80."
+    },
+    "reason": "Owner explicitly approved the adjacent worked result as a third gold evidence region."
+  },
+  {
+    "query_id": "p2_cache_limit",
+    "owner_reply": "Confirm all four and add the cache result region",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 6."
+  },
+  {
+    "query_id": "p2_cache_eviction",
+    "owner_reply": "Confirm all four and add the cache result region",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 6."
+  },
+  {
+    "query_id": "p2_cache_best_hit",
+    "owner_reply": "Confirm all four and add the cache result region",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 6."
+  },
+  {
+    "query_id": "p2_cache_lru_latency",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 7."
+  },
+  {
+    "query_id": "p2_cache_energy",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 7."
+  },
+  {
+    "query_id": "p2_chart_id",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 7."
+  },
+  {
+    "query_id": "p2_chart_budget",
+    "owner_reply": "Confirm all four as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 7."
+  },
+  {
+    "query_id": "p2_chart_tallest",
+    "owner_reply": "Confirm all three as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 8."
+  },
+  {
+    "query_id": "p2_chart_shortest",
+    "owner_reply": "Confirm all three as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 8."
+  },
+  {
+    "query_id": "p2_chart_errors",
+    "owner_reply": "Confirm all three as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 8."
+  },
+  {
+    "query_id": "harbor_partner_limit",
+    "owner_reply": "Confirm all three as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 9."
+  },
+  {
+    "query_id": "harbor_renewed_period",
+    "owner_reply": "Confirm all three as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 9."
+  },
+  {
+    "query_id": "harbor_overdue_fee",
+    "owner_reply": "Confirm all three as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 9."
+  },
+  {
+    "query_id": "juniper_north_meadow",
+    "owner_reply": "Confirm both as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 10."
+  },
+  {
+    "query_id": "juniper_closing_time",
+    "owner_reply": "Confirm both as proposed",
+    "changes": {
+      "ambiguity": "Resolved by owner source-page review."
+    },
+    "reason": "Owner confirmed the proposed label in source review batch 10."
+  }
+]

@@ -70,6 +70,8 @@ def validate_dataset(
     root = manifest_path.parents[2]
     known: dict[tuple[str, str], str] = {}
     evidence: dict[tuple[str, str, str], EvidenceUnit] = {}
+    page_counts: dict[tuple[str, str], int] = {}
+    family_by_hash: dict[str, str] = {}
     for entry in manifest.documents:
         key = (entry.document_id, entry.document_version)
         if key in known:
@@ -80,7 +82,10 @@ def validate_dataset(
         actual_hash = hashlib.sha256(fixture.read_bytes()).hexdigest()
         if actual_hash != entry.sha256:
             raise DatasetValidationError(f"fixture hash mismatch: {fixture}")
-        known[key] = entry.document_id
+        family = entry.document_family or entry.document_id
+        if family_by_hash.setdefault(actual_hash, family) != family:
+            raise DatasetValidationError(f"identical PDF assigned to multiple families: {fixture}")
+        known[key] = family
         if verify_evidence:
             if logical_document_id(fixture.name) != entry.document_id:
                 raise DatasetValidationError(
@@ -97,7 +102,9 @@ def validate_dataset(
                     original_filename=fixture.name,
                     sanitized_filename=fixture.name,
                 )
-                for unit in PyMuPDFParser().parse(fixture, document).units:
+                parsed = PyMuPDFParser().parse(fixture, document)
+                page_counts[key] = parsed.page_count
+                for unit in parsed.units:
                     evidence[(entry.document_id, entry.document_version, unit.evidence_id)] = unit
 
     all_items: list[EvaluationItem] = []
@@ -140,6 +147,8 @@ def validate_dataset(
                 )
         if verify_evidence:
             for ref in item.gold_evidence:
+                if ref.page_index >= page_counts[(ref.document_id, ref.document_version)]:
+                    raise DatasetValidationError(f"evidence page outside document: {item.query_id}")
                 if ref.evidence_id is None:
                     if not item.requires_visual_evidence:
                         raise DatasetValidationError(

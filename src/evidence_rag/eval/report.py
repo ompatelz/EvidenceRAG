@@ -1,7 +1,6 @@
 """Validate raw E0/E1 runs and render the provisional Phase 2 baseline report."""
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -12,6 +11,7 @@ from evidence_rag.eval.runner import (
     aggregate_rows,
     development_items,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 
@@ -81,7 +81,7 @@ def validate_run(
     expected_failures = [row["failure"] for row in rows if row.get("failure") is not None]
     if run.get("failures") != expected_failures:
         raise ValueError("failure list does not match raw queries")
-    expected_status = "partial_failure" if expected_failures else "provisional_unreviewed_labels"
+    expected_status = retrieval_status(rows, failed=bool(expected_failures))
     if run.get("status") != expected_status:
         raise ValueError("run status does not match failures")
     if run.get("counts", {}).get("queries") != len(rows) or run.get("counts", {}).get(
@@ -106,7 +106,7 @@ def render_report(
 ) -> str:
     """Derive every figure from validated raw run artifacts."""
     dataset_hash = normalized_text_sha256(seed_path)
-    manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    manifest_hash = normalized_text_sha256(manifest_path)
     validate_run(e0, "E0", dataset_hash, manifest_hash)
     validate_run(e1, "E1", dataset_hash, manifest_hash)
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
@@ -121,19 +121,22 @@ def render_report(
         raise ValueError("run query IDs do not match the selected evaluation set")
     if e0["corpus_versions"] != e1["corpus_versions"]:
         raise ValueError("E0/E1 corpus versions differ")
-    for a, b in zip(a_rows, b_rows, strict=True):
-        for field in (
-            "query_id",
-            "split",
-            "category",
-            "review_status",
-            "answerable",
-            "requires_visual_evidence",
-            "scope",
-            "gold_evidence_ids",
-        ):
-            if a[field] != b[field]:
-                raise ValueError(f"E0/E1 row contract differs: {field}")
+    for item, a, b in zip(selected, a_rows, b_rows, strict=True):
+        expected = {
+            "query_id": item.query_id,
+            "split": item.split.value,
+            "category": item.category,
+            "review_status": item.review_status.value,
+            "answerable": item.answerable,
+            "requires_visual_evidence": item.requires_visual_evidence,
+            "scope": sorted([ref.document_id, ref.document_version] for ref in item.documents),
+            "gold_evidence_ids": sorted(
+                {ref.evidence_id for ref in item.gold_evidence if ref.evidence_id}
+            ),
+        }
+        for field, value in expected.items():
+            if a[field] != value or b[field] != value:
+                raise ValueError(f"run row differs from evaluation label: {item.query_id}: {field}")
     verified = sum(item.review_status.value == "verified" for item in items)
     scored = sum(row["metrics"] is not None for row in a_rows)
     wins: dict[str, list[str]] = {"E0": [], "E1": [], "both_miss_at_5": []}
@@ -151,13 +154,32 @@ def render_report(
         elif ar is None or br < ar:
             wins["E1"].append(a["query_id"])
 
+    reproducibility = (
+        [
+            "- Regenerate E0 through E3 using "
+            "`python scripts/reviewed_retrieval.py --output-dir "
+            "reports/generated/answer-benchmark` "
+            "with the pinned local model cache."
+        ]
+        if seed_path.name == "reviewed_labels.jsonl"
+        else [
+            "- Run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e0.json`.",
+            "- With the pinned model cached, run "
+            "`uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e1.json`.",
+            "- Generate this report with `uv run python -m evidence_rag.eval.report`.",
+        ]
+    )
     lines = [
-        "# Phase 2 search baselines — provisional gate report",
+        (
+            "# Search baselines — owner-reviewed retrieval"
+            if verified == len(items)
+            else "# Search baselines — provisional gate report"
+        ),
         "",
         "## Provenance and reproduction",
         "",
         f"- Dataset SHA-256: `{dataset_hash}`; manifest SHA-256: `{manifest_hash}`.",
-        "- Dataset and source text hashes normalize line endings to LF so Windows "
+        "- Dataset, manifest and source text hashes normalize line endings to LF so Windows "
         "and Linux checkouts have the same identity.",
         f"- E0 raw run: `{e0_path.as_posix()}`; run Git SHA `{e0['git_sha_at_run']}`; "
         f"index `{e0['index_id']}`.",
@@ -169,12 +191,7 @@ def render_report(
         f"`{str(e1['source_tree_uncommitted_at_run']).lower()}`.",
         "- Both runs use the same canonical evidence units, exact document versions, "
         "query IDs, evidence-unit binary relevance, and K=1/3/5.",
-        "- Run `uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e0.json`.",
-        "- With the pinned model cached, run "
-        "`uv run python -m evidence_rag.eval.benchmark --config configs/phase2-e1.json`. "
-        "For the first download, set `download_model` to `true` in a copy of that "
-        "config; ordinary CI never downloads model weights.",
-        "- Generate this report with `uv run python -m evidence_rag.eval.report`.",
+        *reproducibility,
         "- Timings are exploratory single cold-process observations without warmup; "
         "E1 separates query embedding from vector search. They are not latency "
         "benchmarks. Peak memory was not measured.",
@@ -186,10 +203,12 @@ def render_report(
         f"verified. {scored} answerable nonvisual questions are scored in each run.",
         f"- The frozen test was not searched or used for tuning. {len(items) - verified} "
         "labels require owner review.",
-        "- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified "
-        f"questions; this pilot has {len(items)} candidate labels and {verified} verified. "
-        "Broader external document coverage remains untested. A code merge does "
-        "not complete the human-review gate.",
+        (
+            "- Owner label review is complete. Live answer quality and broader held-out "
+            "retrieval quality remain unmeasured."
+            if verified == len(items)
+            else "- **Phase 2 gate: NOT PASSED.** This snapshot still has pending owner labels."
+        ),
         "",
         "## Aggregate evidence-unit results",
         "",
@@ -237,7 +256,7 @@ def render_report(
         "- Both miss relevant evidence within K=5: "
         f"{', '.join(wins['both_miss_at_5']) or 'none observed'}.",
         (
-            f"- `{both_late[0][0]}` has its provisional relevant unit at rank "
+            f"- `{both_late[0][0]}` has its labeled relevant unit at rank "
             f"{both_late[0][1]} in E0 and {both_late[0][2]} in E1; both miss at "
             "K=1 (taxonomy d)."
             if both_late
@@ -251,9 +270,8 @@ def render_report(
         "Interpretation (e), citation support (f), and security (h) "
         "are outside this retrieval evaluation; document/version isolation has "
         "separate tests.",
-        "- Visual chart questions stay in the frozen family. Their parsing and "
-        "annotation quality cannot be inferred from this run. All provisional "
-        "labels could change after source-page review.",
+        "- Frozen-family chart questions are outside this run. Pending labels could "
+        "change after source-page review.",
         f"- Recorded query failures: E0={len(e0['failures'])}, "
         f"E1={len(e1['failures'])}; any future partial failures are saved per "
         "query and excluded from scored denominators.",

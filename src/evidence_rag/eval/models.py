@@ -113,6 +113,7 @@ class DocumentManifestEntry(BaseModel):
     sha256: Sha256Hex
     redistribution_policy: NonEmptyText
     local_fixture_path: NonEmptyText
+    document_family: NonEmptyText | None = None
 
     @model_validator(mode="after")
     def validate_content_version(self) -> Self:

@@ -32,6 +32,16 @@ def main() -> None:
             "--verify-evidence",
             "datasets/eval/phase2_seed.jsonl",
         ],
+        [sys.executable, "-m", "evidence_rag.eval.owner_review", "--check"],
+        [
+            sys.executable,
+            "-m",
+            "evidence_rag.eval.validate",
+            "--manifest",
+            "datasets/manifests/answer-benchmark.json",
+            "--verify-evidence",
+            "datasets/eval/reviewed_labels.jsonl",
+        ],
         [sys.executable, "-m", "evidence_rag.eval.benchmark", "--config", "configs/phase2-e0.json"],
         [
             sys.executable,

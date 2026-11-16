@@ -134,3 +134,26 @@ def test_report_rejects_cross_document_hit() -> None:
     altered["queries"][0]["ranking"][0]["document_id"] = "unrelated"
     with pytest.raises(ValueError, match="scope"):
         validate_run(altered, "E0", e0["dataset_sha256"], e0["manifest_sha256"])
+
+
+def test_report_rejects_agreeing_runs_with_wrong_review_status() -> None:
+    e0, e1 = _runs()
+    for run in (e0, e1):
+        run["queries"][0]["review_status"] = "verified"
+    with pytest.raises(ValueError, match=r"run row differs.*review_status"):
+        render_report(e0, e1, e0_path=E0, e1_path=E1, seed_path=SEED, manifest_path=MANIFEST)
+
+
+def test_current_saved_runs_reproduce_committed_baseline() -> None:
+    report_dir = Path("reports/reviewed-answer-benchmark")
+    e0_path = report_dir / "runs/e0.json"
+    e1_path = report_dir / "runs/e1.json"
+    report = render_report(
+        json.loads(e0_path.read_text(encoding="utf-8")),
+        json.loads(e1_path.read_text(encoding="utf-8")),
+        e0_path=e0_path,
+        e1_path=e1_path,
+        seed_path=Path("datasets/eval/reviewed_labels.jsonl"),
+        manifest_path=Path("datasets/manifests/answer-benchmark.json"),
+    )
+    assert report == (report_dir / "baselines.md").read_text(encoding="utf-8")

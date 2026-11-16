@@ -83,3 +83,13 @@ two of two eligible text queries. Both flagged pixel-dependent queries
 returned an unsupported-modality outcome. The labels are provisional
 and the generator was disabled. See [the frozen report](reports/final_evaluation.md)
 and [raw run](reports/runs/release-frozen-bm25.json).
+
+## Reviewed answer benchmark progress
+
+The owner reviewed all 36 benchmark questions across seven synthetic PDF
+families. The four-method retrieval report scores 24 answerable nonvisual
+development and validation questions. Live answers, claim metrics and
+broader held-out validation remain pending.
+[Source review](datasets/eval/SOURCE_REVIEW_GUIDE.md) ·
+[Current baseline](reports/reviewed-answer-benchmark/baselines.md) ·
+[Retrieval ablation](reports/reviewed-answer-benchmark/retrieval-ablation.md)

@@ -1,5 +1,8 @@
 # Phase 2 candidate-label review packet
 
+This packet preserves the original proposals. The [owner ledger](owner_decisions.json)
+and [current snapshot](reviewed_labels.jsonl) record the completed decisions.
+
 Dataset SHA-256 (LF-normalized): `cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46`.
 
 All 31 labels below are AI-proposed and **not human verified**. Open each linked

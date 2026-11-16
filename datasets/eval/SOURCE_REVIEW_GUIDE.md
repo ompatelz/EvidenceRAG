@@ -1,6 +1,6 @@
 # Owner source review guide
 
-Open the linked source at the indicated page. For each ID, return **confirm** or **correct** with the replacement answerability, answer, page/region, category, or visual-dependence flag as applicable. For full-document checks, confirm the requested fact is absent. The [review packet](REVIEW_PACKET.md) has evidence IDs and notes fields. Every decision is pending. Review of the frozen source labels is for recordkeeping only. The prior frozen run stays closed.
+Open the linked source at the indicated page. For each ID, return **confirm** or **correct** with the replacement answerability, answer, page/region, category, or visual-dependence flag as applicable. For full-document checks, confirm the requested fact is absent. The [review packet](REVIEW_PACKET.md) has evidence IDs and notes fields. The [decision ledger](owner_decisions.json) records decisions for all 36 labels. Review of the frozen source labels is for recordkeeping only. The prior frozen run stays closed.
 
 Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navigation.
 
@@ -28,12 +28,12 @@ Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navig
 | --- | --- | --- |
 | `p2_table_best`<br>Which retrieval method has the highest F1 in Table 1? | Answerable — Hybrid, 0.86 | [Retrieval Baseline Fixture](../fixtures/retrieval-table.pdf), p. 1, region `0.12, 0.20, 0.87, 0.37`. Confirm Hybrid is highest and its F1 is 0.86. |
 | `p2_table_dense_recall`<br>What recall does the Dense row report? | Answerable — 0.80 | [Retrieval Baseline Fixture](../fixtures/retrieval-table.pdf), p. 1, region `0.12, 0.20, 0.87, 0.37`. Confirm 0.80 comes from the Dense Recall cell. |
-| `p2_table_f1_gap`<br>How many points higher is Hybrid F1 than Lexical F1? | Answerable — 0.11 | [Retrieval Baseline Fixture](../fixtures/retrieval-table.pdf), p. 1, region `0.12, 0.20, 0.87, 0.37`. Confirm 0.86 − 0.75 = 0.11 on the F1 scale and whether the word “points” is clear. |
+| `p2_table_f1_gap`<br>What is Hybrid F1 minus Lexical F1 on the table’s 0–1 scale? | Answerable — 0.11 | [Retrieval Baseline Fixture](../fixtures/retrieval-table.pdf), p. 1, region `0.12, 0.20, 0.87, 0.37`. Owner confirmed 0.86 − 0.75 = 0.11 on the clarified scale. |
 | `p2_table_latency`<br>What is the Dense method's latency in milliseconds? | Unanswerable | [Retrieval Baseline Fixture](../fixtures/retrieval-table.pdf), entire PDF. Check the full fixture for Dense latency in ms. |
 | `p2_cache_study_id`<br>What study ID identifies the cache experiment? | Answerable — CA-09 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.17, 0.51, 0.18`. Confirm CA-09 is the study ID. |
 | `p2_cache_capacity`<br>What is the cache capacity? | Answerable — 64 MiB | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.20, 0.31, 0.21`. Confirm the capacity is 64 MiB. |
 | `p2_cache_formula`<br>What equation defines hit ratio in the study? | Answerable — hits / (hits + misses) | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.26, 0.40, 0.28`. Confirm hits divided by the sum of hits and misses. |
-| `p2_cache_ratio`<br>What hit ratio follows from 800 hits and 200 misses? | Answerable — 0.80 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.23, 0.52, 0.25`; p. 1, region `0.09, 0.26, 0.40, 0.28`. Confirm 800 / (800 + 200) = 0.80. Decide whether the adjacent line giving 0.80 also counts as evidence. |
+| `p2_cache_ratio`<br>What hit ratio follows from 800 hits and 200 misses? | Answerable — 0.80 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.23, 0.52, 0.25`; p. 1, region `0.09, 0.26, 0.40, 0.28`. Owner confirmed 800 / (800 + 200) = 0.80 and inclusion of the adjacent result line as a third region. |
 | `p2_cache_limit`<br>What is the largest object size permitted by admission? | Answerable — 8 MiB | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.32, 0.43, 0.34`. Confirm 8 MiB is inclusive. |
 | `p2_cache_eviction`<br>When does the cache evict an object? | Answerable — When admission would exceed capacity. | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 1, region `0.09, 0.36, 0.56, 0.37`. Confirm eviction happens when admitting an object would exceed capacity. |
 | `p2_cache_best_hit`<br>Which policy has the highest synthetic hit ratio? | Answerable — TinyLFU at 0.84 | [Cache Admission Study Note](../fixtures/cache-admission.pdf), p. 2, region `0.09, 0.20, 0.23, 0.21`; p. 2, region `0.09, 0.23, 0.21, 0.25`; p. 2, region `0.09, 0.26, 0.25, 0.28`. Compare all three hit-ratio cells and confirm TinyLFU at 0.84. |
@@ -49,3 +49,13 @@ Coordinates are normalized `x0, y0, x1, y1` from the top left, rounded for navig
 | `p2_chart_tallest`<br>Which scheduler mode has the greatest median queue wait in Figure 1? | Answerable — FIFO (visual) | [Queue Scheduling Note](../fixtures/queue-chart.pdf), p. 1, region `0.18, 0.30, 0.84, 0.62`. Confirm FIFO is tallest and the label requires visually associating bars and categories. |
 | `p2_chart_shortest`<br>Which scheduler mode has the shortest bar in Figure 1? | Answerable — Priority (visual) | [Queue Scheduling Note](../fixtures/queue-chart.pdf), p. 1, region `0.18, 0.30, 0.84, 0.62`. Confirm Priority is shortest and the label requires visually associating bars and categories. |
 | `p2_chart_errors`<br>How many requests failed in the queue experiment? | Unanswerable | [Queue Scheduling Note](../fixtures/queue-chart.pdf), entire PDF. Check the full page for failures distinct from the number processed. |
+
+## Expansion candidates
+
+| ID and question | Proposal | Source and decision |
+| --- | --- | --- |
+| `harbor_partner_limit` How many items can a Partner account borrow at once? | Answerable, 10 items | [Harbor Library](../fixtures/library-loans.pdf), p. 1, table region (0.09, 0.21, 0.80, 0.31). Confirm Partner and Loan limit intersect at 10 items. |
+| `harbor_renewed_period` What is the total loan period for an eligible Resident item after one renewal? | Answerable, 35 days | [Harbor Library](../fixtures/library-loans.pdf), p. 1, table region (0.09, 0.21, 0.80, 0.31), and p. 2 (0.09, 0.16, 0.46, 0.22). Confirm 21 + 14 days, one renewal and the eligibility qualifier. |
+| `harbor_overdue_fee` What daily overdue fee does the schedule charge a Resident account? | Unanswerable | [Harbor Library](../fixtures/library-loans.pdf), both pages. Confirm no fee is given. |
+| `juniper_north_meadow` Which feature is directly north of the Meadow in Figure 1? | Answerable, Pond, visual | [Juniper Garden](../fixtures/garden-map.pdf), p. 1, map region (0.19, 0.25, 0.79, 0.60). Confirm the layout establishes north of Meadow and the caption gives only orientation. |
+| `juniper_closing_time` At what time does Juniper Garden close to visitors? | Unanswerable | [Juniper Garden](../fixtures/garden-map.pdf), entire page. Confirm no hours appear. |
