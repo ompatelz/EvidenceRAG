@@ -22,6 +22,7 @@ command. Open [the local inspector](http://127.0.0.1:8000/inspector), ingest
 Click the citation to see the highlighted source line. The [demo guide](docs/demo.md)
 includes a controlled retriever comparison and an unsupported question.
 [Build, container and rollback instructions](docs/release.md) cover the local candidate.
+See [live cited answers](docs/live_answers.md) to enable OpenAI with per-query consent.
 
 ## How the application works
 

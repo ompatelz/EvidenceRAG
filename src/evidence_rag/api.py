@@ -4,19 +4,24 @@ import json
 import logging
 from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import asdict
+from functools import partial
 from pathlib import Path
 from tempfile import TemporaryFile
+from threading import Event
 from time import perf_counter
 from typing import Annotated, Literal
 from uuid import uuid4
 
+from anyio import create_task_group
 from fastapi import FastAPI, File, Request, Response, UploadFile, status
 from pydantic import BaseModel, ConfigDict, Field
+from starlette.concurrency import run_in_threadpool
 from starlette.middleware.body_limit import RequestBodyLimitMiddleware
 from starlette.responses import FileResponse, JSONResponse
 
 from evidence_rag import __version__
 from evidence_rag.answers import (
+    AnswerConfig,
     AnswerGenerator,
     AnswerResult,
     FixtureDemoGenerator,
@@ -49,6 +54,7 @@ from evidence_rag.documents import (
 )
 from evidence_rag.documents.models import IngestionStage
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
+from evidence_rag.openai_answers import TIMEOUT_SECONDS, OpenAIAnswerGenerator
 from evidence_rag.policy import AnswerPolicy
 from evidence_rag.retrieval.bm25 import BM25Index
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
@@ -84,6 +90,7 @@ class QueryRequest(BaseModel):
     document_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     mode: Literal["bm25", "dense", "hybrid", "reranked"] = "bm25"
     requires_visual_evidence: bool = False
+    external_answer_consent: Literal["openai"] | None = None
 
 
 class QueryResponse(BaseModel):
@@ -101,6 +108,7 @@ def create_app(
     *,
     answer_generator: AnswerGenerator | None = None,
     semantic_verifier: SemanticVerifier | None = None,
+    openai_generator: OpenAIAnswerGenerator | None = None,
 ) -> FastAPI:
     """Construct an isolated application using explicit settings."""
     resolved_settings = settings or AppSettings()
@@ -137,6 +145,25 @@ def create_app(
     policy = AnswerPolicy() if resolved_settings.abstention_policy == "grounding-v1" else None
     answer_service = GroundedAnswerService(
         artifact_store, chosen_generator, verifier=semantic_verifier, policy=policy
+    )
+    live_enabled = resolved_settings.live_answer_provider == "openai"
+    key = resolved_settings.openai_api_key
+    live_generator = (
+        (openai_generator or OpenAIAnswerGenerator(key.get_secret_value() if key else None))
+        if live_enabled
+        else None
+    )
+    live_policy = AnswerPolicy()
+    live_service = GroundedAnswerService(
+        artifact_store,
+        None,
+        config=AnswerConfig(timeout_ms=int(TIMEOUT_SECONDS * 1000)),
+        verifier=(
+            semantic_verifier or SemanticVerifier(LocalDeberta(resolved_settings.model_cache_dir))
+        )
+        if live_enabled
+        else None,
+        policy=live_policy,
     )
     app.state.intake_service = intake_service
     app.state.parsing_service = parsing_service
@@ -190,7 +217,10 @@ def create_app(
 
     @app.get("/api/v1/capabilities", tags=["operations"])
     def capabilities() -> dict[str, bool]:
-        return {"fixture_demo_answers": resolved_settings.demo_answers}
+        return {
+            "fixture_demo_answers": resolved_settings.demo_answers,
+            "openai_answers": live_enabled,
+        }
 
     ui_root = Path(__file__).parent / "ui"
 
@@ -420,9 +450,34 @@ def create_app(
         return rendering_service.anchor(document_id, document_sha256, evidence_id)
 
     @app.post("/api/v1/query", response_model=QueryResponse, tags=["query"])
-    def query_document(request: QueryRequest, http_request: Request) -> QueryResponse:
+    async def query_document(request: QueryRequest, http_request: Request) -> QueryResponse:
+        if request.external_answer_consent != "openai" or live_generator is None:
+            return await run_in_threadpool(run_query, request, http_request)
+        cancelled = Event()
+
+        async def watch_disconnect() -> None:
+            while True:
+                if (await http_request.receive())["type"] == "http.disconnect":
+                    cancelled.set()
+                    return
+
+        async with create_task_group() as group:
+            group.start_soon(watch_disconnect)
+            try:
+                result = await run_in_threadpool(run_query, request, http_request, cancelled)
+            finally:
+                cancelled.set()
+                group.cancel_scope.cancel()
+        return result
+
+    def run_query(
+        request: QueryRequest, http_request: Request, cancelled: Event | None = None
+    ) -> QueryResponse:
         """Search a ready exact version and return a checked answer or abstention."""
         total_started = perf_counter()
+        wants_live = request.external_answer_consent == "openai"
+        service = live_service if wants_live else answer_service
+        selected_policy = live_policy if wants_live else policy
 
         def record(result: QueryResponse) -> QueryResponse:
             http_request.state.query_summary = {
@@ -435,7 +490,7 @@ def create_app(
         def without_ranking(reason: Reason) -> QueryResponse:
             return record(
                 QueryResponse(
-                    result=answer_service.abstain(reason),
+                    result=service.abstain(reason),
                     retrieval=(),
                     mode=request.mode,
                     retrieval_status=reason,
@@ -448,7 +503,10 @@ def create_app(
         except ArtifactNotFoundError as exc:
             raise IntakeError("document_not_found", "Document version not found.", 404) from exc
         if manifest.state is not IngestionState.READY:
-            if policy and manifest.state in (IngestionState.FAILED, IngestionState.PARTIAL):
+            if selected_policy and manifest.state in (
+                IngestionState.FAILED,
+                IngestionState.PARTIAL,
+            ):
                 reason: Reason = (
                     "indexing_failed"
                     if manifest.failure_stage
@@ -463,7 +521,7 @@ def create_app(
             evidence = artifact_store.get_evidence(request.document_id, request.document_sha256)
             pages = artifact_store.get_page_manifest(request.document_id, request.document_sha256)
         except (ArtifactNotFoundError, StorageError) as exc:
-            if policy:
+            if selected_policy:
                 return without_ranking("indexing_failed")
             raise IntakeError(
                 "ready_artifacts_missing", "Ready document artifacts are missing.", 409
@@ -480,7 +538,7 @@ def create_app(
                 timings["index_build"] = (perf_counter() - started) * 1000
                 ranking = index.search(request.question, k=5, versions=scope)
             except Exception as exc:
-                if policy:
+                if selected_policy:
                     return without_ranking("indexing_failed")
                 raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
             hits = ranking.hits
@@ -524,7 +582,7 @@ def create_app(
             try:
                 client = QdrantClient(":memory:")
             except Exception as exc:
-                if policy:
+                if selected_policy:
                     return without_ranking("indexing_failed")
                 raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
             try:
@@ -605,7 +663,7 @@ def create_app(
             except IntakeError:
                 raise
             except Exception as exc:
-                if policy:
+                if selected_policy:
                     return without_ranking("indexing_failed")
                 raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
             finally:
@@ -613,10 +671,27 @@ def create_app(
         timings["retrieval_total"] = (perf_counter() - total_started) * 1000
         try:
             started = perf_counter()
-            answer = answer_service.answer(request.question, manifest, pages, evidence.units, hits)
+            generate = (
+                partial(live_generator.generate_cancellable, cancelled=cancelled)
+                if wants_live and live_generator is not None and cancelled is not None
+                else None
+            )
+            answer = service.answer(
+                request.question,
+                manifest,
+                pages,
+                evidence.units,
+                hits,
+                generate=generate,
+                cancelled=cancelled,
+            )
+            if generate is not None:
+                answer = answer.model_copy(update={"answer_source": "openai"})
+            elif not wants_live and isinstance(chosen_generator, FixtureDemoGenerator):
+                answer = answer.model_copy(update={"answer_source": "atlas_demo"})
             timings["answer"] = (perf_counter() - started) * 1000
         except ValueError as exc:
-            if policy:
+            if selected_policy:
                 return without_ranking("indexing_failed")
             raise IntakeError(
                 "evidence_mismatch", "Document evidence is inconsistent.", 409

@@ -80,6 +80,9 @@ jobs:
       - name: Run bounded owned-fixture ingestion lifecycle
         run: uv run pytest tests/test_lifecycle.py -q
 
+      - name: Verify live answer schema and cited PDF flow with a fake transport
+        run: uv run --locked pytest tests/test_openai_answers.py -q
+
   qdrant-integration:
     name: Qdrant integration
     runs-on: ubuntu-latest

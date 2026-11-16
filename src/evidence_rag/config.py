@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,6 +22,8 @@ class AppSettings(BaseSettings):
     artifact_root: Path = Path("artifacts")
     model_cache_dir: Path = Path("tmp/hf-model-cache")
     demo_answers: bool = False
+    live_answer_provider: Literal["off", "openai"] = "off"
+    openai_api_key: SecretStr | None = None
     semantic_verifier: bool = False
     abstention_policy: Literal["off", "grounding-v1"] = "off"
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1, le=1024 * 1024 * 1024)
