@@ -1,7 +1,7 @@
 import pytest
 
 from evidence_rag.eval.answer_scoring import AnswerJudgment, CitationJudgment, score_answers
-from evidence_rag.eval.owner_review import SEED, OwnerDecision, apply_decisions
+from evidence_rag.eval.owner_review import SEED, SNAPSHOT, OwnerDecision, apply_decisions
 from evidence_rag.eval.validate import load_evaluation_jsonl
 
 
@@ -55,3 +55,17 @@ def test_citation_support_differs_from_correctness_and_page_match() -> None:
     assert result.false_abstention == (1, 2)
     assert result.answer_coverage == (1, 2)
     assert result.latency_p95_ms == 200
+
+
+def test_approved_scale_and_worked_result_are_applied() -> None:
+    items = {item.query_id: item for item in load_evaluation_jsonl(SNAPSHOT)}
+    gap = items["p2_table_f1_gap"]
+    assert "0\N{EN DASH}1 scale" in gap.question
+    assert gap.gold_answers == ["0.11"]
+    assert gap.numeric_tolerance is None
+    ratio = items["p2_cache_ratio"]
+    assert [anchor.evidence_id for anchor in ratio.gold_evidence][-1] == (
+        "ev_15cc234bb2d5b403549b3314becf1a4b"
+    )
+    assert len(ratio.gold_evidence) == 3
+    assert gap.review_status.value == ratio.review_status.value == "verified"

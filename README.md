@@ -86,11 +86,10 @@ and [raw run](reports/runs/release-frozen-bm25.json).
 
 ## Reviewed answer benchmark progress
 
-The benchmark snapshot has 36 candidate questions across seven synthetic
-PDF families. The owner confirmed four Atlas labels. The other 32 labels
-await source-page decisions. The current report separates the four-method
-development and validation diagnostics from the owner-verified subset.
-Live answer and claim metrics are pending.
+The owner reviewed all 36 benchmark questions across seven synthetic PDF
+families. The four-method retrieval report scores 24 answerable nonvisual
+development and validation questions. Live answers, claim metrics and
+broader held-out validation remain pending.
 [Source review](datasets/eval/SOURCE_REVIEW_GUIDE.md) ·
 [Current baseline](reports/reviewed-answer-benchmark/baselines.md) ·
 [Retrieval ablation](reports/reviewed-answer-benchmark/retrieval-ablation.md)

@@ -23,6 +23,7 @@ from evidence_rag.eval.runner import (
     development_items,
     evaluate_queries,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import RankedEvidence
@@ -104,7 +105,7 @@ def run(
             source_hash.update(path.read_text(encoding="utf-8").encode("utf-8"))
         payload: dict[str, Any] = {
             "experiment": "E1",
-            "status": "partial_failure" if failures else "provisional_unreviewed_labels",
+            "status": retrieval_status(rows, failed=bool(failures)),
             "git_sha_at_run": subprocess.check_output(
                 ["git", "rev-parse", "HEAD"], text=True
             ).strip(),

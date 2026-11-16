@@ -39,10 +39,13 @@ def render_ablation(rows_by_method: dict[str, list[dict[str, Any]]], raw_dir: Pa
             )
         ):
             raise ValueError("incompatible or failed retrieval arm")
-        for cohort, members in (
-            ("All candidates", rows),
-            ("Owner verified", [row for row in rows if row["review_status"] == "verified"]),
-        ):
+        verified = [row for row in rows if row["review_status"] == "verified"]
+        cohorts = (
+            [("Owner verified", verified)]
+            if len(verified) == len(rows)
+            else [("All candidates", rows), ("Owner verified", verified)]
+        )
+        for cohort, members in cohorts:
             groups = aggregate_rows(members, "split")
             for split in ("development", "validation"):
                 group = groups.get(split)
@@ -60,8 +63,8 @@ def render_ablation(rows_by_method: dict[str, list[dict[str, Any]]], raw_dir: Pa
         "",
         f"Raw outputs are in [{raw_dir.name}]({raw_dir.name}/).",
         "",
-        "Only answerable nonvisual examples enter the scored denominator. The owner-verified "
-        "subset is a convenience sample. Its figures carry no population-level inference.",
+        "Only answerable nonvisual examples enter the scored denominator. The synthetic "
+        "sample supports descriptive figures for these families.",
         "The reranker comparison uses E2's fixed candidate settings. It measures rankings only.",
         "",
     ]

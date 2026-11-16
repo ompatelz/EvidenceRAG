@@ -19,6 +19,7 @@ from evidence_rag.eval.runner import (
     development_items,
     evaluate_queries,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import BM25Index
@@ -128,7 +129,7 @@ def run(
             source_hash.update(path.read_bytes())
         payload: dict[str, Any] = {
             "experiment": "E2",
-            "status": "provisional_unreviewed_labels",
+            "status": retrieval_status(selected_trial["queries"], failed=False),
             "git_sha_at_run": subprocess.check_output(
                 ["git", "rev-parse", "HEAD"], text=True
             ).strip(),

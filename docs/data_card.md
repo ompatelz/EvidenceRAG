@@ -36,10 +36,10 @@ and provisional annotations.
 
 | Split | Families | Questions | Owner verified | Pending |
 | --- | ---: | ---: | ---: | ---: |
-| Development | 3 | 16 | 4 | 12 |
-| Validation | 3 | 15 | 0 | 15 |
-| Historical frozen test | 1 | 5 | 0 | 5 |
-| Total | 7 | 36 | 4 | 32 |
+| Development | 3 | 16 | 16 | 0 |
+| Validation | 3 | 15 | 15 | 0 |
+| Historical frozen test | 1 | 5 | 5 | 0 |
+| Total | 7 | 36 | 36 | 0 |
 
 The current corpus has 29 answerable questions, seven unanswerable questions,
 and three visual-dependent questions. The added Harbor Library schedule
@@ -50,4 +50,4 @@ CC0-1.0. Their provenance and exact versions are recorded in the
 [current manifest](../datasets/manifests/answer-benchmark.json).
 The benchmark now covers more layouts and subject matter. Scans, naturally
 authored documents, diverse held-out families and production workloads remain
-gaps. All five expansion labels are pending. No new test family was declared.
+gaps. The owner verified all five expansion labels. No new test family was declared.

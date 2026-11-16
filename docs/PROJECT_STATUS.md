@@ -2,12 +2,11 @@
 
 Updated: 2026-11-16
 
-The current benchmark has 36 candidate questions from seven owned PDFs.
-Four original Atlas labels have owner decisions. The remaining 27 original
-labels and five expansion labels await source review. The new retrieval
-comparison is provisional, including its small owner-verified subset.
-The historical frozen run remains closed. Live calls, claim judgments,
-and live answer metrics are pending. See the [current retrieval comparison](../reports/reviewed-answer-benchmark/retrieval-ablation.md)
+The owner reviewed all 36 questions from seven owned PDFs. Two approvals
+changed the F1 question wording and cache-ratio evidence. The new retrieval
+comparison scores 24 development and validation questions. The historical
+frozen run remains closed. Live calls, claim judgments and live answer
+metrics are pending. See the [current retrieval comparison](../reports/reviewed-answer-benchmark/retrieval-ablation.md)
 and [live evaluation workflow](live_answers.md#reviewed-benchmark-workflow).
 
 Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
@@ -475,11 +474,10 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 - ADR-0006 defines the synchronous state machine, atomic ready boundary, whole-artifact
   retry/re-index policy, immutable intake recovery, safe telemetry, and durable-job triggers.
 
-## Next 3 tasks
+## Next tasks
 
-1. Owner reviews all 31 candidate labels in `datasets/eval/REVIEW_PACKET.md` and
-   records corrections or approval from direct source-page inspection.
-2. Apply reviewed labels, rerun E0/E1 and the report, and verify the full gate
-   including CI without using frozen-test results for tuning.
-3. Decide whether remaining external-document and PyMuPDF/repository licensing
-   limits are acceptable for this PR before merge or distribution.
+1. Run the optional paid evaluation after explicit source-excerpt consent,
+   provider credentials, and a cost ceiling are available.
+2. Review the raw draft and final answer claims against exact source pages.
+3. Add representative permissioned document families and predeclare
+   a separate held-out split before inspecting any new test results.

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from evidence_rag.eval.metrics import RetrievalMetrics, mean_metrics, score_ranking
-from evidence_rag.eval.models import EvaluationItem, EvaluationSplit
+from evidence_rag.eval.models import EvaluationItem, EvaluationSplit, ReviewStatus
 from evidence_rag.retrieval.bm25 import RankedEvidence
 from evidence_rag.retrieval.hybrid import HybridHit
 from evidence_rag.retrieval.rerank import RerankedHit
@@ -35,6 +35,15 @@ def development_items(items: Sequence[EvaluationItem]) -> list[EvaluationItem]:
     if not selected:
         raise ValueError("no development or validation items")
     return selected
+
+
+def retrieval_status(rows: Sequence[dict[str, Any]], *, failed: bool) -> str:
+    """Mark the review scope without implying measured answer quality."""
+    if failed:
+        return "partial_failure"
+    if rows and all(row["review_status"] == ReviewStatus.VERIFIED for row in rows):
+        return "owner_reviewed_retrieval_only"
+    return "provisional_unreviewed_labels"
 
 
 def aggregate_rows(rows: Sequence[dict[str, Any]], key: str) -> dict[str, dict[str, Any]]:

@@ -58,6 +58,6 @@ in both BM25 and dense, so the rank-1 miss persists with confirmed evidence.
 The added library renewal case needs passages on both pages. A hit on any
 one passage gives Hit@K credit, while Recall@K measures the fraction of
 the three proposed evidence units retrieved. The garden map question is
-excluded from text-ranking scores and awaits visual-label review. Claim
+owner-verified and excluded from text-ranking scores. Claim
 support and false-abstention performance from live answers remain pending.
 [Current retrieval comparison](reviewed-answer-benchmark/retrieval-ablation.md)

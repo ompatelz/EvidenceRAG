@@ -18,6 +18,7 @@ from evidence_rag.eval.runner import (
     development_items,
     evaluate_queries,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 from evidence_rag.retrieval.bm25 import INDEX_VERSION, TOKENIZER_VERSION, BM25Index, RankedEvidence
@@ -61,7 +62,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
         source_hash.update(path.read_text(encoding="utf-8").encode("utf-8"))
     payload: dict[str, object] = {
         "experiment": "E0",
-        "status": "partial_failure" if failures else "provisional_unreviewed_labels",
+        "status": retrieval_status(rows, failed=bool(failures)),
         "git_sha_at_run": _git("rev-parse", "HEAD"),
         "source_tree_uncommitted_at_run": bool(
             _git("status", "--porcelain", "--", "src/evidence_rag", "pyproject.toml", "uv.lock")

@@ -12,6 +12,7 @@ from evidence_rag.eval.runner import (
     aggregate_rows,
     development_items,
     normalized_text_sha256,
+    retrieval_status,
 )
 from evidence_rag.eval.validate import load_evaluation_jsonl, validate_dataset
 
@@ -81,7 +82,7 @@ def validate_run(
     expected_failures = [row["failure"] for row in rows if row.get("failure") is not None]
     if run.get("failures") != expected_failures:
         raise ValueError("failure list does not match raw queries")
-    expected_status = "partial_failure" if expected_failures else "provisional_unreviewed_labels"
+    expected_status = retrieval_status(rows, failed=bool(expected_failures))
     if run.get("status") != expected_status:
         raise ValueError("run status does not match failures")
     if run.get("counts", {}).get("queries") != len(rows) or run.get("counts", {}).get(
@@ -170,7 +171,11 @@ def render_report(
         ]
     )
     lines = [
-        "# Search baselines — provisional gate report",
+        (
+            "# Search baselines — owner-reviewed retrieval"
+            if verified == len(items)
+            else "# Search baselines — provisional gate report"
+        ),
         "",
         "## Provenance and reproduction",
         "",
@@ -199,10 +204,12 @@ def render_report(
         f"verified. {scored} answerable nonvisual questions are scored in each run.",
         f"- The frozen test was not searched or used for tuning. {len(items) - verified} "
         "labels require owner review.",
-        "- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified "
-        f"questions; this pilot has {len(items)} candidate labels and {verified} verified. "
-        "Broader external document coverage remains untested. A code merge does "
-        "not complete the human-review gate.",
+        (
+            "- Owner label review is complete. Live answer quality and broader held-out "
+            "retrieval quality remain unmeasured."
+            if verified == len(items)
+            else "- **Phase 2 gate: NOT PASSED.** This snapshot still has pending owner labels."
+        ),
         "",
         "## Aggregate evidence-unit results",
         "",

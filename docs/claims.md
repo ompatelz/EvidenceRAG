@@ -30,9 +30,8 @@ human-reviewed benchmark gate is met.
 
 ## Current benchmark boundary
 
-The refreshed E0–E3 comparison has 24 scored candidate questions.
-Only three scoreable development questions have owner-verified gold
-labels, all from Atlas. The verified validation and live answer
+The refreshed E0–E3 comparison has 24 scored owner-reviewed questions.
+These cases are split between development and validation. Live answer
 denominators remain empty. The added cases establish coverage of specific
 document formats in the corpus. They provide no estimate of deployment
 performance.
