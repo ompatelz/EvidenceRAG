@@ -14,6 +14,7 @@ from evidence_rag.documents.service import resolve_evidence_anchor
 from evidence_rag.documents.storage import ArtifactNotFoundError, LocalArtifactStore
 from evidence_rag.evidence import AnchorPrecision, EvidenceUnit, TableStructure
 from evidence_rag.grounding import RuleSupport, assess_table_claim
+from evidence_rag.semantic import SemanticResult, SemanticVerifier
 
 
 class RankedCandidate(Protocol):
@@ -97,6 +98,7 @@ class ValidatedClaim(BaseModel):
     citations: tuple[Citation, ...]
     citation_status: Literal["valid"] = "valid"
     rule_support: RuleSupport
+    semantic_support: SemanticResult | None = None
 
 
 Reason = Literal[
@@ -246,10 +248,12 @@ class GroundedAnswerService:
         store: LocalArtifactStore,
         generator: AnswerGenerator | None,
         config: AnswerConfig | None = None,
+        verifier: SemanticVerifier | None = None,
     ) -> None:
         self.store = store
         self.generator = generator
         self.config = config or AnswerConfig()
+        self.verifier = verifier
 
     def answer(
         self,
@@ -372,6 +376,22 @@ class GroundedAnswerService:
             return insufficient("contradicted_evidence", tuple(validated))
         if any(claim.rule_support == "insufficient" for claim in validated):
             return insufficient("insufficient_claim_support", tuple(validated))
+        if self.verifier is not None:
+            pending = []
+            for index, claim_result in enumerate(validated):
+                if claim_result.rule_support != "not_assessed":
+                    continue
+                ids = tuple(dict.fromkeys(ref.evidence_id for ref in claim_result.citations))
+                inputs = tuple(supplied[evidence_id].text for evidence_id in ids)
+                truncated = any(
+                    supplied[evidence_id].text != unit_map[evidence_id].text for evidence_id in ids
+                )
+                pending.append((index, (claim_result.text, inputs, truncated)))
+            assessed = self.verifier.assess([item for _, item in pending])
+            for (index, _), assessment in zip(pending, assessed, strict=True):
+                validated[index] = validated[index].model_copy(
+                    update={"semantic_support": assessment}
+                )
         return AnswerResult(
             status="answered",
             reason="answered",

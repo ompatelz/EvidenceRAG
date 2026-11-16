@@ -2,7 +2,7 @@
 
 import io
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +17,7 @@ from evidence_rag.documents.storage import LocalArtifactStore
 from evidence_rag.evidence import TableStructure
 from evidence_rag.grounding import assess_table_claim
 from evidence_rag.retrieval.bm25 import BM25Index
+from evidence_rag.semantic import SemanticVerifier
 
 
 @pytest.fixture
@@ -102,6 +103,43 @@ def test_empty_and_unsupported_questions(
     responses["Atlas sampling rate"] = {"status": "insufficient_evidence"}
     unsupported = client.post(question_url(), json=payload(ingested))
     assert unsupported.json()["result"]["reason"] == "unsupported_question"
+
+
+def test_query_reports_semantic_assessment_for_cited_context(
+    setup: tuple[TestClient, dict[str, Any], dict[str, Any]], tmp_path: Path
+) -> None:
+    client, ingested, responses = setup
+    request = payload(ingested)
+    evidence = client.get(
+        f"/api/v1/documents/{ingested['document_id']}/versions/"
+        f"{ingested['document_sha256']}/evidence"
+    ).json()
+    unit = next(unit for unit in evidence["units"] if "20 hertz" in unit["text"])
+    responses[request["question"]] = scripted_answer(citation(ingested, unit))
+    premises = []
+
+    class Scorer:
+        model = "test-verifier"
+        revision = "1"
+
+        def logits(self, premise: str, claim: str) -> Sequence[float]:
+            premises.append(premise)
+            return (0.0, 3.0, 1.0)
+
+    settings = AppSettings(environment="test", artifact_root=tmp_path / "artifacts")
+    with TestClient(
+        create_app(
+            settings,
+            answer_generator=ScriptedGenerator(responses),
+            semantic_verifier=SemanticVerifier(Scorer()),
+        )
+    ) as verified:
+        result = verified.post(question_url(), json=request).json()["result"]
+    claim = result["claims"][0]
+    assert claim["rule_support"] == "not_assessed"
+    assert claim["semantic_support"]["support"] == "supported"
+    assert claim["semantic_support"]["model"] == "test-verifier"
+    assert premises == [unit["text"]]
 
 
 def test_default_api_abstains_without_generator(

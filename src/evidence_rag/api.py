@@ -45,6 +45,7 @@ from evidence_rag.documents import (
 )
 from evidence_rag.documents.storage import ArtifactNotFoundError
 from evidence_rag.retrieval.bm25 import BM25Index
+from evidence_rag.semantic import LocalDeberta, SemanticVerifier
 
 CallNext = Callable[[Request], Awaitable[Response]]
 
@@ -88,7 +89,10 @@ class QueryResponse(BaseModel):
 
 
 def create_app(
-    settings: AppSettings | None = None, *, answer_generator: AnswerGenerator | None = None
+    settings: AppSettings | None = None,
+    *,
+    answer_generator: AnswerGenerator | None = None,
+    semantic_verifier: SemanticVerifier | None = None,
 ) -> FastAPI:
     """Construct an isolated application using explicit settings."""
     resolved_settings = settings or AppSettings()
@@ -120,7 +124,11 @@ def create_app(
     chosen_generator = answer_generator or (
         FixtureDemoGenerator() if resolved_settings.demo_answers else None
     )
-    answer_service = GroundedAnswerService(artifact_store, chosen_generator)
+    if semantic_verifier is None and resolved_settings.semantic_verifier:
+        semantic_verifier = SemanticVerifier(LocalDeberta(resolved_settings.model_cache_dir))
+    answer_service = GroundedAnswerService(
+        artifact_store, chosen_generator, verifier=semantic_verifier
+    )
     app.state.intake_service = intake_service
     app.state.parsing_service = parsing_service
     app.state.rendering_service = rendering_service

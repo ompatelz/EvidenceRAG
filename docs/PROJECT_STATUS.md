@@ -18,9 +18,11 @@ claims. The query API checks exact-version citation scope, supplied evidence
 membership, and resolvable source locations. It reports table rule support
 separately from citation validity and withholds drafts with missing or invalid
 citations or failed table checks. See [the answer contract](answer_contract.md).
-Semantic assessment, validation-set policy selection, and controlled
-answer-quality evaluation remain pending. The frozen test was not used for
-implementation or tuning. The next checkpoint is semantic support assessment.
+The optional local text verifier adds per-claim entailment, contradiction,
+insufficiency, and failure metadata. See [the verifier procedure](semantic_support.md).
+Its development and validation audit still needs human review.
+Validation-set policy selection and controlled answer-quality evaluation
+remain pending. The frozen test was not used for implementation or tuning.
 
 Local verification passed lock and dependency checks, Ruff formatting and lint,
 strict mypy, 165 pytest tests and a separate live Qdrant test, deterministic
