@@ -16,7 +16,7 @@ FROM python:3.12-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb06
 
 ARG VCS_REF=unknown
 LABEL org.opencontainers.image.title="EvidenceRAG" \
-      org.opencontainers.image.description="Evidence-first retrieval API foundation" \
+      org.opencontainers.image.description="Local PDF evidence retrieval and inspection" \
       org.opencontainers.image.revision="${VCS_REF}"
 
 ENV PATH="/app/.venv/bin:${PATH}" \
@@ -38,4 +38,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
     CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()"]
 
-CMD ["uvicorn", "evidence_rag.api:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "evidence_rag.api:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
