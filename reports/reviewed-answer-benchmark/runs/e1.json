@@ -1,10 +1,10 @@
 {
   "experiment": "E1",
-  "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "d375038d10ca1264aed069be6984fbc7b1b526a0",
+  "status": "owner_reviewed_retrieval_only",
+  "git_sha_at_run": "63027696198c9bfa1d656108d02b5c3ba08621a7",
   "source_tree_uncommitted_at_run": false,
-  "source_sha256": "7deaf66d2db0d675e5fc545d6d289460a39d9c4518b06ac52182ff5d813f2ae2",
-  "dataset_sha256": "c8139440fc359cc4615727b6933dc7d69afa7b8132c13fa722008b5424e10098",
+  "source_sha256": "60c23e8516a9c1219f9771128908486b184a36c8b56a4c127dc3b9e144e1fc8c",
+  "dataset_sha256": "bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71",
   "manifest_sha256": "fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec",
   "corpus_versions": [
     [
@@ -81,8 +81,8 @@
     "peak_memory": "not measured"
   },
   "timing": {
-    "corpus_preparation_ms": 570.229199998721,
-    "embedding_and_index_ms": 1449.1402999992715,
+    "corpus_preparation_ms": 468.175699999847,
+    "embedding_and_index_ms": 1174.8058000011952,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -108,22 +108,22 @@
     },
     "validation": {
       "1": {
-        "hit_rate": 0.6363636363636364,
-        "recall": 0.6363636363636364,
-        "mrr": 0.6363636363636364,
-        "ndcg": 0.6363636363636364
+        "hit_rate": 0.7272727272727273,
+        "recall": 0.6666666666666666,
+        "mrr": 0.7272727272727273,
+        "ndcg": 0.7272727272727273
       },
       "3": {
         "hit_rate": 0.9090909090909091,
         "recall": 0.9090909090909091,
-        "mrr": 0.7727272727272727,
-        "ndcg": 0.8141169009781987
+        "mrr": 0.8181818181818182,
+        "ndcg": 0.8419872279220832
       },
       "5": {
         "hit_rate": 0.9090909090909091,
         "recall": 0.9090909090909091,
-        "mrr": 0.7727272727272727,
-        "ndcg": 0.8141169009781987
+        "mrr": 0.8181818181818182,
+        "ndcg": 0.8419872279220832
       }
     }
   },
@@ -159,22 +159,22 @@
       "failures": 0,
       "metrics": {
         "1": {
-          "hit_rate": 0.5,
-          "recall": 0.5,
-          "mrr": 0.5,
-          "ndcg": 0.5
+          "hit_rate": 1.0,
+          "recall": 0.6666666666666666,
+          "mrr": 1.0,
+          "ndcg": 1.0
         },
         "3": {
           "hit_rate": 1.0,
           "recall": 1.0,
-          "mrr": 0.75,
-          "ndcg": 0.8467132018086354
+          "mrr": 1.0,
+          "ndcg": 1.0
         },
         "5": {
           "hit_rate": 1.0,
           "recall": 1.0,
-          "mrr": 0.75,
-          "ndcg": 0.8467132018086354
+          "mrr": 1.0,
+          "ndcg": 1.0
         }
       }
     },
@@ -491,8 +491,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 12.18440000047849,
-      "vector_search_ms": 12.251899999682792
+      "embedding_ms": 8.292700000311015,
+      "vector_search_ms": 6.780900001103873
     },
     {
       "query_id": "p2_atlas_path",
@@ -608,8 +608,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.535199999343604,
-      "vector_search_ms": 6.961999999475665
+      "embedding_ms": 8.791199999905075,
+      "vector_search_ms": 4.715300001407741
     },
     {
       "query_id": "p2_atlas_filter",
@@ -725,8 +725,8 @@
         }
       },
       "failure": null,
-      "embedding_ms": 10.850599999685073,
-      "vector_search_ms": 6.242100000235951
+      "embedding_ms": 7.474500000171247,
+      "vector_search_ms": 4.254199999195407
     },
     {
       "query_id": "p2_atlas_weight",
@@ -821,14 +821,14 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 10.457300000780378,
-      "vector_search_ms": 6.099399999584421
+      "embedding_ms": 6.84230000115349,
+      "vector_search_ms": 4.090899999937392
     },
     {
       "query_id": "p2_table_best",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -938,14 +938,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 10.92140000037034,
-      "vector_search_ms": 7.848699999158271
+      "embedding_ms": 7.585999999719206,
+      "vector_search_ms": 4.516299999522744
     },
     {
       "query_id": "p2_table_dense_recall",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1055,14 +1055,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.372400001666392,
-      "vector_search_ms": 6.325799999103765
+      "embedding_ms": 7.762999999613385,
+      "vector_search_ms": 4.3582000016613165
     },
     {
       "query_id": "p2_table_f1_gap",
       "split": "validation",
       "category": "table_calculation",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1081,7 +1081,7 @@
           "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
           "page_index": 0,
           "rank": 1,
-          "score": 0.47818978205764745,
+          "score": 0.4539850060495707,
           "anchor_precision": "region",
           "bbox": {
             "x0": 0.11764706,
@@ -1091,27 +1091,12 @@
           }
         },
         {
-          "evidence_id": "ev_8e0c1e6d6ce9ed940b753375bd6d25a9",
-          "document_id": "doc_66624dfc102d650e04560cc4",
-          "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
-          "page_index": 0,
-          "rank": 2,
-          "score": 0.23844601374893207,
-          "anchor_precision": "region",
-          "bbox": {
-            "x0": 0.11764706,
-            "y0": 0.39053029,
-            "x1": 0.37281041,
-            "y1": 0.40762626
-          }
-        },
-        {
           "evidence_id": "ev_81e39a429c4efc88737fccbc8dc8789d",
           "document_id": "doc_66624dfc102d650e04560cc4",
           "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
           "page_index": 0,
-          "rank": 3,
-          "score": 0.2260754891257548,
+          "rank": 2,
+          "score": 0.3986993647366859,
           "anchor_precision": "region",
           "bbox": {
             "x0": 0.08823529,
@@ -1121,12 +1106,27 @@
           }
         },
         {
+          "evidence_id": "ev_8e0c1e6d6ce9ed940b753375bd6d25a9",
+          "document_id": "doc_66624dfc102d650e04560cc4",
+          "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+          "page_index": 0,
+          "rank": 3,
+          "score": 0.30334775843591955,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.11764706,
+            "y0": 0.39053029,
+            "x1": 0.37281041,
+            "y1": 0.40762626
+          }
+        },
+        {
           "evidence_id": "ev_0f08dbe193d1fc83f54bd0b15575ca34",
           "document_id": "doc_66624dfc102d650e04560cc4",
           "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
           "page_index": 0,
           "rank": 4,
-          "score": 0.18368434562107508,
+          "score": 0.19334161003238196,
           "anchor_precision": "region",
           "bbox": {
             "x0": 0.08823529,
@@ -1141,7 +1141,7 @@
           "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
           "page_index": 0,
           "rank": 5,
-          "score": 0.05326319910327568,
+          "score": 0.06707147481686723,
           "anchor_precision": "region",
           "bbox": {
             "x0": 0.65189541,
@@ -1172,14 +1172,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.65939999918919,
-      "vector_search_ms": 6.215000001247972
+      "embedding_ms": 11.875099999087979,
+      "vector_search_ms": 4.202100000838982
     },
     {
       "query_id": "p2_table_latency",
       "split": "validation",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -1268,14 +1268,14 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 12.638599999263533,
-      "vector_search_ms": 6.292500000199652
+      "embedding_ms": 10.003700001107063,
+      "vector_search_ms": 4.49799999842071
     },
     {
       "query_id": "p2_retry_protocol",
       "split": "development",
       "category": "exact_identifier",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1385,14 +1385,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 10.31420000072103,
-      "vector_search_ms": 6.747299999915413
+      "embedding_ms": 7.256200000483659,
+      "vector_search_ms": 4.583500000080676
     },
     {
       "query_id": "p2_retry_digest",
       "split": "development",
       "category": "exact_identifier",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1502,14 +1502,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.113899999443674,
-      "vector_search_ms": 7.376800000201911
+      "embedding_ms": 6.30269999965094,
+      "vector_search_ms": 4.18809999973746
     },
     {
       "query_id": "p2_retry_chunk_bytes",
       "split": "development",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1619,14 +1619,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.242099999028142,
-      "vector_search_ms": 6.8799999990005745
+      "embedding_ms": 6.650699999227072,
+      "vector_search_ms": 4.472200000236626
     },
     {
       "query_id": "p2_retry_ack",
       "split": "development",
       "category": "narrative_fact",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1736,14 +1736,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 9.469200000239653,
-      "vector_search_ms": 6.650500001342152
+      "embedding_ms": 6.783599999835133,
+      "vector_search_ms": 4.41309999951045
     },
     {
       "query_id": "p2_retry_formula",
       "split": "development",
       "category": "equation_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1853,14 +1853,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.90599999911501,
-      "vector_search_ms": 6.853400000181864
+      "embedding_ms": 6.536700000651763,
+      "vector_search_ms": 4.232999999658205
     },
     {
       "query_id": "p2_retry_total",
       "split": "development",
       "category": "equation_calculation",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1970,14 +1970,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.570999999094056,
-      "vector_search_ms": 6.516199999168748
+      "embedding_ms": 8.856200000082026,
+      "vector_search_ms": 4.223500000080094
     },
     {
       "query_id": "p2_retry_attempts",
       "split": "development",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2087,14 +2087,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.287399998764158,
-      "vector_search_ms": 7.160500001191394
+      "embedding_ms": 7.999199999176199,
+      "vector_search_ms": 4.559899998639594
     },
     {
       "query_id": "p2_retry_second_backoff",
       "split": "development",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2204,14 +2204,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 10.801599999467726,
-      "vector_search_ms": 6.529599999339553
+      "embedding_ms": 7.3546000003261724,
+      "vector_search_ms": 4.971799999111681
     },
     {
       "query_id": "p2_retry_loss",
       "split": "development",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -2300,14 +2300,14 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 10.40140000077372,
-      "vector_search_ms": 6.482000000687549
+      "embedding_ms": 7.376800000201911,
+      "vector_search_ms": 4.69869999869843
     },
     {
       "query_id": "p2_cache_study_id",
       "split": "validation",
       "category": "exact_identifier",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2417,14 +2417,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.283400000436814,
-      "vector_search_ms": 6.385499998941668
+      "embedding_ms": 6.592799998543342,
+      "vector_search_ms": 4.170899999735411
     },
     {
       "query_id": "p2_cache_capacity",
       "split": "validation",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2534,14 +2534,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.092200001352467,
-      "vector_search_ms": 5.964600000879727
+      "embedding_ms": 5.8303000005253125,
+      "vector_search_ms": 4.462599999897066
     },
     {
       "query_id": "p2_cache_formula",
       "split": "validation",
       "category": "equation_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2651,14 +2651,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 7.978699999512173,
-      "vector_search_ms": 5.952000001343549
+      "embedding_ms": 7.771599999614409,
+      "vector_search_ms": 4.266099998858408
     },
     {
       "query_id": "p2_cache_ratio",
       "split": "validation",
       "category": "equation_calculation",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2668,6 +2668,7 @@
         ]
       ],
       "gold_evidence_ids": [
+        "ev_15cc234bb2d5b403549b3314becf1a4b",
         "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
         "ev_ace047e2a9ec126336deb5074eed1f3d"
       ],
@@ -2750,33 +2751,33 @@
       ],
       "metrics": {
         "1": {
-          "hit_rate": 0.0,
-          "recall": 0.0,
-          "mrr": 0.0,
-          "ndcg": 0.0
+          "hit_rate": 1.0,
+          "recall": 0.3333333333333333,
+          "mrr": 1.0,
+          "ndcg": 1.0
         },
         "3": {
           "hit_rate": 1.0,
           "recall": 1.0,
-          "mrr": 0.5,
-          "ndcg": 0.6934264036172708
+          "mrr": 1.0,
+          "ndcg": 1.0
         },
         "5": {
           "hit_rate": 1.0,
           "recall": 1.0,
-          "mrr": 0.5,
-          "ndcg": 0.6934264036172708
+          "mrr": 1.0,
+          "ndcg": 1.0
         }
       },
       "failure": null,
-      "embedding_ms": 9.440199999517063,
-      "vector_search_ms": 6.020599999828846
+      "embedding_ms": 7.9531000010319985,
+      "vector_search_ms": 4.665499998736777
     },
     {
       "query_id": "p2_cache_limit",
       "split": "validation",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2886,14 +2887,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.250900000348338,
-      "vector_search_ms": 5.912399999942863
+      "embedding_ms": 6.279100000028848,
+      "vector_search_ms": 4.174900001089554
     },
     {
       "query_id": "p2_cache_eviction",
       "split": "validation",
       "category": "narrative_fact",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3003,14 +3004,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.41240000045218,
-      "vector_search_ms": 7.51250000030268
+      "embedding_ms": 6.382200001098681,
+      "vector_search_ms": 4.283400001440896
     },
     {
       "query_id": "p2_cache_best_hit",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3122,14 +3123,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 8.624300000519725,
-      "vector_search_ms": 6.268199998885393
+      "embedding_ms": 6.422899999961373,
+      "vector_search_ms": 4.27529999979015
     },
     {
       "query_id": "p2_cache_lru_latency",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3239,14 +3240,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 11.238700000831159,
-      "vector_search_ms": 8.493399998769746
+      "embedding_ms": 7.880500001192559,
+      "vector_search_ms": 4.37430000056338
     },
     {
       "query_id": "p2_cache_energy",
       "split": "validation",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -3335,14 +3336,14 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 12.224899999637273,
-      "vector_search_ms": 13.612999999168096
+      "embedding_ms": 6.923499999174965,
+      "vector_search_ms": 4.751300000862102
     },
     {
       "query_id": "harbor_partner_limit",
       "split": "development",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3452,14 +3453,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 15.35620000140625,
-      "vector_search_ms": 9.767199999259901
+      "embedding_ms": 8.91599999886239,
+      "vector_search_ms": 4.7814999998081475
     },
     {
       "query_id": "harbor_renewed_period",
       "split": "development",
       "category": "multi_page",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3571,14 +3572,14 @@
         }
       },
       "failure": null,
-      "embedding_ms": 19.417700001213234,
-      "vector_search_ms": 8.617400000730413
+      "embedding_ms": 9.983499998270418,
+      "vector_search_ms": 4.681499998696381
     },
     {
       "query_id": "harbor_overdue_fee",
       "split": "development",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -3667,14 +3668,14 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 13.54890000038722,
-      "vector_search_ms": 8.036299999730545
+      "embedding_ms": 8.747300000322866,
+      "vector_search_ms": 5.058599999756552
     },
     {
       "query_id": "juniper_north_meadow",
       "split": "validation",
       "category": "visual",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": true,
       "scope": [
@@ -3748,14 +3749,14 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 14.497900001515518,
-      "vector_search_ms": 9.901699999318225
+      "embedding_ms": 8.599999999205465,
+      "vector_search_ms": 4.838099999687984
     },
     {
       "query_id": "juniper_closing_time",
       "split": "validation",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -3829,8 +3830,8 @@
       ],
       "metrics": null,
       "failure": null,
-      "embedding_ms": 15.231399998810957,
-      "vector_search_ms": 6.751799999619834
+      "embedding_ms": 8.35929999993823,
+      "vector_search_ms": 4.9914999999600695
     }
   ]
 }

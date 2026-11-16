@@ -1,10 +1,10 @@
 {
   "experiment": "E0",
-  "status": "provisional_unreviewed_labels",
-  "git_sha_at_run": "d375038d10ca1264aed069be6984fbc7b1b526a0",
+  "status": "owner_reviewed_retrieval_only",
+  "git_sha_at_run": "63027696198c9bfa1d656108d02b5c3ba08621a7",
   "source_tree_uncommitted_at_run": false,
-  "source_sha256": "df8cd08b3ba5ee5859f309a002aa6a844025127ec8053cf6545d1a747f90aaa0",
-  "dataset_sha256": "c8139440fc359cc4615727b6933dc7d69afa7b8132c13fa722008b5424e10098",
+  "source_sha256": "a3a7c48dbde51f7505e70eeaee0edd6f9666a2dc2d7e511f974441322c331724",
+  "dataset_sha256": "bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71",
   "manifest_sha256": "fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec",
   "corpus_versions": [
     [
@@ -65,8 +65,8 @@
     "logical_cpus": 20
   },
   "timing": {
-    "corpus_preparation_ms": 257.4819000001298,
-    "index_build_ms": 1.6787000004114816,
+    "corpus_preparation_ms": 530.9620000007271,
+    "index_build_ms": 3.7496000004466623,
     "assumption": "single cold process; no warmup; exploratory only"
   },
   "aggregates": {
@@ -93,7 +93,7 @@
     "validation": {
       "1": {
         "hit_rate": 0.6363636363636364,
-        "recall": 0.5909090909090909,
+        "recall": 0.5757575757575757,
         "mrr": 0.6363636363636364,
         "ndcg": 0.6363636363636364
       },
@@ -144,7 +144,7 @@
       "metrics": {
         "1": {
           "hit_rate": 0.5,
-          "recall": 0.25,
+          "recall": 0.16666666666666666,
           "mrr": 0.5,
           "ndcg": 0.5
         },
@@ -460,7 +460,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.09820000013860408
+      "search_ms": 0.16730000061215833
     },
     {
       "query_id": "p2_atlas_path",
@@ -576,7 +576,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.060999998822808266
+      "search_ms": 0.11089999861724209
     },
     {
       "query_id": "p2_atlas_filter",
@@ -662,7 +662,7 @@
         }
       },
       "failure": null,
-      "search_ms": 0.050999999075429514
+      "search_ms": 0.09549999958835542
     },
     {
       "query_id": "p2_atlas_weight",
@@ -742,13 +742,13 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.04470000021683518
+      "search_ms": 0.09380000119563192
     },
     {
       "query_id": "p2_table_best",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -858,13 +858,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.052400000640773214
+      "search_ms": 0.10800000018207356
     },
     {
       "query_id": "p2_table_dense_recall",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -914,13 +914,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.03319999996165279
+      "search_ms": 0.06279999979597051
     },
     {
       "query_id": "p2_table_f1_gap",
       "split": "validation",
       "category": "table_calculation",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -947,6 +947,51 @@
             "x1": 0.86928105,
             "y1": 0.37373737
           }
+        },
+        {
+          "evidence_id": "ev_8e0c1e6d6ce9ed940b753375bd6d25a9",
+          "document_id": "doc_66624dfc102d650e04560cc4",
+          "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+          "page_index": 0,
+          "rank": 2,
+          "score": 1.6579387626752617,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.11764706,
+            "y0": 0.39053029,
+            "x1": 0.37281041,
+            "y1": 0.40762626
+          }
+        },
+        {
+          "evidence_id": "ev_81e39a429c4efc88737fccbc8dc8789d",
+          "document_id": "doc_66624dfc102d650e04560cc4",
+          "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+          "page_index": 0,
+          "rank": 3,
+          "score": 1.2681412479396985,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.11638258,
+            "x1": 0.61271239,
+            "y1": 0.13546591
+          }
+        },
+        {
+          "evidence_id": "ev_591f03b93a6ab90080462875adcf1822",
+          "document_id": "doc_66624dfc102d650e04560cc4",
+          "document_version": "sha256:38445fbdb2dfc8700d3b81acb103c5786fd4d27be64db8dbbe411aff87532b72",
+          "page_index": 0,
+          "rank": 4,
+          "score": 0.6317745869243792,
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.65189541,
+            "y0": 0.9436869,
+            "x1": 0.91176461,
+            "y1": 0.95756569
+          }
         }
       ],
       "metrics": {
@@ -970,13 +1015,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.03499999911582563
+      "search_ms": 0.11240000094403513
     },
     {
       "query_id": "p2_table_latency",
       "split": "validation",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -1005,13 +1050,13 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.045900000259280205
+      "search_ms": 0.06960000064282212
     },
     {
       "query_id": "p2_retry_protocol",
       "split": "development",
       "category": "exact_identifier",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1121,13 +1166,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.09409999984200113
+      "search_ms": 0.15270000039890874
     },
     {
       "query_id": "p2_retry_digest",
       "split": "development",
       "category": "exact_identifier",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1237,13 +1282,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.09959999988495838
+      "search_ms": 0.15530000018770806
     },
     {
       "query_id": "p2_retry_chunk_bytes",
       "split": "development",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1353,13 +1398,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.08729999899514951
+      "search_ms": 0.2922000003309222
     },
     {
       "query_id": "p2_retry_ack",
       "split": "development",
       "category": "narrative_fact",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1469,13 +1514,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.09440000030735973
+      "search_ms": 0.26419999994686805
     },
     {
       "query_id": "p2_retry_formula",
       "split": "development",
       "category": "equation_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1585,13 +1630,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.08549999984097667
+      "search_ms": 0.31599999965692405
     },
     {
       "query_id": "p2_retry_total",
       "split": "development",
       "category": "equation_calculation",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1701,13 +1746,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.09950000094249845
+      "search_ms": 0.20899999981338624
     },
     {
       "query_id": "p2_retry_attempts",
       "split": "development",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1817,13 +1862,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.10230000043520704
+      "search_ms": 0.2007000002777204
     },
     {
       "query_id": "p2_retry_second_backoff",
       "split": "development",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -1933,13 +1978,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.08410000009462237
+      "search_ms": 0.1644000003580004
     },
     {
       "query_id": "p2_retry_loss",
       "split": "development",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -2028,13 +2073,13 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.13330000001587905
+      "search_ms": 0.2550999997765757
     },
     {
       "query_id": "p2_cache_study_id",
       "split": "validation",
       "category": "exact_identifier",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2144,13 +2189,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.07540000115113799
+      "search_ms": 0.14869999904476572
     },
     {
       "query_id": "p2_cache_capacity",
       "split": "validation",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2260,13 +2305,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.060900001699337736
+      "search_ms": 0.1401999998051906
     },
     {
       "query_id": "p2_cache_formula",
       "split": "validation",
       "category": "equation_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2376,13 +2421,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.07879999975557439
+      "search_ms": 0.25040000036824495
     },
     {
       "query_id": "p2_cache_ratio",
       "split": "validation",
       "category": "equation_calculation",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2392,6 +2437,7 @@
         ]
       ],
       "gold_evidence_ids": [
+        "ev_15cc234bb2d5b403549b3314becf1a4b",
         "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
         "ev_ace047e2a9ec126336deb5074eed1f3d"
       ],
@@ -2475,7 +2521,7 @@
       "metrics": {
         "1": {
           "hit_rate": 1.0,
-          "recall": 0.5,
+          "recall": 0.3333333333333333,
           "mrr": 1.0,
           "ndcg": 1.0
         },
@@ -2493,13 +2539,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.088099999629776
+      "search_ms": 0.1745000008668285
     },
     {
       "query_id": "p2_cache_limit",
       "split": "validation",
       "category": "exact_number",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2609,13 +2655,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.0822000001790002
+      "search_ms": 0.1632999992580153
     },
     {
       "query_id": "p2_cache_eviction",
       "split": "validation",
       "category": "narrative_fact",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2725,13 +2771,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.07650000043213367
+      "search_ms": 0.1385000014124671
     },
     {
       "query_id": "p2_cache_best_hit",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2843,13 +2889,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.0884000000951346
+      "search_ms": 0.1505999989603879
     },
     {
       "query_id": "p2_cache_lru_latency",
       "split": "validation",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -2944,13 +2990,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.0746000005165115
+      "search_ms": 0.1396000006934628
     },
     {
       "query_id": "p2_cache_energy",
       "split": "validation",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -3039,13 +3085,13 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.07780000123602804
+      "search_ms": 0.14600000031350646
     },
     {
       "query_id": "harbor_partner_limit",
       "split": "development",
       "category": "table_lookup",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3155,13 +3201,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.06269999903452117
+      "search_ms": 0.12489999971876387
     },
     {
       "query_id": "harbor_renewed_period",
       "split": "development",
       "category": "multi_page",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": false,
       "scope": [
@@ -3273,13 +3319,13 @@
         }
       },
       "failure": null,
-      "search_ms": 0.07999999979801942
+      "search_ms": 0.14649999866378494
     },
     {
       "query_id": "harbor_overdue_fee",
       "split": "development",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -3368,13 +3414,13 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.06580000081157777
+      "search_ms": 0.12900000001536682
     },
     {
       "query_id": "juniper_north_meadow",
       "split": "validation",
       "category": "visual",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": true,
       "requires_visual_evidence": true,
       "scope": [
@@ -3418,13 +3464,13 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.03870000000461005
+      "search_ms": 0.07480000022042077
     },
     {
       "query_id": "juniper_closing_time",
       "split": "validation",
       "category": "unanswerable",
-      "review_status": "needs_review",
+      "review_status": "verified",
       "answerable": false,
       "requires_visual_evidence": false,
       "scope": [
@@ -3468,7 +3514,7 @@
       ],
       "metrics": null,
       "failure": null,
-      "search_ms": 0.0320999988616677
+      "search_ms": 0.06519999988086056
     }
   ]
 }

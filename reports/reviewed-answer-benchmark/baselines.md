@@ -1,22 +1,22 @@
-# Search baselines — provisional gate report
+# Search baselines — owner-reviewed retrieval
 
 ## Provenance and reproduction
 
-- Dataset SHA-256: `c8139440fc359cc4615727b6933dc7d69afa7b8132c13fa722008b5424e10098`; manifest SHA-256: `fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec`.
+- Dataset SHA-256: `bdec2123f3c9a9770f156c43b84a0870a7651f851354aac7af8478699d8b8e71`; manifest SHA-256: `fae53809868b44108837cf14f96fbfc220072cb3e62d80b12df0866e9e7622ec`.
 - Dataset and source text hashes normalize line endings to LF so Windows and Linux checkouts have the same identity.
-- E0 raw run: `reports/reviewed-answer-benchmark/runs/e0.json`; run Git SHA `d375038d10ca1264aed069be6984fbc7b1b526a0`; index `sha256:04957b073c73ce311bf4671e141d7d25768e246a089c0e983dee017158301db6`.
-- E0 source SHA-256 `df8cd08b3ba5ee5859f309a002aa6a844025127ec8053cf6545d1a747f90aaa0`; source uncommitted at run: `false`.
-- E1 raw run: `reports/reviewed-answer-benchmark/runs/e1.json`; run Git SHA `d375038d10ca1264aed069be6984fbc7b1b526a0`; index `sha256:97577d6709c2154e404e18659f52caf7de1d3f7a663331dcfcf55b66399604c7`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
-- E1 source SHA-256 `7deaf66d2db0d675e5fc545d6d289460a39d9c4518b06ac52182ff5d813f2ae2`; source uncommitted at run: `false`.
+- E0 raw run: `reports/reviewed-answer-benchmark/runs/e0.json`; run Git SHA `63027696198c9bfa1d656108d02b5c3ba08621a7`; index `sha256:04957b073c73ce311bf4671e141d7d25768e246a089c0e983dee017158301db6`.
+- E0 source SHA-256 `a3a7c48dbde51f7505e70eeaee0edd6f9666a2dc2d7e511f974441322c331724`; source uncommitted at run: `false`.
+- E1 raw run: `reports/reviewed-answer-benchmark/runs/e1.json`; run Git SHA `63027696198c9bfa1d656108d02b5c3ba08621a7`; index `sha256:97577d6709c2154e404e18659f52caf7de1d3f7a663331dcfcf55b66399604c7`; model revision `d13954661f83248295ba75c1ed411eef3b7b936e`.
+- E1 source SHA-256 `60c23e8516a9c1219f9771128908486b184a36c8b56a4c127dc3b9e144e1fc8c`; source uncommitted at run: `false`.
 - Both runs use the same canonical evidence units, exact document versions, query IDs, evidence-unit binary relevance, and K=1/3/5.
 - Regenerate E0 through E3 using `python scripts/reviewed_retrieval.py --output-dir reports/generated/answer-benchmark` with the pinned local model cache.
 - Timings are exploratory single cold-process observations without warmup; E1 separates query embedding from vector search. They are not latency benchmarks. Peak memory was not measured.
 
 ## Dataset and gate
 
-- 36 candidate questions: 31 development/validation queries and 5 frozen-test queries; 4 human verified. 24 answerable nonvisual questions are scored in each run.
-- The frozen test was not searched or used for tuning. 32 labels require owner review.
-- **Phase 2 gate: NOT PASSED.** The target is 30-50 human-verified questions; this pilot has 36 candidate labels and 4 verified. Broader external document coverage remains untested. A code merge does not complete the human-review gate.
+- 36 candidate questions: 31 development/validation queries and 5 frozen-test queries; 36 human verified. 24 answerable nonvisual questions are scored in each run.
+- The frozen test was not searched or used for tuning. 0 labels require owner review.
+- Owner label review is complete. Live answer quality and broader held-out retrieval quality remain unmeasured.
 
 ## Aggregate evidence-unit results
 
@@ -25,7 +25,7 @@
 | development | E0 | 13 | 0.692 | 0.923 | 0.897 | 0.808 | 0.815 |
 | development | E1 | 13 | 0.769 | 1.000 | 1.000 | 0.872 | 0.905 |
 | validation | E0 | 11 | 0.636 | 0.909 | 0.909 | 0.758 | 0.797 |
-| validation | E1 | 11 | 0.636 | 0.909 | 0.909 | 0.773 | 0.814 |
+| validation | E1 | 11 | 0.727 | 0.909 | 0.909 | 0.818 | 0.842 |
 
 ## Per-category diagnostics
 
@@ -36,7 +36,7 @@ Categories with no scored answerable nonvisual questions have no retrieval metri
 | diagram_interpretation | E0 | 1 | 0.000 | 1.000 |
 | diagram_interpretation | E1 | 1 | 0.000 | 1.000 |
 | equation_calculation | E0 | 2 | 0.500 | 1.000 |
-| equation_calculation | E1 | 2 | 0.500 | 1.000 |
+| equation_calculation | E1 | 2 | 1.000 | 1.000 |
 | equation_lookup | E0 | 2 | 1.000 | 1.000 |
 | equation_lookup | E1 | 2 | 1.000 | 1.000 |
 | exact_identifier | E0 | 3 | 1.000 | 1.000 |
@@ -58,7 +58,7 @@ Categories with no scored answerable nonvisual questions have no retrieval metri
 
 ## Controlled comparison and failures
 
-- E0 wins on first relevant rank: p2_cache_ratio, p2_cache_eviction.
+- E0 wins on first relevant rank: p2_cache_eviction.
 - E1 wins on first relevant rank: p2_retry_chunk_bytes, p2_retry_total, p2_cache_limit, p2_cache_lru_latency.
 - Both miss relevant evidence within K=5: p2_cache_best_hit.
 - `p2_atlas_path` has its labeled relevant unit at rank 2 in E0 and 2 in E1; both miss at K=1 (taxonomy d).
