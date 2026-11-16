@@ -49,8 +49,9 @@ ran BM25 and fixed drafts on 13 development and validation cases. The checked
 arm emitted six answers and zero false answers on four unanswerable cases.
 The baseline emitted 12 answers and three false answers on those four cases.
 Both runs use provisional labels. The [error analysis](../reports/error_analysis.md)
-documents the remaining human review, which the owner deferred. The frozen test
-was not scored or used for tuning.
+documents the remaining human review, which the owner deferred. The grounding
+comparison excluded the frozen test. The later release diagnostic scored
+frozen text retrieval with the generator disabled.
 
 Local verification passed lock and dependency checks, Ruff formatting and lint,
 strict mypy, 187 pytest tests, a separate live Qdrant test, deterministic
