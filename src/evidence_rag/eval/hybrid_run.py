@@ -39,6 +39,7 @@ def run(
 ) -> dict[str, Any]:
     """Save all trials and choose one configuration using validation only."""
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
+    manifest_hash = normalized_text_sha256(manifest_path)
     items = development_items(load_evaluation_jsonl(seed_path))
     selected = sorted(
         {(ref.document_id, ref.document_version) for item in items for ref in item.documents}
@@ -48,6 +49,7 @@ def run(
     for baseline in baselines:
         if (
             baseline.get("dataset_sha256") != dataset_hash
+            or baseline.get("manifest_sha256") != manifest_hash
             or baseline.get("corpus_versions") != [list(pair) for pair in selected]
             or baseline.get("config", {}).get("cutoffs") != list(CUTOFFS)
             or baseline.get("relevance_unit") != "evidence_unit"
@@ -149,7 +151,7 @@ def run(
             ),
             "source_sha256": source_hash.hexdigest(),
             "dataset_sha256": dataset_hash,
-            "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+            "manifest_sha256": manifest_hash,
             "corpus_versions": selected,
             "relevance_unit": "evidence_unit",
             "metric_denominator": "answerable nonvisual candidate questions only",

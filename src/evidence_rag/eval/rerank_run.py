@@ -45,6 +45,7 @@ def run(
     if not config.enabled:
         raise ValueError("real-model evaluation requires enabled reranking")
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
+    manifest_hash = normalized_text_sha256(manifest_path)
     items = development_items(load_evaluation_jsonl(seed_path))
     hybrid = json.loads(hybrid_path.read_text(encoding="utf-8"))
     selected = sorted(
@@ -52,6 +53,7 @@ def run(
     )
     if (
         hybrid.get("dataset_sha256") != normalized_text_sha256(seed_path)
+        or hybrid.get("manifest_sha256") != manifest_hash
         or hybrid.get("corpus_versions") != [list(pair) for pair in selected]
         or hybrid.get("relevance_unit") != "evidence_unit"
         or tuple(hybrid.get("cutoffs", ())) != CUTOFFS
@@ -131,7 +133,7 @@ def run(
         ),
         "source_sha256": source_hash.hexdigest(),
         "dataset_sha256": normalized_text_sha256(seed_path),
-        "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "manifest_sha256": manifest_hash,
         "corpus_versions": selected,
         "relevance_unit": "evidence_unit",
         "cutoffs": CUTOFFS,

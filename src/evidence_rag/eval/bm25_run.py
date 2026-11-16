@@ -69,7 +69,7 @@ def run(manifest_path: Path, seed_path: Path, output_path: Path) -> dict[str, ob
         ),
         "source_sha256": source_hash.hexdigest(),
         "dataset_sha256": normalized_text_sha256(seed_path),
-        "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "manifest_sha256": normalized_text_sha256(manifest_path),
         "corpus_versions": sorted(selected),
         "index_id": index.index_id,
         "index_version": INDEX_VERSION,

@@ -1,7 +1,6 @@
 """Validate raw E0/E1 runs and render the provisional Phase 2 baseline report."""
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -107,7 +106,7 @@ def render_report(
 ) -> str:
     """Derive every figure from validated raw run artifacts."""
     dataset_hash = normalized_text_sha256(seed_path)
-    manifest_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    manifest_hash = normalized_text_sha256(manifest_path)
     validate_run(e0, "E0", dataset_hash, manifest_hash)
     validate_run(e1, "E1", dataset_hash, manifest_hash)
     validate_dataset(manifest_path, [seed_path], verify_evidence=True)
@@ -180,7 +179,7 @@ def render_report(
         "## Provenance and reproduction",
         "",
         f"- Dataset SHA-256: `{dataset_hash}`; manifest SHA-256: `{manifest_hash}`.",
-        "- Dataset and source text hashes normalize line endings to LF so Windows "
+        "- Dataset, manifest and source text hashes normalize line endings to LF so Windows "
         "and Linux checkouts have the same identity.",
         f"- E0 raw run: `{e0_path.as_posix()}`; run Git SHA `{e0['git_sha_at_run']}`; "
         f"index `{e0['index_id']}`.",
