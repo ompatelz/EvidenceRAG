@@ -21,3 +21,9 @@
 - Quantified bullet template pending reviewed evidence: “Measured [retrieval or
   abstention metric] on [N human-verified held-out queries] against [baseline],
   with [coverage or cost trade-off].”
+
+The [frozen report](../reports/final_evaluation.md) is measured on the
+frozen test under provisional labels. Its two eligible text retrieval
+queries and two caller-flagged visual refusals support the narrowly
+worded README observation. Keep the resume metric template until the
+human-reviewed benchmark gate is met.

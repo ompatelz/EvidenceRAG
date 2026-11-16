@@ -24,3 +24,12 @@ Rehearse the upload, answer, unsupported query and citation routes using
 `uv run --locked python scripts/measure_local.py --output reports/generated/demo-smoke.json`
 after creating `reports/generated`. The [saved smoke](../reports/runs/local-release-smoke.json)
 contains the inspected citation ID, query outputs, and preview size.
+
+## Browser evidence
+
+The demo was rehearsed in Chromium against the running local application,
+with the owned Atlas PDF and the pinned cached hybrid embedding model.
+
+- [Cited answer with the opened source region](demo-evidence/cited.png)
+- [Unsupported question and the visible abstention](demo-evidence/abstention.png)
+- [Held-out diagnostic and its separate runtime scope](../reports/final_evaluation.md)

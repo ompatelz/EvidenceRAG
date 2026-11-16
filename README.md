@@ -74,3 +74,11 @@ review.
 The [project status](docs/PROJECT_STATUS.md) records verification and remaining
 gates. The [study guide](docs/interview.md) covers the code and experiments in
 reading order.
+
+## Held-out diagnostic
+
+On one held-out owned PDF, BM25 ranked the labeled evidence first on
+two of two eligible text queries. Both flagged pixel-dependent queries
+returned an unsupported-modality outcome. The labels are provisional
+and the generator was disabled. See [the frozen report](reports/final_evaluation.md)
+and [raw run](reports/runs/release-frozen-bm25.json).

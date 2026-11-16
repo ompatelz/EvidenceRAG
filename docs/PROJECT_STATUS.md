@@ -22,7 +22,9 @@ A local read-only Compose candidate reached healthy as UID 10001. The
 previous image reopened the same artifact volume and reused the exact
 owned PDF version after rollback. [Release procedure](release.md).
 
-The frozen test and human label review remain open. This project currently
+A single authorized frozen run completed on the declared commit. See
+[raw results and scope](../reports/final_evaluation.md). Human label review
+remains open. This project currently
 supports a local prototype demonstration and provisional diagnostics.
 
 ## Claim support and abstention

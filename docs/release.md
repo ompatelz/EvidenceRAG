@@ -66,3 +66,14 @@ from versioned evidence per request. For a separately persisted Qdrant
 experiment index, keep each model revision and dimensions in a distinct
 collection and rebuild the old index from old inputs if necessary.
 See [dense index compatibility](dense_baseline.md).
+
+## Candidate notes
+
+- Exact-version artifact validation, bounded generator concurrency and
+  source-safe request logs improve failure handling in the local prototype.
+- The read-only Compose build supports the local inspector with BM25 and
+  an optional fixture answer setting. Pinned external model files can be
+  added to the Python quickstart separately.
+- The [frozen evaluation](../reports/final_evaluation.md) records one
+  authorized held-out run. Human-reviewed general quality, distribution
+  terms and any deployment remain open.
