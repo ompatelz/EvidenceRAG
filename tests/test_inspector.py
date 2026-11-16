@@ -1,5 +1,6 @@
 """Deterministic full inspector flow with local pages and fake model adapters."""
 
+import json
 from collections.abc import Iterator, Sequence
 from pathlib import Path
 from typing import Any
@@ -137,12 +138,62 @@ def test_unavailable_model_stale_version_and_wrong_document(
     missing = client.post("/api/v1/query", json=query_payload(document, mode="dense"))
     assert missing.status_code == 503
     assert missing.json()["error"]["code"] == "model_unavailable"
+    assert missing.json()["request_id"] == missing.headers["X-Request-ID"]
     stale = query_payload(document)
     stale["document_sha256"] = "b" * 64
     assert client.post("/api/v1/query", json=stale).status_code == 404
     wrong = query_payload(document)
     wrong["document_id"] = "doc_other"
     assert client.post("/api/v1/query", json=wrong).status_code == 404
+
+
+def test_dense_query_failure_is_bounded(
+    workspace: tuple[TestClient, dict[str, Any], Path],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def unavailable(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("private index failure")
+
+    client, document, _ = workspace
+    monkeypatch.setattr("huggingface_hub.snapshot_download", lambda **kwargs: "cached-model")
+    monkeypatch.setattr(dense, "FastEmbedder", FakeEmbedder)
+    monkeypatch.setattr(dense.DenseIndex, "search", unavailable)
+    response = client.post("/api/v1/query", json=query_payload(document, mode="dense"))
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "retrieval_failed"
+    assert "private index failure" not in response.text
+
+
+def test_query_telemetry_omits_question(
+    workspace: tuple[TestClient, dict[str, Any], Path], caplog: pytest.LogCaptureFixture
+) -> None:
+    client, document, _ = workspace
+    with caplog.at_level("INFO", logger="evidence_rag.requests"):
+        response = client.post("/api/v1/query", json=query_payload(document))
+    event = json.loads(caplog.records[-1].message)
+    assert event["request_id"] == response.headers["X-Request-ID"]
+    assert event["route"] == "/api/v1/query"
+    assert event["stage_ms"]["total"] >= 0
+    assert QUESTION not in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("filename", "suffix"),
+    [
+        ("manifest.json", ""),
+        ("evidence.json", "/evidence"),
+        ("pages/manifest.json", "/pages/0/preview"),
+    ],
+)
+def test_artifact_scope_mismatch_fails_closed(
+    workspace: tuple[TestClient, dict[str, Any], Path], filename: str, suffix: str
+) -> None:
+    client, document, root = workspace
+    base = f"/api/v1/documents/{document['document_id']}/versions/{document['document_sha256']}"
+    path = next((root / "artifacts").glob(f"documents/*/versions/*/{filename}"))
+    raw = path.read_text(encoding="utf-8").replace(document["document_id"], "doc_other")
+    path.write_text(raw, encoding="utf-8")
+    assert client.get(f"{base}{suffix}").status_code == 404
 
 
 def test_page_only_anchor_and_unsupported_caption_question(
