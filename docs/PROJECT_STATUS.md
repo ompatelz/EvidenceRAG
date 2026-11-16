@@ -1,8 +1,17 @@
 # Project Status
 
-Updated: 2026-11-05
+Updated: 2026-11-16
 
-Current phase: Grounded QA checkpoint 4 on `codex/grounded-qa` (draft PR #6). Phase 2
+Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
+at `c096832`. Visual evidence feasibility is a no-go on the current seed.
+There are zero visual-dependent development or validation questions. The two
+visual-dependent labels belong to the frozen test. See
+[ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md) for the owned
+preflight fixture, model comparison, and conditions for reopening the milestone.
+
+## Grounded QA milestone record
+
+Grounded QA checkpoint 4 was delivered on `codex/grounded-qa`. Phase 2
 baselines merged into `main` at `73c49f8`. All 31 candidate labels remain
 `needs_review`, and the Phase 2 human-review gate is **not passed**. A merged
 implementation must not be described as a validated Phase 2 benchmark.
