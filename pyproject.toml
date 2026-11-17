@@ -9,6 +9,8 @@ description = "Evidence-first retrieval foundations for technical documents"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Om Patel" }]
+license = "AGPL-3.0-only"
+license-files = ["LICENSE", "NOTICE"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Programming Language :: Python :: 3",

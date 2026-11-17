@@ -175,7 +175,7 @@ and explicit conditions for moving to durable jobs.
 ## Optional live generation
 
 The exact-version query handler builds a bounded pack from scoped retrieval
-results. Per-query consent enables the OpenAI adapter on a configured local
-server. Returned claims and evidence IDs pass through the same citation
+results. Per-query consent enables the configured Codex CLI, OpenRouter, or OpenAI
+adapter on the local server. Returned claims and evidence IDs pass through the same citation
 resolution and local grounding policy before the inspector displays an answer.
 The default runtime remains local. See [the live adapter and data flow](live_answers.md).

@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "documents": [
+    {
+      "document_id": "doc_fcdb70568fd0ec0d95ba7276",
+      "document_version": "sha256:7e0d88065d3442cf4c129981b46de7e62ad2fab06f26a5ce845aaef86edd8335",
+      "source_url": "repo://datasets/fixtures/orchid-reef-permit.pdf",
+      "title": "Orchid Reef Field Permit",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-17",
+      "sha256": "7e0d88065d3442cf4c129981b46de7e62ad2fab06f26a5ce845aaef86edd8335",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/orchid-reef-permit.pdf",
+      "document_family": "orchid-reef-permit"
+    },
+    {
+      "document_id": "doc_9cd3753c77f7c0379593ca76",
+      "document_version": "sha256:7137a92929c513d9ccbefb07cff0e08ef789898f417642be94faa0f7e01cf8bc",
+      "source_url": "repo://datasets/fixtures/meridian-kiln-shift-card.pdf",
+      "title": "Meridian Kiln Shift Card",
+      "license_or_permission": "Repository-authored synthetic fixture; CC0-1.0",
+      "acquisition_date": "2026-11-17",
+      "sha256": "7137a92929c513d9ccbefb07cff0e08ef789898f417642be94faa0f7e01cf8bc",
+      "redistribution_policy": "May be redistributed under CC0-1.0",
+      "local_fixture_path": "datasets/fixtures/meridian-kiln-shift-card.pdf",
+      "document_family": "meridian-kiln"
+    }
+  ]
+}

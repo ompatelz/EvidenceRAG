@@ -27,6 +27,13 @@ instance, including the [Compose candidate](release.md). The
 [saved smoke](../reports/runs/local-release-smoke.json)
 contains the inspected citation ID, query outputs, and preview size.
 
+## Optional live answer
+
+Follow the [Codex or OpenRouter setup](live_answers.md), then enable per-query
+consent and ask for the Atlas calibration sampling frequency. Open the
+citation and show the source line. The
+[Codex smoke record](../reports/live-provider-smoke.md) documents this path.
+
 ## Browser evidence
 
 The demo was rehearsed in Chromium against the running local application,

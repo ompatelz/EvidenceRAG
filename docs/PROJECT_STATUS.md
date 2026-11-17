@@ -26,8 +26,21 @@ fixed Atlas answer, its version-scoped PNG region, and an unsupported query.
 The E0–E3 rerun with the pinned cache reproduced the committed comparison
 table. The [demo](demo.md), [run record](../reports/reviewed-answer-benchmark/README.md)
 and [release procedure](release.md) contain the reproduction commands.
-No live request or new final-test run was performed. See the
+That handoff did not run a live request or a new final test. See the
 [fresh-test declaration requirements](evaluation_protocol.md#declaring-a-fresh-final-test).
+
+## Live answers and licensing
+
+The signed-in Codex CLI produced a grounded Atlas answer and the API resolved
+its citation to the rendered source. The [smoke report](../reports/live-provider-smoke.md)
+records the verified answer and a separately withheld draft. OpenRouter is
+available with a user-supplied key and a selected model. Its live smoke and
+the reviewed live answer comparison remain pending.
+
+The application uses AGPL-3.0-only with copyright attribution. The
+[reserved final-test packet](../datasets/eval/RESERVED_FINAL_TEST.md) has
+two new source families and six candidate labels. Owner review and a
+formal evaluation freeze are pending. No model predictions were opened.
 
 ## Release readiness
 
@@ -454,7 +467,7 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 ## Known technical debt / risks
 
 - The local inspector and retrieval API support a fixed fixture answer and
-  consent-gated OpenAI generation. Live output quality is unmeasured. The
+  consent-gated external generation. Benchmark live output quality is unmeasured. The
   reviewed retrieval corpus consists of a small synthetic sample.
 - Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
   multiple processes nor automatically resumes after a restart; interrupted work requires
@@ -462,11 +475,10 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 - Table detection is page-local. Complex reading order, multi-page tables, vector diagrams,
   equations, unusual malformed page boxes, and rotated/cropped production documents are not
   yet validated broadly.
-- PyMuPDF uses AGPL/commercial licensing, while this repository has no selected license.
-  Container/source redistribution must not begin until licensing is resolved.
+- PyMuPDF offers AGPL/commercial licensing. Follow the
+  [release distribution terms](release.md#distribution) for any image publication.
 - Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
   exercised in Phase 0.1.
-- The project has no selected license.
 - Windows is the only locally verified operating system for this first branch; CI provides
   Linux coverage.
 

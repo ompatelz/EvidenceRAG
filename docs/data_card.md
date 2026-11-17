@@ -50,5 +50,6 @@ CC0-1.0. Their provenance and exact versions are recorded in the
 [current manifest](../datasets/manifests/answer-benchmark.json).
 The benchmark now covers more layouts and subject matter. Scans, naturally
 authored documents, diverse held-out families and production workloads remain
-gaps. The owner verified all five expansion labels. No new test family was declared. Every current PDF family already belongs to
-development, validation or the opened historical test.
+gaps. The owner verified all five expansion labels. The [reserved test candidate](../datasets/eval/RESERVED_FINAL_TEST.md) adds
+two separate CC0 families and six pending labels. Its inputs are isolated from
+this reviewed snapshot. No predictions have been generated for them.

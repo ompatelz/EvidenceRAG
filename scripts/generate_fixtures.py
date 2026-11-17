@@ -16,6 +16,8 @@ FIXTURE_NAMES = (
     "cache-admission.pdf",
     "library-loans.pdf",
     "garden-map.pdf",
+    "orchid-reef-permit.pdf",
+    "meridian-kiln-shift-card.pdf",
 )
 
 
@@ -304,6 +306,51 @@ def generate_garden(path: Path) -> None:
     canvas.save()
 
 
+def generate_reef_permits(path: Path) -> None:
+    """Create a reserved two-page permit notice with a conditional rule."""
+    canvas = _canvas(path, "Orchid Reef Field Permit")
+    _note_page(
+        canvas,
+        "Orchid Reef Field Permit",
+        "1. Permit categories",
+        (
+            "Class R7 authorizes shoreline observation only.",
+            "Class D4 is required for water sampling.",
+            "The duty officer issues a receipt after each inspection.",
+        ),
+        1,
+    )
+    canvas.showPage()
+    _note_page(
+        canvas,
+        "Orchid Reef Field Permit",
+        "2. Filing and exceptions",
+        (
+            "Class D4 holders submit their receipt within 72 hours.",
+            "Storm closures suspend all permit categories.",
+        ),
+        2,
+    )
+    canvas.save()
+
+
+def generate_kiln_log(path: Path) -> None:
+    """Create a reserved operations log with distinct thresholds."""
+    canvas = _canvas(path, "Meridian Kiln Shift Card")
+    _note_page(
+        canvas,
+        "Meridian Kiln Shift Card",
+        "Warmup and monitoring",
+        (
+            "The conveyor remains stopped until the chamber reaches 180 degrees Celsius.",
+            "The exhaust alarm sounds at 215 degrees Celsius.",
+            "On an exhaust alarm, isolate the feed and call the shift technician.",
+        ),
+        1,
+    )
+    canvas.save()
+
+
 def generate_all(output_dir: Path) -> None:
     """Generate every fixture into an existing or new directory."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -314,6 +361,8 @@ def generate_all(output_dir: Path) -> None:
     generate_cache_admission(output_dir / FIXTURE_NAMES[4])
     generate_library(output_dir / FIXTURE_NAMES[5])
     generate_garden(output_dir / FIXTURE_NAMES[6])
+    generate_reef_permits(output_dir / FIXTURE_NAMES[7])
+    generate_kiln_log(output_dir / FIXTURE_NAMES[8])
 
 
 def check_committed(output_dir: Path) -> bool:

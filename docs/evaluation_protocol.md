@@ -98,8 +98,8 @@ no population-level inference.
 ## Declaring a fresh final test
 
 The original chart family is historical because its outputs have been opened.
-Each of the seven current families already has a benchmark assignment. Bring
-in permissioned new PDF families before declaring a replacement final test.
+The [reserved review packet](../datasets/eval/RESERVED_FINAL_TEST.md) contains
+two distinct, permissioned families outside the original benchmark.
 Record each family's source, permission, exact PDF hash and split assignment.
 Have the owner check the questions, acceptable answers, answerability, visual
 dependency and source-page or region anchors. Commit and hash the reviewed

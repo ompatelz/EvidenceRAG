@@ -14,11 +14,11 @@ uploads the owned fixture to the running Compose service, checks the source
 region and PNG, and verifies an unsupported question abstains.
 The verification record expires after
 14 days. It is a build record, with no signature or vulnerability scan attestation.
-The project and PyMuPDF licensing review remains open for redistribution.
+The application uses GNU AGPLv3 and the image includes its license and notice.
 
 Candidate verification is the end of the current pipeline. A future maintainer
-can adopt reviewed version tags for release publishing after distribution terms
-are settled. Deployment would require a real host, protected credentials, health
+can adopt reviewed version tags and provide matching corresponding source
+when publishing an image. Deployment would require a real host, protected credentials, health
 checks and a tested rollback before any deployment job is added.
 
 ## Rebuild and verify from a clean clone
@@ -72,19 +72,21 @@ experiment index, keep each model revision and dimensions in a distinct
 collection and rebuild the old index from old inputs if necessary.
 See [dense index compatibility](dense_baseline.md).
 
-## Distribution decision
+## Distribution
 
-The repository has no project-wide license. The original PDF fixtures use
-[CC0-1.0](../datasets/LICENSE-FIXTURES.txt). PyMuPDF and MuPDF are offered
-under AGPL and commercial terms. [GitHub repository licensing](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) · [PyMuPDF license terms](https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright)
+The application uses [AGPL-3.0-only](../LICENSE) with attribution in
+[NOTICE](../NOTICE). Keep the copyright and license notices and provide
+the matching corresponding source when distributing binaries or an image.
+When users interact with a modified version over a network, follow the AGPL
+source-offer requirement. The original fixtures have a separate
+[CC0-1.0 dedication](../datasets/LICENSE-FIXTURES.txt). PyMuPDF and MuPDF
+are offered under AGPL and Artifex commercial terms.
+[PyMuPDF license terms](https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright)
 
-The owner can keep the project local, review an AGPL-compatible distribution
-with corresponding source and applicable notices, or obtain a written Artifex
-license covering the intended distribution. Replacing PyMuPDF would require
-revalidating extraction, table structure and region anchors before reviewing
-the replacement’s terms. Each distribution route needs a decision on the app
-license and a review of notices and terms for the exact image and any bundled
-models. Publishing a release or registry image remains blocked.
+The Python package and candidate image ship the application license and notice.
+Before publishing a particular image, verify the exact image and corresponding
+source, including the pinned base image, dependencies and any added model
+weights. The current pipeline builds and tests a local candidate.
 
 ## Candidate notes
 
@@ -94,5 +96,4 @@ models. Publishing a release or registry image remains blocked.
   an optional fixture answer setting. Pinned external model files can be
   added to the Python quickstart separately.
 - The [frozen evaluation](../reports/final_evaluation.md) records one
-  authorized held-out run. Human-reviewed general quality, distribution
-  terms and any deployment remain open.
+  authorized held-out run. Human-reviewed general quality and any deployment remain open.

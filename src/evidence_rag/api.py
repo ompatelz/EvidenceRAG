@@ -29,6 +29,7 @@ from evidence_rag.answers import (
     RankedCandidate,
     Reason,
 )
+from evidence_rag.codex_answers import CODEX_TIMEOUT_SECONDS, CodexAnswerGenerator
 from evidence_rag.config import AppSettings
 from evidence_rag.documents import (
     DocumentIngestionResponse,
@@ -55,6 +56,7 @@ from evidence_rag.documents import (
 from evidence_rag.documents.models import IngestionStage
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.openai_answers import TIMEOUT_SECONDS, OpenAIAnswerGenerator
+from evidence_rag.openrouter_answers import OpenRouterAnswerGenerator
 from evidence_rag.policy import AnswerPolicy
 from evidence_rag.retrieval.bm25 import BM25Index
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
@@ -90,7 +92,7 @@ class QueryRequest(BaseModel):
     document_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     mode: Literal["bm25", "dense", "hybrid", "reranked"] = "bm25"
     requires_visual_evidence: bool = False
-    external_answer_consent: Literal["openai"] | None = None
+    external_answer_consent: Literal["openai", "openrouter", "codex"] | None = None
 
 
 class QueryResponse(BaseModel):
@@ -109,6 +111,8 @@ def create_app(
     answer_generator: AnswerGenerator | None = None,
     semantic_verifier: SemanticVerifier | None = None,
     openai_generator: OpenAIAnswerGenerator | None = None,
+    openrouter_generator: OpenRouterAnswerGenerator | None = None,
+    codex_generator: CodexAnswerGenerator | None = None,
 ) -> FastAPI:
     """Construct an isolated application using explicit settings."""
     resolved_settings = settings or AppSettings()
@@ -146,22 +150,34 @@ def create_app(
     answer_service = GroundedAnswerService(
         artifact_store, chosen_generator, verifier=semantic_verifier, policy=policy
     )
-    live_enabled = resolved_settings.live_answer_provider == "openai"
-    key = resolved_settings.openai_api_key
-    live_generator = (
-        (openai_generator or OpenAIAnswerGenerator(key.get_secret_value() if key else None))
-        if live_enabled
-        else None
-    )
+    live_provider = resolved_settings.live_answer_provider
+    live_generator: OpenAIAnswerGenerator | OpenRouterAnswerGenerator | CodexAnswerGenerator | None
+    live_generator = None
+    if live_provider == "openai":
+        key = resolved_settings.openai_api_key
+        live_generator = openai_generator or OpenAIAnswerGenerator(
+            key.get_secret_value() if key else None
+        )
+    elif live_provider == "openrouter":
+        key = resolved_settings.openrouter_api_key
+        live_generator = openrouter_generator or OpenRouterAnswerGenerator(
+            key.get_secret_value() if key else None, resolved_settings.openrouter_model
+        )
+    elif live_provider == "codex":
+        live_generator = codex_generator or CodexAnswerGenerator(resolved_settings.codex_executable)
     live_policy = AnswerPolicy()
     live_service = GroundedAnswerService(
         artifact_store,
         None,
-        config=AnswerConfig(timeout_ms=int(TIMEOUT_SECONDS * 1000)),
+        config=AnswerConfig(
+            timeout_ms=int(
+                (CODEX_TIMEOUT_SECONDS if live_provider == "codex" else TIMEOUT_SECONDS) * 1000
+            )
+        ),
         verifier=(
             semantic_verifier or SemanticVerifier(LocalDeberta(resolved_settings.model_cache_dir))
         )
-        if live_enabled
+        if live_generator is not None
         else None,
         policy=live_policy,
     )
@@ -219,7 +235,9 @@ def create_app(
     def capabilities() -> dict[str, bool]:
         return {
             "fixture_demo_answers": resolved_settings.demo_answers,
-            "openai_answers": live_enabled,
+            "openai_answers": live_provider == "openai",
+            "openrouter_answers": live_provider == "openrouter",
+            "codex_answers": live_provider == "codex",
         }
 
     ui_root = Path(__file__).parent / "ui"
@@ -451,7 +469,7 @@ def create_app(
 
     @app.post("/api/v1/query", response_model=QueryResponse, tags=["query"])
     async def query_document(request: QueryRequest, http_request: Request) -> QueryResponse:
-        if request.external_answer_consent != "openai" or live_generator is None:
+        if request.external_answer_consent != live_provider or live_generator is None:
             return await run_in_threadpool(run_query, request, http_request)
         cancelled = Event()
 
@@ -475,7 +493,7 @@ def create_app(
     ) -> QueryResponse:
         """Search a ready exact version and return a checked answer or abstention."""
         total_started = perf_counter()
-        wants_live = request.external_answer_consent == "openai"
+        wants_live = request.external_answer_consent is not None
         service = live_service if wants_live else answer_service
         selected_policy = live_policy if wants_live else policy
 
@@ -673,7 +691,9 @@ def create_app(
             started = perf_counter()
             generate = (
                 partial(live_generator.generate_cancellable, cancelled=cancelled)
-                if wants_live and live_generator is not None and cancelled is not None
+                if request.external_answer_consent == live_provider
+                and live_generator is not None
+                and cancelled is not None
                 else None
             )
             answer = service.answer(
@@ -686,7 +706,7 @@ def create_app(
                 cancelled=cancelled,
             )
             if generate is not None:
-                answer = answer.model_copy(update={"answer_source": "openai"})
+                answer = answer.model_copy(update={"answer_source": live_provider})
             elif not wants_live and isinstance(chosen_generator, FixtureDemoGenerator):
                 answer = answer.model_copy(update={"answer_source": "atlas_demo"})
             timings["answer"] = (perf_counter() - started) * 1000

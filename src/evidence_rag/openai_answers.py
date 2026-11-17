@@ -61,8 +61,14 @@ Transport = Callable[[str, bytes, float, Event], tuple[int, bytes]]
 
 
 def send(key: str, body: bytes, deadline: float, cancelled: Event) -> tuple[int, bytes]:
-    """One TLS POST to the fixed endpoint. Never follow redirects or retry."""
-    connection = HTTPSConnection("api.openai.com", timeout=check_deadline(deadline, cancelled))
+    return post_json("api.openai.com", "/v1/responses", key, body, deadline, cancelled)
+
+
+def post_json(
+    host: str, path: str, key: str, body: bytes, deadline: float, cancelled: Event
+) -> tuple[int, bytes]:
+    """One TLS POST. Never follow redirects or retry."""
+    connection = HTTPSConnection(host, timeout=check_deadline(deadline, cancelled))
     try:
         connection.connect()
         assert connection.sock is not None
@@ -70,7 +76,7 @@ def send(key: str, body: bytes, deadline: float, cancelled: Event) -> tuple[int,
         socket.settimeout(check_deadline(deadline, cancelled))
         connection.request(
             "POST",
-            "/v1/responses",
+            path,
             body=body,
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
         )

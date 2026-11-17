@@ -1,16 +1,18 @@
 """Exercise the live-provider path without credentials or network I/O."""
 
 import json
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 from threading import Event
-from typing import Any
+from typing import Any, Literal
 
 import pytest
 from fastapi.testclient import TestClient
 
 from evidence_rag.answers import DraftAnswer, EvidencePack, GenerationError, PackItem
 from evidence_rag.api import create_app
+from evidence_rag.codex_answers import CodexAnswerGenerator
 from evidence_rag.config import AppSettings
 from evidence_rag.openai_answers import (
     INSTRUCTIONS,
@@ -20,6 +22,7 @@ from evidence_rag.openai_answers import (
     check_deadline,
     response_schema,
 )
+from evidence_rag.openrouter_answers import OpenRouterAnswerGenerator
 from evidence_rag.semantic import MODEL_NAME, MODEL_REVISION, SemanticVerifier
 
 QUESTION = "What is the calibration sampling rate of the Atlas sensor?"
@@ -233,3 +236,116 @@ def test_transport_budget_and_cancellation(case: str, reason: str, expected_call
     with pytest.raises(GenerationError) as error:
         OpenAIAnswerGenerator(SECRET, fake).generate_cancellable(QUESTION, pack, cancelled)
     assert error.value.reason == reason and calls == expected_calls
+
+
+@pytest.mark.parametrize("provider", ["codex", "openrouter"])
+@pytest.mark.parametrize(
+    ("case", "expected", "calls"),
+    [
+        ("supported", "answered", 1),
+        ("unsupported", "insufficient_claim_support", 1),
+        ("bad_reference", "invalid_citation", 1),
+        ("malformed", "malformed_response", 1),
+        ("wrong_consent", "generator_unavailable", 0),
+        ("local_only", "generator_unavailable", 0),
+        ("visual", "unsupported_modality", 0),
+    ],
+)
+def test_additional_live_providers(
+    provider: Literal["codex", "openrouter"],
+    case: str,
+    expected: str,
+    calls: int,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sent: list[dict[str, Any]] = []
+
+    def make_draft(data: dict[str, Any]) -> dict[str, Any]:
+        sent.append(data)
+        item = next(item for item in data["evidence"] if "20 hertz" in item["text"])
+        ref = {key: value for key, value in item.items() if key != "text"}
+        if case == "bad_reference":
+            ref["evidence_id"] = "ev_outside_pack"
+        claim = "The sensor samples at 99 hertz." if case == "unsupported" else CLAIM
+        return {
+            "status": "answered",
+            "answer": claim,
+            "claims": [{"text": claim, "citations": [ref]}],
+        }
+
+    def router(key: str, body: bytes, deadline: float, cancelled: Event) -> tuple[int, bytes]:
+        assert key == SECRET
+        assert check_deadline(deadline, cancelled) > 0
+        payload = json.loads(body)
+        assert payload["model"] == "test/model"
+        assert payload["provider"]["require_parameters"] is True
+        assert payload["provider"]["allow_fallbacks"] is False
+        assert payload["response_format"]["json_schema"]["strict"] is True
+        draft = make_draft(json.loads(payload["messages"][1]["content"]))
+        return 200, json.dumps(
+            {
+                "choices": [
+                    {
+                        "finish_reason": "stop",
+                        "message": {
+                            "content": "invalid JSON" if case == "malformed" else json.dumps(draft)
+                        },
+                    }
+                ],
+                "usage": {"prompt_tokens": 300, "completion_tokens": 42},
+            }
+        ).encode()
+
+    def codex(
+        self: CodexAnswerGenerator,
+        executable: Path,
+        prompt: bytes,
+        deadline: float,
+        cancelled: Event,
+    ) -> DraftAnswer:
+        assert executable == Path(sys.executable).resolve()
+        assert check_deadline(deadline, cancelled) > 0
+        draft = make_draft(json.loads(prompt.split(b"\n", maxsplit=1)[1]))
+        if case == "malformed":
+            raise GenerationError("malformed_response")
+        return DraftAnswer.model_validate(draft)
+
+    monkeypatch.setattr(CodexAnswerGenerator, "_run", codex)
+    settings = AppSettings(artifact_root=tmp_path, live_answer_provider=provider)
+    with TestClient(
+        create_app(
+            settings,
+            openrouter_generator=OpenRouterAnswerGenerator(SECRET, "test/model", router),
+            codex_generator=CodexAnswerGenerator(Path(sys.executable)),
+            semantic_verifier=SemanticVerifier(AtlasScorer()),
+        )
+    ) as client:
+        caps = client.get("/api/v1/capabilities").json()
+        assert caps[f"{provider}_answers"] and not caps["openai_answers"]
+        fixture = Path("datasets/fixtures/atlas-narrative.pdf")
+        with fixture.open("rb") as pdf:
+            upload = client.post(
+                "/api/v1/ingestions", files={"file": (fixture.name, pdf, "application/pdf")}
+            )
+        assert upload.status_code == 201
+        document = upload.json()
+        query = {
+            "document_id": document["document_id"],
+            "document_sha256": document["document_sha256"],
+            "question": QUESTION,
+        }
+        if case != "local_only":
+            query["external_answer_consent"] = "openai" if case == "wrong_consent" else provider
+        if case == "visual":
+            query["requires_visual_evidence"] = True
+        response = client.post("/api/v1/query", json=query)
+        assert response.status_code == 200
+        result = response.json()["result"]
+        assert result["reason"] == expected
+        if case == "supported":
+            assert result["answer_source"] == provider and result["answer"] == CLAIM
+            assert result["claims"][0]["citations"][0]["semantic_support"] == "supported"
+        else:
+            assert result["answer"] is None
+    assert len(sent) == calls

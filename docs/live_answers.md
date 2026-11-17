@@ -1,8 +1,76 @@
 # Live cited answers
 
-The application defaults to local retrieval. To enable OpenAI on a trusted
-local instance, install the optional inference dependencies and prepare the
-pinned offline verifier cache using [the verifier procedure](semantic_support.md).
+External generation is off by default. Use the app on loopback with one
+trusted user. For any live provider install the optional inference dependencies
+and prepare the pinned offline verifier cache using
+[the verifier procedure](semantic_support.md).
+
+## Use your ChatGPT plan through Codex
+
+Install the official Codex CLI and run `codex login` with ChatGPT.
+Confirm `codex login status` reports ChatGPT sign-in. EvidenceRAG invokes
+the official CLI non-interactively with a temporary directory, read-only
+permissions, no interactive approvals, and command, web and connector tools
+disabled. The CLI manages its own sign-in. Usage follows your ChatGPT plan.
+This route runs on the host under your local account.
+[Codex plan and sign-in](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)
+
+```powershell
+$env:EVIDENCERAG_LIVE_ANSWER_PROVIDER = 'codex'
+uv run --locked uvicorn evidence_rag.api:create_app --factory --no-access-log
+```
+
+On Windows, if PATH exposes only an npm `codex.cmd` launcher, set
+`EVIDENCERAG_CODEX_EXECUTABLE` to the full path of the official native
+`codex.exe` before starting EvidenceRAG. To locate it for an npm install,
+run the following in PowerShell and use the appropriate result for your CPU.
+
+```powershell
+Get-ChildItem (Join-Path (Split-Path (Get-Command codex.cmd).Source) 'node_modules/@openai') -Filter codex.exe -Recurse | Select-Object -ExpandProperty FullName
+```
+
+Use Codex CLI 0.160.0 or a version
+that supports the same flags. Open `http://127.0.0.1:8000/inspector`,
+upload a permitted PDF, and explicitly consent to sending selected excerpts
+for the question. [Verified Atlas smoke](../reports/live-provider-smoke.md)
+
+## Use OpenRouter with your own key
+
+Create a key with a spend limit in your OpenRouter account. Supply it to the
+host process as `EVIDENCERAG_OPENROUTER_API_KEY` through your secret store.
+Select a model with strict JSON-schema output and a compatible provider route.
+
+```powershell
+$env:EVIDENCERAG_LIVE_ANSWER_PROVIDER = 'openrouter'
+$env:EVIDENCERAG_OPENROUTER_MODEL = 'google/gemini-2.5-flash-lite'
+uv run --locked uvicorn evidence_rag.api:create_app --factory --no-access-log
+```
+
+The app uses a fixed OpenRouter endpoint, disables route fallback, and asks
+for providers that support the requested parameters and do not collect the
+data for training. Requests cap prompt and completion rates at USD 0.25 and
+2 per million tokens respectively, with bounded payload and completion.
+OpenRouter routing, availability, retention, and account charges follow
+its and the selected model provider’s terms.
+[Routing controls](https://openrouter.ai/docs/guides/routing/provider-selection) ·
+[Structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs) ·
+[Example model](https://openrouter.ai/google/gemini-2.5-flash-lite)
+
+Each local server selects one live provider. The inspector names that
+provider in its consent checkbox, resets consent after each submission,
+and identifies the source of a published answer. API clients set
+`external_answer_consent` to `codex`, `openrouter`, or `openai` to
+match the configured provider. Omitting consent keeps the query local.
+
+To rehearse with a single repository-owned fixture after configuring the
+selected provider and the cached verifier, use one of these commands.
+
+```powershell
+uv run --locked --all-extras python scripts/live_answer_smoke.py --send-atlas-excerpts-via-codex --output reports/generated/codex-atlas.jsonl
+uv run --locked --all-extras python scripts/live_answer_smoke.py --send-atlas-excerpts-to-openrouter --output reports/generated/openrouter-atlas.jsonl
+```
+
+## Use the OpenAI API
 Set `EVIDENCERAG_LIVE_ANSWER_PROVIDER=openai` and inject
 `EVIDENCERAG_OPENAI_API_KEY` into the process environment from your secret
 store. Start the host server as shown in the README. The configured server
@@ -42,10 +110,10 @@ path for each deliberate run. CI exercises the same path with a fake transport.
 
 ## Evaluation status
 
-The live smoke and live accuracy remain unverified. A smoke requires an
-OpenAI API key, local verifier cache and express approval to transmit the
-owned Atlas excerpts. Accuracy evaluation also requires owner-reviewed
-development or validation labels and per-claim source review. The historical
+The Codex smoke passed on the owned Atlas PDF. The OpenRouter and separately
+billed OpenAI API smokes still need provider keys and authorized spend.
+Accuracy evaluation also requires per-claim source review on the
+owner-reviewed development or validation cohort. The historical
 frozen run stays closed.
 
 The owner decisions and rerun of BM25, dense, hybrid and reranking are
@@ -81,5 +149,4 @@ Compare the raw provider draft and final decision on the same query and
 evidence pack. Have the owner judge answer correctness and each claim-link
 against the exact rendered page before scoring either arm. Report provider
 failures separately from semantic abstention. A locally withheld draft can
-be inspected for the counterfactual but did not reach the user. Live
-results, usage, and human claim judgments are currently pending.
+be inspected for the counterfactual but did not reach the user. Benchmark live results, usage, and human claim judgments are currently pending.

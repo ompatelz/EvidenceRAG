@@ -22,7 +22,8 @@ command. Open [the local inspector](http://127.0.0.1:8000/inspector), ingest
 Click the citation to see the highlighted source line. The [demo guide](docs/demo.md)
 includes a controlled retriever comparison and an unsupported question.
 [Build, container and rollback instructions](docs/release.md) cover the local candidate.
-See [live cited answers](docs/live_answers.md) to enable OpenAI with per-query consent.
+See [live cited answers](docs/live_answers.md) to use a signed-in Codex CLI,
+OpenRouter, or the OpenAI API with per-query consent.
 
 ## How the application works
 
@@ -68,8 +69,9 @@ responsible for the documents it uploads. Access control for shared hosts,
 durable distributed ingestion, OCR, multi-page table linking, and pixel-level
 chart or diagram interpretation are outside this scope. A region preview shows
 where evidence came from. The system can still retrieve irrelevant context or
-withhold a supported answer. Distribution awaits project and PyMuPDF license
-review.
+withhold a supported answer. The application is licensed under
+[GNU AGPLv3](LICENSE). Keep the [copyright and license notices](NOTICE) when
+redistributing and follow the [distribution guide](docs/release.md#distribution).
 
 The [project status](docs/PROJECT_STATUS.md) records verification and remaining
 gates. The [study guide](docs/interview.md) covers the code and experiments in
@@ -89,7 +91,8 @@ and [raw run](reports/runs/release-frozen-bm25.json).
 The owner reviewed all 36 benchmark questions across seven synthetic PDF
 families. The four-method retrieval report scores 24 answerable nonvisual
 development and validation questions. Live answers, claim metrics and
-broader held-out validation remain pending.
+broader held-out validation remain pending. A [reserved source-review packet](datasets/eval/RESERVED_FINAL_TEST.md)
+contains two new families awaiting owner approval before any predictions.
 [Source review](datasets/eval/SOURCE_REVIEW_GUIDE.md) ·
 [Current baseline](reports/reviewed-answer-benchmark/baselines.md) ·
 [Retrieval ablation](reports/reviewed-answer-benchmark/retrieval-ablation.md)
