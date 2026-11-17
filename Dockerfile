@@ -8,7 +8,7 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 WORKDIR /app
 
-COPY pyproject.toml uv.lock README.md ./
+COPY pyproject.toml uv.lock README.md LICENSE NOTICE ./
 COPY src ./src
 RUN uv sync --frozen --no-dev --no-editable
 
@@ -17,7 +17,9 @@ FROM python:3.12-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb06
 ARG VCS_REF=unknown
 LABEL org.opencontainers.image.title="EvidenceRAG" \
       org.opencontainers.image.description="Local PDF evidence retrieval and inspection" \
-      org.opencontainers.image.revision="${VCS_REF}"
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.licenses="AGPL-3.0-only" \
+      org.opencontainers.image.source="https://github.com/ompatelz/EvidenceRAG"
 
 ENV PATH="/app/.venv/bin:${PATH}" \
     PYTHONUNBUFFERED=1 \
@@ -31,6 +33,7 @@ RUN groupadd --system --gid 10001 evidencerag \
 
 WORKDIR /app
 COPY --from=builder --chown=evidencerag:evidencerag /app/.venv /app/.venv
+COPY LICENSE NOTICE /app/
 
 USER evidencerag:evidencerag
 EXPOSE 8000

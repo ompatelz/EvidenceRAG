@@ -1,0 +1,12 @@
+EvidenceRAG
+Copyright (C) 2026 Om Patel and EvidenceRAG contributors.
+
+EvidenceRAG is provided under the GNU Affero General Public License,
+version 3 only, without warranty. Retain applicable copyright and license
+notices when redistributing copies. See LICENSE for the complete terms.
+
+Source: https://github.com/ompatelz/EvidenceRAG
+
+The repository-authored PDF fixtures are separately dedicated under CC0-1.0.
+See datasets/LICENSE-FIXTURES.txt. Third-party dependencies and model files
+retain their own terms and notices.

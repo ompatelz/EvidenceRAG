@@ -169,6 +169,8 @@ jobs:
           trap cleanup EXIT
           docker compose up --no-build --wait --wait-timeout 45
           test "$(docker compose exec -T api id -u)" = "10001"
+          docker compose exec -T api test -s /app/LICENSE
+          docker compose exec -T api test -s /app/NOTICE
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.revision"}}' evidencerag:ci)" = "$GITHUB_SHA"
           uv run --locked python scripts/measure_local.py --base-url http://127.0.0.1:8000 \
             --output build/verification/container-demo.json
