@@ -91,8 +91,8 @@ and [raw run](reports/runs/release-frozen-bm25.json).
 The owner reviewed all 36 benchmark questions across seven synthetic PDF
 families. The four-method retrieval report scores 24 answerable nonvisual
 development and validation questions. Live answers, claim metrics and
-broader held-out validation remain pending. A [reserved source-review packet](datasets/eval/RESERVED_FINAL_TEST.md)
-contains two new families awaiting owner approval before any predictions.
+larger-population validation remain pending. A [separate held-out run](reports/reserved-final-evaluation.md)
+records Codex results on two new owner-approved synthetic families.
 [Source review](datasets/eval/SOURCE_REVIEW_GUIDE.md) ·
 [Current baseline](reports/reviewed-answer-benchmark/baselines.md) ·
 [Retrieval ablation](reports/reviewed-answer-benchmark/retrieval-ablation.md)

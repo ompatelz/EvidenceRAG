@@ -51,5 +51,6 @@ CC0-1.0. Their provenance and exact versions are recorded in the
 The benchmark now covers more layouts and subject matter. Scans, naturally
 authored documents, diverse held-out families and production workloads remain
 gaps. The owner verified all five expansion labels. The [reserved test candidate](../datasets/eval/RESERVED_FINAL_TEST.md) adds
-two separate CC0 families and six pending labels. Its inputs are isolated from
-this reviewed snapshot. No predictions have been generated for them.
+two separate CC0 families and six owner-confirmed labels. Its inputs are
+isolated from this development/validation snapshot. The
+[one-shot holdout](../reports/reserved-final-evaluation.md) is closed to tuning.

@@ -110,8 +110,8 @@ path for each deliberate run. CI exercises the same path with a fake transport.
 
 ## Evaluation status
 
-The Codex smoke passed on the owned Atlas PDF. The OpenRouter and separately
-billed OpenAI API smokes still need provider keys and authorized spend.
+The Codex smoke passed on the owned Atlas PDF. The user-authorized OpenRouter Atlas smoke passed. The separately billed
+OpenAI API smoke still needs a provider key and authorized spend.
 Accuracy evaluation also requires per-claim source review on the
 owner-reviewed development or validation cohort. The historical
 frozen run stays closed.

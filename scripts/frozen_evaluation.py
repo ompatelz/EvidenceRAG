@@ -15,31 +15,47 @@ from typing import Any
 from fastapi.testclient import TestClient
 
 from evidence_rag.api import QueryResponse, create_app
+from evidence_rag.codex_answers import CODEX_TIMEOUT_SECONDS, CodexAnswerGenerator
 from evidence_rag.config import AppSettings
 from evidence_rag.eval.metrics import score_ranking
-from evidence_rag.eval.models import EvaluationItem, EvaluationSplit
+from evidence_rag.eval.models import EvaluationItem, EvaluationSplit, ReviewStatus
 from evidence_rag.eval.runner import CUTOFFS
-from evidence_rag.eval.validate import load_evaluation_jsonl, load_manifest
+from evidence_rag.eval.validate import load_evaluation_jsonl, load_manifest, validate_dataset
+from evidence_rag.openai_answers import INSTRUCTIONS
+from evidence_rag.semantic import MODEL_NAME, MODEL_REVISION, LocalDeberta, SemanticVerifier
 
 SEED = Path("datasets/eval/phase2_seed.jsonl")
 MANIFEST = Path("datasets/manifests/fixtures.json")
+RESERVED_SEED = Path("datasets/eval/reserved_final_test.jsonl")
+RESERVED_MANIFEST = Path("datasets/manifests/reserved-final-test.json")
+RESERVED_MODEL = "gpt-6.1-sol"
 
 
 def git(*args: str) -> str:
     return subprocess.check_output(["git", *args], text=True, timeout=10).strip()
 
 
-def freeze() -> dict[str, Any]:
+def freeze(*, reserved: bool = False) -> dict[str, Any]:
     """Hash inputs without parsing or exposing evaluation labels."""
     if git("status", "--porcelain"):
         raise ValueError("record and execute the freeze from a clean worktree")
-    fixtures = load_manifest(MANIFEST)
-    paths = [Path("uv.lock"), MANIFEST, *(Path(d.local_fixture_path) for d in fixtures.documents)]
-    return {
+    seed, manifest = (RESERVED_SEED, RESERVED_MANIFEST) if reserved else (SEED, MANIFEST)
+    if reserved:
+        validate_dataset(manifest, [seed], verify_evidence=True)
+        items = load_evaluation_jsonl(seed)
+        if not items or any(
+            item.split is not EvaluationSplit.FROZEN_TEST
+            or item.review_status is not ReviewStatus.VERIFIED
+            for item in items
+        ):
+            raise ValueError("reserved test requires a fully owner-reviewed frozen snapshot")
+    fixtures = load_manifest(manifest)
+    paths = [Path("uv.lock"), manifest, *(Path(d.local_fixture_path) for d in fixtures.documents)]
+    record: dict[str, Any] = {
         "git_commit": git("rev-parse", "HEAD"),
         "sha256": {
             **{p.as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths},
-            SEED.as_posix(): hashlib.sha256(SEED.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
+            seed.as_posix(): hashlib.sha256(seed.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
         },
         "config": {
             "split": EvaluationSplit.FROZEN_TEST.value,
@@ -62,6 +78,23 @@ def freeze() -> dict[str, Any]:
         },
     }
 
+    if reserved:
+        record["config"].pop("models_prompts_thresholds")
+        record["config"].update(
+            generator="signed-in Codex CLI, one attempt per question",
+            generation_model=RESERVED_MODEL,
+            generation_instructions_sha256=hashlib.sha256(INSTRUCTIONS.encode()).hexdigest(),
+            model_timeout_seconds=CODEX_TIMEOUT_SECONDS,
+            support_model=MODEL_NAME,
+            support_revision=MODEL_REVISION,
+            policy="grounding-v1",
+            evidence_budget="live AnswerConfig defaults at frozen source commit",
+            labels="owner verified before inference",
+            relevance="exact canonical evidence unit within the selected version",
+            answer_scoring="inspect emitted answers and each citation against gold and source text",
+        )
+    return record
+
 
 def diagnostic(item: EvaluationItem, response: QueryResponse) -> dict[str, Any] | None:
     if not item.answerable or item.requires_visual_evidence:
@@ -71,12 +104,19 @@ def diagnostic(item: EvaluationItem, response: QueryResponse) -> dict[str, Any] 
     return {str(k): asdict(score_ranking(ranked, expected, k=k)) for k in CUTOFFS}
 
 
-def execute() -> list[dict[str, Any]]:
-    items = [i for i in load_evaluation_jsonl(SEED) if i.split is EvaluationSplit.FROZEN_TEST]
+def execute(*, reserved: bool = False) -> list[dict[str, Any]]:
+    seed, manifest = (RESERVED_SEED, RESERVED_MANIFEST) if reserved else (SEED, MANIFEST)
+    items = [i for i in load_evaluation_jsonl(seed) if i.split is EvaluationSplit.FROZEN_TEST]
+    defaults = AppSettings()
+    verifier = SemanticVerifier(LocalDeberta(defaults.model_cache_dir)) if reserved else None
+    if verifier is not None:
+        (preflight,) = verifier.assess([("The value is 1.", ("The value is 1.",), False)])
+        if preflight.status != "assessed":
+            raise ValueError("reserved test requires the pinned local verifier cache")
     if not items:
         raise ValueError("no frozen-test items")
     corpus = {
-        (doc.document_id, doc.document_version): doc for doc in load_manifest(MANIFEST).documents
+        (doc.document_id, doc.document_version): doc for doc in load_manifest(manifest).documents
     }
     with (
         TemporaryDirectory() as root,
@@ -87,7 +127,14 @@ def execute() -> list[dict[str, Any]]:
                     demo_answers=False,
                     semantic_verifier=False,
                     abstention_policy="off",
+                    live_answer_provider="codex" if reserved else "off",
+                ),
+                codex_generator=CodexAnswerGenerator(
+                    defaults.codex_executable, model=RESERVED_MODEL
                 )
+                if reserved
+                else None,
+                semantic_verifier=verifier,
             )
         ) as client,
     ):
@@ -129,6 +176,7 @@ def execute() -> list[dict[str, Any]]:
                         "document_sha256": entry.sha256,
                         "mode": "bm25",
                         "requires_visual_evidence": item.requires_visual_evidence,
+                        **({"external_answer_consent": "codex"} if reserved else {}),
                     },
                 )
                 row["request_wall_ms"] = (perf_counter() - started) * 1000
@@ -147,8 +195,11 @@ def main() -> None:
     parser.add_argument("action", choices=("freeze", "run"))
     parser.add_argument("--record", required=True, type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--reserved", action="store_true", help="Use the new owner-reviewed Codex holdout."
+    )
     args = parser.parse_args()
-    current = freeze()
+    current = freeze(reserved=args.reserved)
     if args.action == "freeze":
         with args.record.open("x", encoding="utf-8") as record:
             json.dump(current, record, indent=2)
@@ -160,7 +211,7 @@ def main() -> None:
         json.dump(payload, output, indent=2)
         output.flush()
         try:
-            rows = execute()
+            rows = execute(reserved=args.reserved)
             payload["rows"] = rows
             payload["status"] = "completed"
             if any(row.get("failure") for row in rows):

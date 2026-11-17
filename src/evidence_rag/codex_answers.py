@@ -24,8 +24,9 @@ LOGGER = logging.getLogger("evidence_rag.codex")
 
 
 class CodexAnswerGenerator:
-    def __init__(self, executable: Path | None) -> None:
+    def __init__(self, executable: Path | None, *, model: str | None = None) -> None:
         self._executable = executable
+        self._model = model
 
     def generate_cancellable(
         self, question: str, pack: EvidencePack, cancelled: Event
@@ -115,6 +116,8 @@ class CodexAnswerGenerator:
                 "view_image",
             ):
                 args.extend(("--disable", feature))
+            if self._model is not None:
+                args.extend(("--model", self._model))
             args.append("-")
             env = {
                 key: value
