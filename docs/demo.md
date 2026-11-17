@@ -13,10 +13,10 @@ question when changing the mode.
 | 1:35–2:05 | Restore the Atlas question and change BM25 to Hybrid. Compare top evidence IDs and stages on the same input. If weights have not been cached, use the saved validation comparison rather than downloading during the demo. |
 | 2:05–2:40 | Show the paired support experiment. The checked arm emitted six of 13 fixed drafts and had zero false answers on four unanswerable cases. The baseline emitted 12 of 13 and had three false answers on those four cases. Point out the fall from seven to six correct answers and the provisional labels. |
 
-The saved E2 comparison scores canonical evidence-unit ranks on one shared
-validation split: BM25 0.797, dense 0.814, and hybrid 0.781 nDCG@5. This is a
-case where fusion underperforms both individual runs on that metric.
-[Raw E2 output](../reports/runs/e2-hybrid-validation.json).
+The reviewed comparison scores canonical evidence-unit ranks on 11 eligible
+validation queries. All four methods hit 10/11 at rank three. Dense and the
+reranker tie at 0.842 nDCG@5, compared with 0.808 for hybrid and 0.797 for BM25.
+[Run record and raw outputs](../reports/reviewed-answer-benchmark/README.md).
 The paired support comparison fixes both retrieval and drafts.
 [Raw paired output](../reports/runs/grounding-comparison-v1.json).
 

@@ -94,3 +94,17 @@ abstentions over answerable queries. Coverage is emitted answers over all
 queries. Latency uses nearest-rank p50 and p95. A zero denominator leaves a
 metric unmeasured. Small, family-clustered subsets are descriptive and carry
 no population-level inference.
+
+## Declaring a fresh final test
+
+The original chart family is historical because its outputs have been opened.
+Each of the seven current families already has a benchmark assignment. Bring
+in permissioned new PDF families before declaring a replacement final test.
+Record each family's source, permission, exact PDF hash and split assignment.
+Have the owner check the questions, acceptable answers, answerability, visual
+dependency and source-page or region anchors. Commit and hash the reviewed
+labels before inference. Declare retrieval settings, model revisions, prompt,
+context budget, scoring rules, exclusions and failure reporting in that same
+freeze record. Keep the families out of development and validation. Run once
+against the frozen record and preserve all per-query outputs. Later changes
+require a fresh holdout for an untouched final-test claim.

@@ -1,6 +1,6 @@
 # Project Status
 
-Updated: 2026-11-16
+Updated: 2026-11-17
 
 The owner reviewed all 36 questions from seven owned PDFs. Two approvals
 changed the F1 question wording and cache-ratio evidence. The new retrieval
@@ -13,10 +13,21 @@ Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
 at `c096832`. Visual evidence feasibility is a no-go on the current seed.
 The feasibility decision merged in [PR #7](https://github.com/ompatelz/EvidenceRAG/pull/7)
 at `efa55d4`. The runtime can display page and region previews and has no pixel interpreter.
-There are zero visual-dependent development or validation questions. The two
-visual-dependent labels belong to the frozen test. See
+The reviewed snapshot has one visual-dependent development question, zero in
+validation, and two in the historical frozen family. See
 [ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md) for the owned
 preflight fixture, model comparison, and conditions for reopening the milestone.
+
+## Handoff verification
+
+From a fresh clone of the merged benchmark, locked setup and the full local
+quality gate passed. The Compose HTTP smoke checked fixture ingestion, the
+fixed Atlas answer, its version-scoped PNG region, and an unsupported query.
+The E0–E3 rerun with the pinned cache reproduced the committed comparison
+table. The [demo](demo.md), [run record](../reports/reviewed-answer-benchmark/README.md)
+and [release procedure](release.md) contain the reproduction commands.
+No live request or new final-test run was performed. See the
+[fresh-test declaration requirements](evaluation_protocol.md#declaring-a-fresh-final-test).
 
 ## Release readiness
 
@@ -30,9 +41,8 @@ previous image reopened the same artifact volume and reused the exact
 owned PDF version after rollback. [Release procedure](release.md).
 
 A single authorized frozen run completed on the declared commit. See
-[raw results and scope](../reports/final_evaluation.md). Human label review
-remains open. This project currently
-supports a local prototype demonstration and provisional diagnostics.
+[raw results and scope](../reports/final_evaluation.md). The owner subsequently reviewed the labels. This project supports a local
+prototype demonstration and reviewed retrieval diagnostics.
 
 The release smoke now exercises the Compose candidate over loopback HTTP.
 It checks inspector assets, readiness, fixture ingestion, the cited Atlas
@@ -425,7 +435,7 @@ Verification evidence is updated in this file only after commands have actually 
 Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
 passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
-## Experiment registry / latest valid metrics
+## Historical experiment registry
 
 - E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains raw rankings
   for 26 development/validation queries and 22 scored answerable nonvisual
@@ -443,10 +453,9 @@ passed on Linux for Python 3.11 and Python 3.14 in PR #2.
 
 ## Known technical debt / risks
 
-- The local inspector and retrieval API are implemented, but there is no
-  general answer-generation runtime, database, or durable background job
-  system. The evaluation rows are a small synthetic pilot, not a
-  representative human-reviewed benchmark.
+- The local inspector and retrieval API support a fixed fixture answer and
+  consent-gated OpenAI generation. Live output quality is unmeasured. The
+  reviewed retrieval corpus consists of a small synthetic sample.
 - Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
   multiple processes nor automatically resumes after a restart; interrupted work requires
   an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.

@@ -3,7 +3,7 @@
 | Claim | Status | Evidence and wording |
 | --- | --- | --- |
 | Versioned PDF intake, parsing and PNG previews | Implemented and tested | Local synchronous lifecycle. [Architecture](architecture.md), [failure paths](reliability.md). |
-| BM25, dense, hybrid RRF, optional reranking | Implemented, tested, measured on provisional validation | Report method, split, denominator and unit alongside numeric results. [Baseline](../reports/baselines.md), [hybrid](hybrid_retrieval.md), [reranking](reranking.md). |
+| BM25, dense, hybrid RRF, optional reranking | Implemented, tested, measured on owner-reviewed development and validation | Report method, split, denominator and unit alongside numeric results. [Reviewed runs](../reports/reviewed-answer-benchmark/README.md). |
 | A source citation opens the exact PDF page or a reliable region | Implemented and tested | The owned Atlas fixture demonstrates a real region. A page-only anchor shows the page at page precision. [Inspector](inspector.md). |
 | Citation validation, table rules and optional prose support | Implemented and tested | Identity checks and support decisions have distinct outputs. [Answer contract](answer_contract.md), [verifier](semantic_support.md). |
 | Abstention reduces false answers in a controlled experiment | Measured on provisional development and validation | Same fixed drafts and rankings, 3/4 → 0/4 false answers with coverage 12/13 → 6/13. [Ablation](../reports/ablation_study.md). |
@@ -16,8 +16,9 @@
 
 - Built a local FastAPI prototype that indexes technical PDF text and tables
   with immutable document versions and clickable page and region citations.
-- Compared BM25, dense, hybrid and reranked retrieval on a synthetic validation
-  pilot and built a fixed-draft evaluation for claim support and abstention.
+- Compared BM25, dense, hybrid and reranked retrieval on owner-reviewed
+  synthetic development and validation questions. Built a paired fixed-draft
+  evaluation for claim support and abstention.
 - Quantified bullet template pending reviewed evidence: “Measured [retrieval or
   abstention metric] on [N human-verified held-out queries] against [baseline],
   with [coverage or cost trade-off].”

@@ -48,10 +48,9 @@ owned Atlas excerpts. Accuracy evaluation also requires owner-reviewed
 development or validation labels and per-claim source review. The historical
 frozen run stays closed.
 
-Use the [source review guide](../datasets/eval/SOURCE_REVIEW_GUIDE.md) to
-return decisions. Once reviewed labels are available, rerun the existing
-BM25, dense, hybrid, reranking, claim and abstention runners on eligible
-development and validation examples. Save the raw outcomes by category and
+The owner decisions and rerun of BM25, dense, hybrid and reranking are
+recorded in the [reviewed run record](../reports/reviewed-answer-benchmark/README.md).
+The next human review concerns generated claims and their cited source pages. Save the raw outcomes by category and
 record the exact command/config, reviewed dataset and corpus hashes, Git SHA,
 model and prompt revisions, and cost. For a live comparison, fix retrieval,
 evidence budgets, prompt, model, and generation parameters and review each
