@@ -2,26 +2,24 @@
 
 These are two new repository-authored CC0 PDF families. They are separate
 from the reviewed development/validation corpus and historical chart test.
-The six candidate labels were prepared from the source pages and parser
-anchors. No retrieval or answer predictions have been generated for them.
+The owner confirmed all six labels before inference on 2026-11-17. The
+[one-shot run](../../reports/reserved-final-evaluation.md) has since completed.
 
 | Family | Review against the source |
 | --- | --- |
 | [Orchid Reef permit](../fixtures/orchid-reef-permit.pdf) | Check the shoreline-only class on page 1 and the sampling class plus receipt deadline on pages 1–2. Check both pages for the missing application fee. |
 | [Meridian kiln card](../fixtures/meridian-kiln-shift-card.pdf) | Check the conveyor threshold and required alarm response on page 1. Check the page for a reset delay. |
 
-For each query ID in [the candidate labels](reserved_final_test.jsonl),
-confirm or correct answerability, acceptable answers and the completeness of
-the source regions. Return the query ID and corrected wording or evidence for
-any change. All six rows are pending owner confirmation.
+The [owner-reviewed snapshot](reserved_final_test.jsonl) preserves the six
+confirmed checks for answerability, acceptable answers and source anchors.
 
 ## Declaration
 
 - [Document manifest](../manifests/reserved-final-test.json), LF-normalized
   SHA-256 `d652e461a3af8160a8ec0bacf21614fc60dfab1168fdb3a0e08849664396fb82`.
   The manifest records each PDF's exact byte hash.
-- [Candidate labels](reserved_final_test.jsonl), LF-normalized SHA-256
-  `19830ad3ffd4de635bfb80a3b0aa50ad494d1582c86026a4b50b4f8613f4bab6`.
+- [Owner-approved labels](reserved_final_test.jsonl), LF-normalized SHA-256
+  `9fa4d394513fbb29411ee6a76b5abfc49131a367075decb746db13d1eb3ccf4a`.
 - Freeze the owner-approved labels, source commit and lock, model, prompt,
   BM25 K=5, evidence budget and grounding policy before inference. Use
   canonical evidence-unit Hit@5 and Recall@5 for eligible answerable rows.
@@ -29,6 +27,5 @@ any change. All six rows are pending owner confirmation.
   citation support per claim–citation link, correct answers and coverage over
   answerable items, and false answers over unanswerable items. Preserve
   failed calls separately with the original per-query records.
-- Run once after the freeze and keep these families out of implementation
-  tuning. The initial candidate hashes support review and input validation.
-  The owner-confirmed hashes will define the actual evaluation freeze.
+- The run occurred once after the [freeze](../../reports/runs/reserved-final-freeze.json).
+  Keep these families out of implementation tuning.

@@ -33,14 +33,15 @@ That handoff did not run a live request or a new final test. See the
 
 The signed-in Codex CLI produced a grounded Atlas answer and the API resolved
 its citation to the rendered source. The [smoke report](../reports/live-provider-smoke.md)
-records the verified answer and a separately withheld draft. OpenRouter is
-available with a user-supplied key and a selected model. Its live smoke and
-the reviewed live answer comparison remain pending.
+records successful Codex and OpenRouter fixture answers and a separately
+withheld Codex draft. A reviewed development/validation answer comparison is
+still pending.
 
 The application uses AGPL-3.0-only with copyright attribution. The
 [reserved final-test packet](../datasets/eval/RESERVED_FINAL_TEST.md) has
-two new source families and six candidate labels. Owner review and a
-formal evaluation freeze are pending. No model predictions were opened.
+two new source families and six owner-confirmed labels. The
+[one-shot Codex holdout](../reports/reserved-final-evaluation.md) completed.
+The two withheld answerable cases document support-verification failures.
 
 ## Release readiness
 

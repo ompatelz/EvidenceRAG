@@ -15,4 +15,9 @@ source bytes. The signed-in CLI selected its default model.
 A separate development attempt returned an answer but failed a mistaken PNG
 signature assertion. The successful run followed correction of that
 assertion. These records cover individual fixture smoke outcomes. There was
-no broader answer evaluation or OpenRouter provider call.
+no broader answer evaluation in these smoke runs.
+
+A later one-request OpenRouter smoke returned 20 Hz, passed local support,
+and resolved a page-one region and PNG. The app response identified
+OpenRouter. The exact served model and actual invoice amount were unavailable.
+[Redacted OpenRouter raw result](runs/openrouter-atlas-http.json)

@@ -1,0 +1,27 @@
+{
+  "utc": "2026-11-17T10:16:44.596763+00:00",
+  "fixture_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+  "provider": "openrouter",
+  "request_count": 1,
+  "smoke": "atlas_calibration_rate",
+  "retrieval_mode": "bm25",
+  "transport": "loopback_http",
+  "approved_estimated_usd_ceiling": 0.01,
+  "passed": true,
+  "http_status": 200,
+  "status": "answered",
+  "reason": "answered",
+  "answer_source": "openrouter",
+  "policy_version": "grounding-v1",
+  "expected_rate_matched": true,
+  "checked_citations": [
+    {
+      "page_number": 1,
+      "exact_fixture_scope": true,
+      "anchor_status": 200,
+      "precision": "region",
+      "png_valid": true,
+      "semantic_support": "supported"
+    }
+  ]
+}

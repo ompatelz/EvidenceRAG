@@ -79,6 +79,7 @@ def freeze(*, reserved: bool = False) -> dict[str, Any]:
     }
 
     if reserved:
+        record["config"].pop("models_prompts_thresholds")
         record["config"].update(
             generator="signed-in Codex CLI, one attempt per question",
             generation_model=RESERVED_MODEL,
