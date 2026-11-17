@@ -138,7 +138,7 @@ class AnswerResult(BaseModel):
     supplied_evidence_ids: tuple[str, ...]
     excluded_evidence_ids: tuple[str, ...]
     policy_version: str | None = None
-    answer_source: Literal["atlas_demo", "openai"] | None = None
+    answer_source: Literal["atlas_demo", "openai", "openrouter", "codex"] | None = None
 
 
 class AnswerGenerator(Protocol):

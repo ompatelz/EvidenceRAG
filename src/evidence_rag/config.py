@@ -22,8 +22,11 @@ class AppSettings(BaseSettings):
     artifact_root: Path = Path("artifacts")
     model_cache_dir: Path = Path("tmp/hf-model-cache")
     demo_answers: bool = False
-    live_answer_provider: Literal["off", "openai"] = "off"
+    live_answer_provider: Literal["off", "openai", "openrouter", "codex"] = "off"
     openai_api_key: SecretStr | None = None
+    openrouter_api_key: SecretStr | None = None
+    openrouter_model: str | None = Field(default=None, pattern=r"^[\w.-]+/[\w.:-]+$")
+    codex_executable: Path | None = None
     semantic_verifier: bool = False
     abstention_policy: Literal["off", "grounding-v1"] = "off"
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1, le=1024 * 1024 * 1024)

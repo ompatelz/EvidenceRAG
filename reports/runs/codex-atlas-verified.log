@@ -1,0 +1,2 @@
+answer_generation provider=codex outcome=answered latency_ms=9219.000
+{"event": "smoke_result", "provider": "codex", "status": "answered", "reason": "answered", "policy_version": "grounding-v1", "fixture_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa", "passed": true}

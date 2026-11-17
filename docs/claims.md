@@ -8,6 +8,7 @@
 | Citation validation, table rules and optional prose support | Implemented and tested | Identity checks and support decisions have distinct outputs. [Answer contract](answer_contract.md), [verifier](semantic_support.md). |
 | Abstention reduces false answers in a controlled experiment | Measured on provisional development and validation | Same fixed drafts and rankings, 3/4 → 0/4 false answers with coverage 12/13 → 6/13. [Ablation](../reports/ablation_study.md). |
 | Query and ingestion timing | Measured on one operational fixture workload | Include hardware, cache and stage boundaries. [Reliability smoke](reliability.md). |
+| Signed-in Codex live fixture answer | Verified against the source region | [Live smoke and raw records](../reports/live-provider-smoke.md). |
 | General answer accuracy and real-user reliability | Future evaluation | The fixed Atlas answer or scripted evaluation drafts cannot establish this. |
 | OCR, chart interpretation, and visual retrieval | Planned or deferred | The current system supports image previews and explicit unsupported-modality responses. [ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md). |
 | Production service, public release, tenant isolation | Planned or out of scope | Local candidate and single-user boundaries. [Release](release.md). |
