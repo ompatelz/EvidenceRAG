@@ -44,15 +44,14 @@ See the [architecture diagram](docs/architecture.md), [answer contract](docs/ans
 
 ## Measured results
 
-The owned PDFs and candidate labels form a small synthetic pilot. All quality
-figures below use provisional development or validation labels. The
+The current retrieval comparison uses owner-reviewed synthetic labels.
+The older fixed-draft and retrieval results below are historical diagnostics. The
 [evaluation protocol](docs/evaluation_protocol.md) defines split isolation,
 ranking denominators, and the human-review gate.
 
 | Observation | Scope | Evidence |
 | --- | --- | --- |
-| BM25 / dense / hybrid nDCG@5: 0.797 / 0.814 / 0.781 | Same 11 scored validation queries and canonical evidence-unit relevance | [E2 raw run](reports/runs/e2-hybrid-validation.json) |
-| Hybrid / reranked MRR@5: 0.727 / 0.773, with mean rerank stage 45.04 ms | Same validation set and saved hybrid candidates, one CPU run | [E3 raw run](reports/runs/e3-rerank-validation.json), [conditions](docs/reranking.md) |
+| BM25 / dense / hybrid / reranked validation nDCG@5: 0.797 / 0.842 / 0.808 / 0.842 | Same 11 scored owner-reviewed validation queries and canonical evidence-unit relevance | [Run record and raw outputs](reports/reviewed-answer-benchmark/README.md) |
 | False answers on unanswerable cases: 3/4 → 0/4. Coverage: 12/13 → 6/13. Correct answers: 7/13 → 6/13. | Same BM25 rankings and fixed drafts, support policy off/on | [Paired raw run](reports/runs/grounding-comparison-v1.json), [analysis](reports/ablation_study.md) |
 | Ingest 173.21 ms/page and cited query 12.24 ms wall time | One owned page, one cited BM25 query, Windows i7-13700H, sequential in-process ASGI | [Operational smoke](reports/runs/local-release-smoke.json), [conditions](docs/reliability.md) |
 
@@ -80,8 +79,9 @@ reading order.
 
 On one held-out owned PDF, BM25 ranked the labeled evidence first on
 two of two eligible text queries. Both flagged pixel-dependent queries
-returned an unsupported-modality outcome. The labels are provisional
-and the generator was disabled. See [the frozen report](reports/final_evaluation.md)
+returned an unsupported-modality outcome. The run used the original provisional label snapshot and a disabled generator.
+Those labels were subsequently reviewed. The opened family stays closed to
+new final-test claims. See [the frozen report](reports/final_evaluation.md)
 and [raw run](reports/runs/release-frozen-bm25.json).
 
 ## Reviewed answer benchmark progress

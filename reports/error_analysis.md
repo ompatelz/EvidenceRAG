@@ -61,3 +61,13 @@ the three proposed evidence units retrieved. The garden map question is
 owner-verified and excluded from text-ranking scores. Claim
 support and false-abstention performance from live answers remain pending.
 [Current retrieval comparison](reviewed-answer-benchmark/retrieval-ablation.md)
+
+## Reviewed retrieval snapshot
+
+The earlier fixed-draft errors remain historical diagnostics. In the
+owner-reviewed retrieval rerun, BM25 and dense still miss the cache comparison
+evidence at rank five. Both retrieve the approved cache-ratio evidence by
+rank three. The library renewal example needs three evidence units. At rank
+three BM25 finds two and dense and reranking find all three. See the
+[run record, raw rankings and label changes](reviewed-answer-benchmark/README.md).
+Answer correctness and source support for live outputs await claim judgments.

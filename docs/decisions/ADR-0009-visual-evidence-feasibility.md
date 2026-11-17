@@ -2,7 +2,15 @@
 
 Status · No-go for feature implementation on the current evaluation seed, 2026-11-16.
 
-## Evidence available
+## Reviewed snapshot update, 2026-11-17
+
+The [owner-reviewed snapshot](../data_card.md) adds one visual-dependent
+Juniper Garden development item. Validation still has zero visual-dependent
+items. The two chart questions belong to the already opened historical test.
+The no-go remains in force. One validation item can inform future fixture
+design. Visual method comparison requires a broader independent cohort and development controls.
+
+## Evidence available at the original decision
 
 Grounded QA is on `main` at merge commit `c09683214190f34a8a66ce10c27e22ca8f51e34b`.
 The manifest has five owned PDFs totaling 17,349 bytes. The seed has 13 development

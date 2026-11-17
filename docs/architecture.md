@@ -171,3 +171,11 @@ profile, crop/rotation transforms, atomic page publication, asset security, and 
 See [ADR-0006](decisions/ADR-0006-reliable-synchronous-ingestion-lifecycle.md) for the
 state machine, ready commit boundary, retry/re-index policy, recovery, telemetry privacy,
 and explicit conditions for moving to durable jobs.
+
+## Optional live generation
+
+The exact-version query handler builds a bounded pack from scoped retrieval
+results. Per-query consent enables the OpenAI adapter on a configured local
+server. Returned claims and evidence IDs pass through the same citation
+resolution and local grounding policy before the inspector displays an answer.
+The default runtime remains local. See [the live adapter and data flow](live_answers.md).

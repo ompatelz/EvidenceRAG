@@ -19,8 +19,8 @@ No rerun or final-test tuning was performed.
 | Other abstentions | 3 remaining queries | 3/3 reported `generator_unavailable` |
 | Answer correctness, citation support, page/region answer grounding and visual QA | No eligible generated answers | Unmeasured |
 
-Every item belongs to one synthetic, one-page PDF. The corpus labels
-remain `needs_review`. The two-query retrieval denominator provides
+Every item belongs to one synthetic, one-page PDF. The original run used the `needs_review` snapshot. The owner has since
+reviewed those labels in [the current snapshot](../datasets/eval/reviewed_labels.jsonl). The two-query retrieval denominator provides
 too little evidence for a general accuracy claim. The visual rows exercise
 the caller-supplied modality flag. Three generator-unavailable responses
 show the configured runtime state and provide no semantic abstention

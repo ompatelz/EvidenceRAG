@@ -72,6 +72,20 @@ experiment index, keep each model revision and dimensions in a distinct
 collection and rebuild the old index from old inputs if necessary.
 See [dense index compatibility](dense_baseline.md).
 
+## Distribution decision
+
+The repository has no project-wide license. The original PDF fixtures use
+[CC0-1.0](../datasets/LICENSE-FIXTURES.txt). PyMuPDF and MuPDF are offered
+under AGPL and commercial terms. [GitHub repository licensing](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository) · [PyMuPDF license terms](https://pymupdf.readthedocs.io/en/latest/about.html#license-and-copyright)
+
+The owner can keep the project local, review an AGPL-compatible distribution
+with corresponding source and applicable notices, or obtain a written Artifex
+license covering the intended distribution. Replacing PyMuPDF would require
+revalidating extraction, table structure and region anchors before reviewing
+the replacement’s terms. Each distribution route needs a decision on the app
+license and a review of notices and terms for the exact image and any bundled
+models. Publishing a release or registry image remains blocked.
+
 ## Candidate notes
 
 - Exact-version artifact validation, bounded generator concurrency and
