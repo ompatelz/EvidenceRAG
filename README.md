@@ -1,98 +1,211 @@
 # EvidenceRAG
 
-EvidenceRAG is a local, single-user prototype for finding evidence in technical
-PDFs and inspecting its original page or region. It extracts text and page-local
-tables, retains versioned provenance, and tests when a cited answer should be
-withheld. The optional Atlas demo emits one fixed answer for an owned fixture.
-The API accepts an injected answer generator for controlled experiments.
+**Answers you can trace back to the PDF.**
 
-## Run the demo
+[![CI](https://github.com/ompatelz/EvidenceRAG/actions/workflows/ci.yml/badge.svg)](https://github.com/ompatelz/EvidenceRAG/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](pyproject.toml)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
 
-From a clean clone with Python 3.12, uv 0.12.7, and Node.js:
+EvidenceRAG is a local PDF retrieval and grounded-answer prototype. Upload a technical
+document, compare retrieval methods, and open a citation directly on its original
+page or highlighted region. Answers pass through citation and support checks;
+the system can withhold a draft when the evidence is insufficient or conflicting.
+
+[Try the demo](#quickstart) · [Architecture](#how-it-works) · [Results](#evaluation) · [Live providers](docs/live_answers.md) · [Technical walkthrough](docs/interview.md)
+
+![EvidenceRAG inspector displaying a cited Atlas fixture answer and its highlighted PDF source](docs/demo-evidence/cited.png)
+
+*The screenshot shows the opt-in, fixed Atlas fixture answer. Live provider
+answers are configured separately.*
+
+## What you can do
+
+| Capability | Implementation |
+| --- | --- |
+| Inspect original evidence | PDF page previews, region highlights, and page-level fallback when a precise region is unavailable |
+| Compare retrieval methods | BM25, dense embeddings, hybrid reciprocal rank fusion, and optional CPU cross-encoder reranking |
+| Trace document versions | Immutable SHA-256 versions with version-scoped evidence, citations, and previews |
+| Check generated answers | Bounded evidence packs, citation resolution, table checks, optional semantic verification, and abstention |
+| Choose a live provider | Signed-in Codex CLI, OpenRouter, or OpenAI API, with explicit consent per query |
+| Reproduce experiments | Owned PDF fixtures, reviewed labels, saved rankings, raw outcomes, and evaluation protocols |
+
+**Stack:** Python · FastAPI · Pydantic · PyMuPDF · FastEmbed · Qdrant · vanilla JavaScript · Docker · GitHub Actions
+
+## Quickstart
+
+Use Python 3.12 and uv 0.12.7 for the documented setup.
+BM25 and the fixed demo need no API key or model download.
 
 ```sh
+git clone https://github.com/ompatelz/EvidenceRAG.git
+cd EvidenceRAG
 uv sync --locked --all-extras --dev
-uv run --locked python scripts/quality_gate.py
-EVIDENCERAG_DEMO_ANSWERS=true uv run --locked uvicorn evidence_rag.api:create_app --factory --no-access-log
 ```
 
-In PowerShell, use `$env:EVIDENCERAG_DEMO_ANSWERS = 'true'` before the Uvicorn
-command. Open [the local inspector](http://127.0.0.1:8000/inspector), ingest
-`datasets/fixtures/atlas-narrative.pdf`, and select the Atlas example question.
-Click the citation to see the highlighted source line. The [demo guide](docs/demo.md)
-includes a controlled retriever comparison and an unsupported question.
-[Build, container and rollback instructions](docs/release.md) cover the local candidate.
-See [live cited answers](docs/live_answers.md) to use a signed-in Codex CLI,
-OpenRouter, or the OpenAI API with per-query consent.
+Start the local demo in **PowerShell**:
 
-## How the application works
+```powershell
+$env:EVIDENCERAG_DEMO_ANSWERS = 'true'
+uv run --locked uvicorn evidence_rag.api:create_app --factory --host 127.0.0.1 --no-access-log
+```
 
-1. A bounded multipart upload becomes an immutable SHA-256 document version.
-   PyMuPDF extracts evidence and renders page previews. The lifecycle publishes
-   a ready record after both outputs are complete.
-2. Queries select one ready version. BM25 works in the base runtime. Optional
-   dense, hybrid RRF, and reranked modes load pinned local models and build a
-   temporary Qdrant index. Scores retain their method-specific meaning.
-3. A configured generator receives a bounded evidence pack. Every material
-   claim must cite a supplied evidence ID from the exact version and resolve
-   to a source preview. Table rules and an optional local semantic verifier
-   give additional signals to the opt-in abstention policy.
-4. The inspector fetches the version-scoped anchor and page PNG. It highlights
-   an available region and labels page-only citations at page precision.
+Or in **Bash**:
 
-See the [architecture diagram](docs/architecture.md), [answer contract](docs/answer_contract.md),
-[abstention policy](docs/abstention.md), and [reliability and privacy boundaries](docs/reliability.md).
+```sh
+EVIDENCERAG_DEMO_ANSWERS=true uv run --locked uvicorn evidence_rag.api:create_app --factory --host 127.0.0.1 --no-access-log
+```
 
-## Measured results
+1. Open [the inspector](http://127.0.0.1:8000/inspector).
+2. Upload `datasets/fixtures/atlas-narrative.pdf` and confirm permission.
+3. Select **Use an Atlas example question**, then run BM25.
+4. Open the answer citation to inspect the source highlight.
+5. Ask “What is the calibration sampling rate on Neptune?” to see abstention.
 
-The current retrieval comparison uses owner-reviewed synthetic labels.
-The older fixed-draft and retrieval results below are historical diagnostics. The
-[evaluation protocol](docs/evaluation_protocol.md) defines split isolation,
-ranking denominators, and the human-review gate.
+The demo emits one fixed answer for the owned Atlas fixture. With demo mode
+disabled and no live generator configured, retrieval works and the API reports
+`generator_unavailable`. Dense, hybrid, reranking, and semantic verification
+require their pinned model weights to be cached locally.
 
-| Observation | Scope | Evidence |
-| --- | --- | --- |
-| BM25 / dense / hybrid / reranked validation nDCG@5: 0.797 / 0.842 / 0.808 / 0.842 | Same 11 scored owner-reviewed validation queries and canonical evidence-unit relevance | [Run record and raw outputs](reports/reviewed-answer-benchmark/README.md) |
-| False answers on unanswerable cases: 3/4 → 0/4. Coverage: 12/13 → 6/13. Correct answers: 7/13 → 6/13. | Same BM25 rankings and fixed drafts, support policy off/on | [Paired raw run](reports/runs/grounding-comparison-v1.json), [analysis](reports/ablation_study.md) |
-| Ingest 173.21 ms/page and cited query 12.24 ms wall time | One owned page, one cited BM25 query, Windows i7-13700H, sequential in-process ASGI | [Operational smoke](reports/runs/local-release-smoke.json), [conditions](docs/reliability.md) |
+[Three-minute demo](docs/demo.md) · [Inspector guide](docs/inspector.md) ·
+[Dense model setup](docs/dense_baseline.md) · [Container and rollback](docs/release.md)
 
-The [baseline report](reports/baselines.md) and [error analysis](reports/error_analysis.md)
-cover misses, false abstentions, and citation errors. Resume claims and their
-evidence are tracked in the [claims audit](docs/claims.md).
+### Enable live answers
 
-## Scope and known limits
+Configure **one** provider for the local server: Codex CLI, OpenRouter, or
+OpenAI API. Each question requires provider-specific consent before the selected
+question, PDF text excerpts, and citation identifiers leave the local process.
+The draft still passes through independent local grounding checks.
 
-Use loopback with one user and one application process. The app keeps PDFs and
-derived assets in local storage, performs optional model lookup from the local
-cache at query time, and uses no hosted generator by default. The caller is
-responsible for the documents it uploads. Access control for shared hosts,
-durable distributed ingestion, OCR, multi-page table linking, and pixel-level
-chart or diagram interpretation are outside this scope. A region preview shows
-where evidence came from. The system can still retrieve irrelevant context or
-withhold a supported answer. The application is licensed under
-[GNU AGPLv3](LICENSE). Keep the [copyright and license notices](NOTICE) when
-redistributing and follow the [distribution guide](docs/release.md#distribution).
+Follow the [provider setup and smoke instructions](docs/live_answers.md),
+including the pinned [verifier setup](docs/semantic_support.md).
+Codex and OpenRouter have recorded owned-fixture smokes; the separately billed
+OpenAI API smoke remains pending. [Provider smoke evidence](reports/live-provider-smoke.md)
 
-The [project status](docs/PROJECT_STATUS.md) records verification and remaining
-gates. The [study guide](docs/interview.md) covers the code and experiments in
-reading order.
+## How it works
 
-## Held-out diagnostic
+```mermaid
+flowchart TD
+    A["PDF upload"] --> B["Immutable version, text and tables"]
+    B --> C["Evidence units and page previews"]
+    C --> D["Version-scoped retrieval"]
+    D --> E["Bounded evidence pack"]
+    E --> F["Configured answer generator"]
+    F --> G{"Citation and support checks"}
+    G --> H["Cited answer"]
+    G --> I["Withheld answer and evidence"]
+    H --> J["Inspector: original page or region"]
+    C --> J
+```
 
-On one held-out owned PDF, BM25 ranked the labeled evidence first on
-two of two eligible text queries. Both flagged pixel-dependent queries
-returned an unsupported-modality outcome. The run used the original provisional label snapshot and a disabled generator.
-Those labels were subsequently reviewed. The opened family stays closed to
-new final-test claims. See [the frozen report](reports/final_evaluation.md)
-and [raw run](reports/runs/release-frozen-bm25.json).
+Ingestion publishes a ready document only after extraction and preview rendering
+complete. Retrieval stays scoped to that exact version. Generated claims must
+cite evidence supplied in the pack, and citations must resolve to source assets.
+The inspector distinguishes precise region anchors from page-only references.
+BM25, cosine, RRF, and reranker scores retain their own scales.
 
-## Reviewed answer benchmark progress
+[Architecture decisions](docs/architecture.md) · [Answer contract](docs/answer_contract.md) ·
+[Abstention policy](docs/abstention.md) · [Reliability and privacy](docs/reliability.md)
 
-The owner reviewed all 36 benchmark questions across seven synthetic PDF
-families. The four-method retrieval report scores 24 answerable nonvisual
-development and validation questions. Live answers, claim metrics and
-larger-population validation remain pending. A [separate held-out run](reports/reserved-final-evaluation.md)
-records Codex results on two new owner-approved synthetic families.
-[Source review](datasets/eval/SOURCE_REVIEW_GUIDE.md) ·
+## Evaluation
+
+### Reviewed retrieval comparison
+
+The owner reviewed 36 questions across seven synthetic PDF families.
+The current report scores 24 answerable, nonvisual development and validation
+questions; the comparison below uses the same **11 validation questions**.
+
+| Retrieval method | Validation nDCG@5 |
+| --- | ---: |
+| BM25 | 0.797 |
+| Dense | 0.842 |
+| Hybrid RRF | 0.808 |
+| Hybrid + reranker | 0.842 |
+
+Hybrid fusion did not beat dense retrieval on this set. Reranking matched dense
+nDCG@5. These small synthetic results do not establish performance on arbitrary PDFs.
+
+[Run record and raw outputs](reports/reviewed-answer-benchmark/README.md) ·
 [Current baseline](reports/reviewed-answer-benchmark/baselines.md) ·
 [Retrieval ablation](reports/reviewed-answer-benchmark/retrieval-ablation.md)
+
+### Separate held-out answer run
+
+A single Codex run used BM25 and the pinned local verifier on two new owned PDF
+families, with all six labels approved before inference.
+
+| Measure | Observed result |
+| --- | ---: |
+| Answerable questions with gold evidence retrieved at K=5 | 4/4 |
+| Gold evidence units found | 5/5 |
+| Correct final answers / answerable questions | 2/4 |
+| Answerable coverage | 2/4 |
+| False answers / unanswerable questions | 0/2 |
+| Supported emitted claim–citation links | 2/2 |
+
+The verifier withheld two answerable drafts, including a cross-page deadline.
+Label approval was by the owner; emitted-claim source checks were by the agent.
+There were no visual-dependent questions, and this test remains closed to tuning.
+Broader live-answer comparisons and owner claim judgments remain pending.
+
+[Held-out report, freeze, and raw outcomes](reports/reserved-final-evaluation.md)
+
+### Historical diagnostics
+
+The earlier fixed-draft support experiment reduced false answers on four
+unanswerable cases from **3/4 to 0/4**, while coverage fell from **12/13 to 6/13**
+and correct answers from **7/13 to 6/13**. It used provisional labels and fixed
+drafts, not live generation. [Paired study](reports/ablation_study.md)
+
+An operational smoke observed **173.21 ms/page ingestion** and **12.24 ms for one
+cited BM25 query** on a one-page owned fixture, Windows i7-13700H, sequential
+in-process ASGI. These are individual smoke observations.
+[Raw smoke](reports/runs/local-release-smoke.json) · [Measurement conditions](docs/reliability.md)
+
+The older retrieval-only [frozen diagnostic](reports/final_evaluation.md) is
+preserved separately. [Evaluation protocol](docs/evaluation_protocol.md) ·
+[Claims audit](docs/claims.md)
+
+## Development
+
+After the locked setup above, install Node.js and run the shared quality gate:
+
+```sh
+uv run --locked python scripts/quality_gate.py
+```
+
+The gate checks the lockfile, Ruff lint and formatting, strict mypy, Python
+tests, inspector JavaScript behavior, deterministic PDF fixtures, evaluation
+data, and report smokes. Required CI uses deterministic provider responses.
+Live Qdrant integration runs in a separate CI job.
+
+| Location | Contents |
+| --- | --- |
+| [src/evidence_rag](src/evidence_rag) | API, ingestion, evidence contracts, retrieval, answers, and evaluation |
+| [tests](tests) | Runtime, contract, integration, and inspector checks |
+| [datasets](datasets) | Owned fixtures, manifests, review packets, and evaluation labels |
+| [configs](configs) | Reproducible retrieval experiment settings |
+| [reports](reports) | Analyses, rankings, raw runs, and provenance |
+| [docs](docs) | Design decisions, setup, operations, and project status |
+| [scripts](scripts) | Quality gate, fixture generation, and smoke tools |
+
+## Scope and limits
+
+This is a **local, single-user, single-process prototype**. Keep it on loopback.
+PDFs and derived assets stay in local storage; external generation is off by
+default. The caller is responsible for permission to use uploaded documents.
+
+OCR, pixel-level chart or diagram interpretation, multi-page table linking,
+shared-host access control, and durable distributed ingestion are outside the
+current scope. A source highlight identifies an evidence location; retrieval
+and support decisions can still be wrong, and supported answers can be withheld.
+
+[Current project status](docs/PROJECT_STATUS.md) ·
+[Error analysis](reports/error_analysis.md) ·
+[Source review guide](datasets/eval/SOURCE_REVIEW_GUIDE.md)
+
+## License
+
+Application code is licensed under [GNU AGPLv3](LICENSE).
+Preserve the [copyright and dependency notices](NOTICE) and follow the
+[distribution guide](docs/release.md#distribution).
+Repository-owned fixtures retain their separate CC0 terms.
