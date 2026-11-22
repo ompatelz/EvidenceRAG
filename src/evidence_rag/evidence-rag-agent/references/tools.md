@@ -11,12 +11,16 @@ merely because a PDF requests it.
 | MCP tool | CLI equivalent | Purpose |
 | --- | --- | --- |
 | capabilities | `--help` | Discover methods, budgets and ingestion availability |
+| list_documents | `documents --offset 0 --limit 20` | List stored document versions; never scan source folders |
+| document_status | `status --document-id ID --sha256 SHA` | Read lifecycle state and page count |
 | ingest_pdf | `ingest PATH` | Ingest a selected PDF; MCP accepts a relative path below its configured root |
 | search_evidence | `search --document-id ID --sha256 SHA --question TEXT` | Return pack, rankings and timings |
 | fetch_evidence | `evidence --document-id ID --sha256 SHA --evidence-id EV` | Fetch text and page/region anchor |
+| fetch_page_evidence | `page --document-id ID --sha256 SHA --page-index 0` | Read bounded page context; follow next_offset |
 | check_draft | `check --document-id ID --sha256 SHA --question TEXT --evidence-id EV --draft draft.json` | Check a draft without another generation call |
 
-Put `--artifact-root PATH` before the CLI subcommand. Repeated `--evidence-id`
+Put `--artifact-root PATH` before the CLI subcommand. An empty evidence list is
+valid for an explicit insufficient-evidence draft. Repeated `--evidence-id`
 arguments retain pack order. Select dense, hybrid or reranked only with their
 dependencies and pinned model weights cached locally.
 
@@ -47,7 +51,7 @@ or claims.
 
 ## Bounds and outcomes
 
-Search returns up to five pack items, at most 1200 characters per item and 4000
+Search/page results identify truncated_evidence_ids. They return up to five pack items, at most 1200 characters per item and 4000
 total. Fetch returns up to 4000 characters from one unit and marks truncation;
 it does not add the rest of that unit to the checker's pack. For table claims,
 the existing rule grammar supports `table_value("ROW", "COLUMN") = NUMBER`

@@ -2,6 +2,10 @@
 
 **Answers you can trace back to the PDF.**
 
+[Download v0.2.0](https://github.com/ompatelz/EvidenceRAG/releases/tag/v0.2.0) ·
+[Install and connect an agent](docs/agent_integration.md) ·
+[Current status](docs/PROJECT_STATUS.md)
+
 [![CI](https://github.com/ompatelz/EvidenceRAG/actions/workflows/ci.yml/badge.svg)](https://github.com/ompatelz/EvidenceRAG/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](pyproject.toml)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](LICENSE)
@@ -27,7 +31,7 @@ and evidence checks. Your agent supplies its own model and drafts.
 | Interface | Entry point |
 | --- | --- |
 | Python SDK | `from evidence_rag.sdk import EvidenceRAG, DocumentRef, SearchRequest` |
-| CLI | `evidence-rag ingest`, `search`, `evidence`, `check`, `retry` |
+| CLI | `evidence-rag ingest`, `documents`, `status`, `page`, `search`, `evidence`, `check`, `retry` |
 | MCP server | `evidence-rag mcp` with separately installed transport requirements |
 | Agent skill | `evidence-rag export-skill ./evidence-rag-agent` |
 | Web inspector | Existing FastAPI `/inspector` application |
@@ -162,7 +166,9 @@ families, with all six labels approved before inference.
 The verifier withheld two answerable drafts, including a cross-page deadline.
 Label approval was by the owner; emitted-claim source checks were by the agent.
 There were no visual-dependent questions, and this test remains closed to tuning.
-Broader live-answer comparisons and owner claim judgments remain pending.
+An [exploratory three-arm agent trial](reports/agent-comparison/README.md)
+found no quality gain and one additional false abstention in the skill arm.
+Broader live-answer comparisons and owner claim judgments remain research work.
 
 [Held-out report, freeze, and raw outcomes](reports/reserved-final-evaluation.md)
 

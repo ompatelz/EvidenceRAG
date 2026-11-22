@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Any
 from pydantic import ValidationError
 
 from evidence_rag.answers import DraftAnswer
-from evidence_rag.config import AppSettings
 from evidence_rag.documents import IntakeError
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.sdk import DocumentRef, EvidenceRAG, SearchRequest
@@ -43,8 +42,11 @@ def allowed_pdf(root: Path | None, relative_path: str) -> Path:
 
 
 def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "FastMCP":
+    import pymupdf
     from mcp.server.fastmcp import FastMCP
     from mcp.types import ToolAnnotations
+
+    pymupdf.no_recommend_layout()  # type: ignore[no-untyped-call]
 
     server = FastMCP(
         "EvidenceRAG",
@@ -61,7 +63,7 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
         return {
             "modes": ["bm25", "dense", "hybrid", "reranked"],
             "ingestion_enabled": documents_root is not None,
-            "semantic_verifier_configured": engine.settings.semantic_verifier,
+            "semantic_verifier_configured": engine.verifier_configured,
             "generation": "agent_supplied_draft_only",
             "max_candidates": 5,
             "max_item_chars": 1200,
@@ -76,6 +78,39 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
         Return the document ID and SHA-256 for every subsequent call.
         """
         return _safe(lambda: engine.ingest(allowed_pdf(documents_root, relative_path)))
+
+    def list_documents(offset: int = 0, limit: int = 20) -> dict[str, Any]:
+        """Rediscover ingested document/version IDs in this local artifact store only."""
+        return _safe(lambda: engine.documents(offset=offset, limit=limit))
+
+    def document_status(document_id: str, document_sha256: str) -> dict[str, Any]:
+        """Read lifecycle status; failed/partial documents are not query-ready."""
+        return _safe(
+            lambda: engine.status(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256)
+            )
+        )
+
+    def fetch_page_evidence(
+        document_id: str,
+        document_sha256: str,
+        page_index: int,
+        offset: int = 0,
+        limit: int = 5,
+    ) -> dict[str, Any]:
+        """Read bounded text context from an explicit zero-based page, with pagination.
+
+        Follow next_offset to read more. No pixel interpretation is performed.
+        Preserve IDs for draft checking and respect returned truncation information.
+        """
+        return _safe(
+            lambda: engine.page_evidence(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256),
+                page_index,
+                offset=offset,
+                limit=limit,
+            )
+        )
 
     def search_evidence(
         document_id: str,
@@ -127,7 +162,8 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
     ) -> dict[str, Any]:
         """Validate an agent-written DraftAnswer using local citations, rules and policy.
 
-        Supply one to five evidence IDs in pack order. Draft shape: status,
+        Supply up to five evidence IDs in pack order; empty supports abstention.
+        Draft shape: status,
         answer, claims[{text, citations[{evidence_id, document_id,
         document_version, page_index}]}]. Answer must exactly join claim texts.
         Missing/unavailable semantic verification abstains on natural-language claims.
@@ -143,6 +179,9 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
         )
 
     server.add_tool(capabilities, annotations=read)
+    server.add_tool(list_documents, annotations=read)
+    server.add_tool(document_status, annotations=read)
+    server.add_tool(fetch_page_evidence, annotations=read)
     server.add_tool(search_evidence, annotations=read)
     server.add_tool(fetch_evidence, annotations=read)
     server.add_tool(check_draft, annotations=read)
@@ -155,6 +194,6 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
     return server
 
 
-def serve(artifact_root: Path, documents_root: Path | None = None) -> None:
-    engine = EvidenceRAG(settings=AppSettings(artifact_root=artifact_root))
+def serve(artifact_root: Path | None, documents_root: Path | None = None) -> None:
+    engine = EvidenceRAG(artifact_root=artifact_root)
     create_server(engine, documents_root).run(transport="stdio")
