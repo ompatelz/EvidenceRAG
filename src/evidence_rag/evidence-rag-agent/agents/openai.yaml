@@ -1,0 +1,4 @@
+interface:
+  display_name: "EvidenceRAG Agent"
+  short_description: "Answer PDF questions with traceable source evidence"
+  default_prompt: "Use $evidence-rag-agent to answer this PDF question with checked source citations."

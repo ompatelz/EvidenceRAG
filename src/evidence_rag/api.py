@@ -2,7 +2,7 @@
 
 import json
 import logging
-from collections.abc import Awaitable, Callable, Sequence
+from collections.abc import Awaitable, Callable
 from dataclasses import asdict
 from functools import partial
 from pathlib import Path
@@ -26,7 +26,6 @@ from evidence_rag.answers import (
     AnswerResult,
     FixtureDemoGenerator,
     GroundedAnswerService,
-    RankedCandidate,
     Reason,
 )
 from evidence_rag.codex_answers import CODEX_TIMEOUT_SECONDS, CodexAnswerGenerator
@@ -58,7 +57,7 @@ from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.openai_answers import TIMEOUT_SECONDS, OpenAIAnswerGenerator
 from evidence_rag.openrouter_answers import OpenRouterAnswerGenerator
 from evidence_rag.policy import AnswerPolicy
-from evidence_rag.retrieval.bm25 import BM25Index
+from evidence_rag.retrieval.service import retrieve
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
 
 CallNext = Callable[[Request], Awaitable[Response]]
@@ -544,148 +543,14 @@ def create_app(
             raise IntakeError(
                 "ready_artifacts_missing", "Ready document artifacts are missing.", 409
             ) from exc
-        scope = [(manifest.document_id, manifest.document_version)]
-        timings: dict[str, float] = {}
-        retrieval_status = "ok"
-        hits: Sequence[RankedCandidate]
-        if request.mode == "bm25":
-            started = perf_counter()
-            index = BM25Index()
-            try:
-                index.rebuild(evidence.units)
-                timings["index_build"] = (perf_counter() - started) * 1000
-                ranking = index.search(request.question, k=5, versions=scope)
-            except Exception as exc:
-                if selected_policy:
-                    return without_ranking("indexing_failed")
-                raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
-            hits = ranking.hits
-            timings["bm25"] = ranking.search_ms
-        else:
-            try:
-                from huggingface_hub import snapshot_download
-                from qdrant_client import QdrantClient
-
-                from evidence_rag.retrieval.dense import (
-                    MODEL_REPOSITORY,
-                    MODEL_REVISION,
-                    DenseIndex,
-                    FastEmbedder,
-                )
-                from evidence_rag.retrieval.hybrid import HybridConfig, HybridRetriever
-            except ImportError as exc:
-                raise IntakeError(
-                    "model_unavailable", "Install the optional local dense dependencies.", 503
-                ) from exc
-            started = perf_counter()
-            try:
-                embedding_path = snapshot_download(
-                    repo_id=MODEL_REPOSITORY,
-                    revision=MODEL_REVISION,
-                    cache_dir=str(resolved_settings.model_cache_dir),
-                    local_files_only=True,
-                    allow_patterns=["*.json", "*.onnx", "vocab.txt"],
-                )
-            except Exception as exc:
-                raise IntakeError(
-                    "model_unavailable", "The pinned embedding model is not cached locally.", 503
-                ) from exc
-            try:
-                embedder = FastEmbedder(embedding_path)
-            except Exception as exc:
-                raise IntakeError(
-                    "model_load_failed", "The local embedding model could not load.", 503
-                ) from exc
-            timings["model_load"] = (perf_counter() - started) * 1000
-            try:
-                client = QdrantClient(":memory:")
-            except Exception as exc:
-                if selected_policy:
-                    return without_ranking("indexing_failed")
-                raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
-            try:
-                started = perf_counter()
-                dense = DenseIndex(client, embedder)
-                dense.rebuild(evidence.units)
-                timings["index_build"] = (perf_counter() - started) * 1000
-                if request.mode == "dense":
-                    result = dense.search(request.question, k=5, versions=scope)
-                    hits = result.hits
-                    timings["embedding"] = result.embedding_ms
-                    timings["vector_search"] = result.vector_search_ms
-                else:
-                    lexical = BM25Index()
-                    lexical.rebuild(evidence.units)
-                    hybrid = HybridRetriever(
-                        lexical, dense, HybridConfig(rrf_k=60, prefetch=10, final_k=5)
-                    ).search(request.question, versions=scope)
-                    hits = hybrid.hits
-                    timings.update(
-                        {
-                            "bm25": hybrid.bm25_ms,
-                            "embedding": hybrid.embedding_ms,
-                            "vector_search": hybrid.vector_search_ms,
-                            "fusion": hybrid.fusion_ms,
-                        }
-                    )
-                    if request.mode == "reranked":
-                        from evidence_rag.retrieval.rerank import (
-                            MODEL_NAME as RERANK_MODEL_NAME,
-                        )
-                        from evidence_rag.retrieval.rerank import (
-                            MODEL_REVISION as RERANK_MODEL_REVISION,
-                        )
-                        from evidence_rag.retrieval.rerank import (
-                            FastEmbedCrossEncoder,
-                            OptionalReranker,
-                            RerankConfig,
-                        )
-
-                        started = perf_counter()
-                        try:
-                            rerank_path = snapshot_download(
-                                repo_id=RERANK_MODEL_NAME,
-                                revision=RERANK_MODEL_REVISION,
-                                cache_dir=str(resolved_settings.model_cache_dir),
-                                local_files_only=True,
-                                allow_patterns=[
-                                    "config.json",
-                                    "tokenizer.json",
-                                    "tokenizer_config.json",
-                                    "special_tokens_map.json",
-                                    "vocab.txt",
-                                    "onnx/model.onnx",
-                                ],
-                            )
-                            scorer = FastEmbedCrossEncoder(rerank_path)
-                        except Exception as exc:
-                            raise IntakeError(
-                                "model_unavailable",
-                                "The pinned reranker is not cached locally.",
-                                503,
-                            ) from exc
-                        timings["rerank_model_load"] = (perf_counter() - started) * 1000
-                        reranker = OptionalReranker(scorer, RerankConfig(enabled=True))
-                        try:
-                            reranked = reranker.rerank(
-                                request.question,
-                                hits,
-                                {unit.evidence_id: unit for unit in evidence.units},
-                                versions=scope,
-                            )
-                        finally:
-                            reranker.close()
-                        hits = reranked.hits
-                        retrieval_status = reranked.status
-                        timings["rerank"] = reranked.rerank_ms
-            except IntakeError:
-                raise
-            except Exception as exc:
-                if selected_policy:
-                    return without_ranking("indexing_failed")
-                raise IntakeError("retrieval_failed", "Local retrieval failed.", 503) from exc
-            finally:
-                client.close()
+        try:
+            hits, timings, retrieval_status = retrieve(
+                request.question, request.mode, evidence.units, manifest, resolved_settings
+            )
+        except IntakeError as exc:
+            if selected_policy and exc.code == "retrieval_failed":
+                return without_ranking("indexing_failed")
+            raise
         timings["retrieval_total"] = (perf_counter() - total_started) * 1000
         try:
             started = perf_counter()

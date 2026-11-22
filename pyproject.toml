@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "evidence-rag"
 dynamic = ["version"]
-description = "Evidence-first retrieval foundations for technical documents"
+description = "Evidence-first PDF retrieval and grounded-answer tools for Python and AI agents"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Om Patel" }]
@@ -29,6 +29,14 @@ dependencies = [
     "uvicorn>=0.38,<1",
 ]
 
+[project.scripts]
+evidence-rag = "evidence_rag.cli:main"
+
+[project.urls]
+Repository = "https://github.com/ompatelz/EvidenceRAG"
+Documentation = "https://github.com/ompatelz/EvidenceRAG/blob/main/docs/agent_integration.md"
+Issues = "https://github.com/ompatelz/EvidenceRAG/issues"
+
 [project.optional-dependencies]
 dense = [
     "fastembed==0.9.1",
@@ -48,6 +56,13 @@ dev = [
 
 [tool.hatch.version]
 path = "src/evidence_rag/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/evidence_rag"]
+
+[[tool.mypy.overrides]]
+module = ["mcp.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 addopts = ["--strict-config", "--strict-markers", "-ra"]
