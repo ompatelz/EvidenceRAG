@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      CI_RUN_ID: ${{ github.event.workflow_run.id }}
+    steps:
+      - name: Check out the tested commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Download tested distributions
+        run: gh run download "$CI_RUN_ID" --name python-distributions --dir dist
+      - name: Package skill and record checksums
+        run: python scripts/package_release.py --git-sha "$RELEASE_SHA" --workflow-run "$CI_RUN_ID"
+      - name: Verify release checksums
+        working-directory: dist
+        run: sha256sum --check SHA256SUMS
+      - name: Publish a new version once
+        shell: bash
+        run: |
+          VERSION=$(python -c 'import re,pathlib; print(re.search(r"__version__ = \"([0-9.]+)\"", pathlib.Path("src/evidence_rag/__init__.py").read_text())[1])')
+          TAG="v$VERSION"
+          if gh release view "$TAG" --json tagName >/dev/null 2>&1; then
+            echo "Release $TAG already exists; preserving its assets."
+            exit 0
+          fi
+          gh release create "$TAG" dist/* --target "$RELEASE_SHA" \
+            --title "EvidenceRAG $TAG" --notes-file "docs/releases/$TAG.md"

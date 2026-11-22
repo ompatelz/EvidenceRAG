@@ -13,6 +13,13 @@ def main() -> None:
         [sys.executable, "-m", "ruff", "format", "--check", "."],
         [sys.executable, "-m", "mypy"],
         [sys.executable, "-m", "pytest"],
+        [
+            sys.executable,
+            "scripts/summarize_agent_trial.py",
+            "--output",
+            "reports/agent-comparison/summary.json",
+            "--check",
+        ],
         ["node", "--test", "tests/inspector_ui.test.cjs"],
         [sys.executable, "scripts/generate_fixtures.py", "--check"],
         [

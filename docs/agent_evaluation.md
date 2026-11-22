@@ -68,8 +68,9 @@ validation. Retain historical raw outputs.
 
 ## Current status
 
-This change adds runnable interfaces, tests, and a forward trial of the companion
-skill. Deterministic tests use explicit doubles for semantic outcomes. Those
-checks establish integration behavior only. A matched, source-reviewed live
-three-arm agent comparison has not yet been completed, so no agent-quality gain
-is claimed. No provider key or paid generation is required for installation or CI.
+The [exploratory three-arm trial](../reports/agent-comparison/README.md) records
+four actual development questions, raw operations and independent agent source
+judgments. It found no quality gain, and its model/source fingerprinting and
+sample size do not meet the stronger protocol above. Deterministic tests use
+explicit doubles for semantic outcomes and establish integration behavior only.
+No provider key or paid generation is required for installation or CI.

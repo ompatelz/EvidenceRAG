@@ -1,505 +1,70 @@
-# Project Status
+# Project status
 
-Updated: 2026-11-17
+Updated: 2026-11-22. Current release line: **v0.2.0 (alpha)**.
 
-The owner reviewed all 36 questions from seven owned PDFs. Two approvals
-changed the F1 question wording and cache-ratio evidence. The new retrieval
-comparison scores 24 development and validation questions. The historical
-frozen run remains closed. Live calls, claim judgments and live answer
-metrics are pending. See the [current retrieval comparison](../reports/reviewed-answer-benchmark/retrieval-ablation.md)
-and [live evaluation workflow](live_answers.md#reviewed-benchmark-workflow).
+EvidenceRAG is a local, single-user toolkit for technical PDF retrieval and
+traceable, checked answers. It can be embedded as Python, called through a JSON
+CLI, exposed through local stdio MCP, or used with its bundled agent skill. The
+FastAPI inspector and optional live answer adapters remain available.
 
-Grounded QA merged in [PR #6](https://github.com/ompatelz/EvidenceRAG/pull/6)
-at `c096832`. Visual evidence feasibility is a no-go on the current seed.
-The feasibility decision merged in [PR #7](https://github.com/ompatelz/EvidenceRAG/pull/7)
-at `efa55d4`. The runtime can display page and region previews and has no pixel interpreter.
-The reviewed snapshot has one visual-dependent development question, zero in
-validation, and two in the historical frozen family. See
-[ADR-0009](decisions/ADR-0009-visual-evidence-feasibility.md) for the owned
-preflight fixture, model comparison, and conditions for reopening the milestone.
+## Release scope
 
-## Handoff verification
+| Area | Delivered behavior | Evidence |
+| --- | --- | --- |
+| PDF ingestion | Immutable versions, text/tables, previews, explicit lifecycle/retry | tests/test_lifecycle.py, tests/test_parser.py |
+| Retrieval | BM25, optional dense/hybrid/reranking with pinned offline models | reports/reviewed-answer-benchmark/ |
+| Grounding | Exact-version citations, source anchors, table checks, optional semantic support and abstention | tests/test_answers.py, tests/test_semantic.py, tests/test_policy.py |
+| Agent interfaces | SDK, JSON CLI, document discovery/status, bounded page context and eight MCP tools | tests/test_sdk.py, tests/test_mcp_server.py |
+| Skill | Bundled/exportable workflow and tool contract | src/evidence_rag/evidence-rag-agent/ |
+| Distribution | Wheel, source archive, standalone skill archive, provenance and checksums | scripts/check_distribution.py, scripts/package_release.py |
+| CI/release | Full quality gate, real MCP protocol, fresh wheel installation, ingestion, Qdrant and container; release after successful main CI | .github/workflows/ci.yml, .github/workflows/release.yml |
 
-From a fresh clone of the merged benchmark, locked setup and the full local
-quality gate passed. The Compose HTTP smoke checked fixture ingestion, the
-fixed Atlas answer, its version-scoped PNG region, and an unsupported query.
-The E0–E3 rerun with the pinned cache reproduced the committed comparison
-table. The [demo](demo.md), [run record](../reports/reviewed-answer-benchmark/README.md)
-and [release procedure](release.md) contain the reproduction commands.
-That handoff did not run a live request or a new final test. See the
-[fresh-test declaration requirements](evaluation_protocol.md#declaring-a-fresh-final-test).
+[Installation](agent_integration.md) and [release notes](releases/v0.2.0.md) are
+the current entry points. The Release workflow publishes only the exact commit
+whose main-branch CI succeeded. See the GitHub Actions run for that commit's
+verification status and the GitHub Release for downloadable artifacts.
 
-## Live answers and licensing
+## What the evaluation establishes
 
-The signed-in Codex CLI produced a grounded Atlas answer and the API resolved
-its citation to the rendered source. The [smoke report](../reports/live-provider-smoke.md)
-records successful Codex and OpenRouter fixture answers and a separately
-withheld Codex draft. A reviewed development/validation answer comparison is
-still pending.
+The owner reviewed 36 labels across seven owned synthetic PDF families. The
+four-method retrieval comparison scores 24 answerable nonvisual development and
+validation questions. On the same 11 validation queries, nDCG@5 is BM25 0.797,
+dense 0.842, hybrid 0.808 and reranked 0.842. These are small synthetic results.
 
-The application uses AGPL-3.0-only with copyright attribution. The
-[reserved final-test packet](../datasets/eval/RESERVED_FINAL_TEST.md) has
-two new source families and six owner-confirmed labels. The
-[one-shot Codex holdout](../reports/reserved-final-evaluation.md) completed.
-The two withheld answerable cases document support-verification failures.
+The preserved one-shot Codex held-out run emitted correct final answers for 2/4
+answerable questions, no false answers on 2 unanswerable questions, and supported
+both emitted claim/citation links. Its families remain closed to tuning.
+[Held-out report](../reports/reserved-final-evaluation.md)
 
-## Release readiness
+The local verifier audit matched all 11 definite provisional development and
+validation judgments; a twelfth uncertain row remains unscored. The independent
+agent source audit of a four-question three-arm trial judged every emitted answer
+correct, but the skill arm withheld one supported arithmetic synthesis. The trial
+has incomplete model/source fingerprinting and is exploratory, not a frozen
+benchmark. It establishes no accuracy improvement. [Trial report](../reports/agent-comparison/README.md)
 
-[PR #9](https://github.com/ompatelz/EvidenceRAG/pull/9) merged into
-`main` at `78f498c` with local reliability, artifact checks, documentation,
-and the final evaluation. The first checkpoint passed 194 Python tests with live Qdrant
-and the deterministic inspector, data, and fixture checks. The
-[local smoke](reliability.md) verifies citation navigation and abstention.
-A local read-only Compose candidate reached healthy as UID 10001. The
-previous image reopened the same artifact volume and reused the exact
-owned PDF version after rollback. [Release procedure](release.md).
+## Boundaries
 
-A single authorized frozen run completed on the declared commit. See
-[raw results and scope](../reports/final_evaluation.md). The owner subsequently reviewed the labels. This project supports a local
-prototype demonstration and reviewed retrieval diagnostics.
+The release supports one trusted local process on loopback. It has no OCR,
+pixel-level chart/diagram interpretation, shared-host authentication, multi-tenant
+service, distributed ingestion, or arbitrary-document accuracy guarantee. These
+are outside the release scope. Semantic verification can reject supported drafts.
+Missing model weights or support verification are explicit failures/abstentions.
+External generation is off by default and requires provider-specific consent.
 
-The release smoke now exercises the Compose candidate over loopback HTTP.
-It checks inspector assets, readiness, fixture ingestion, the cited Atlas
-answer and resolved PNG region, and abstention for an unsupported question.
-CI retains the smoke result alongside the image's build record. The fixture
-answer is opt-in and the default Compose configuration leaves it disabled.
+Broader natural-document validation, human judgments of newly generated claims,
+and statistically useful agent comparisons remain research work. Agent audits
+must never be represented as owner verification. Existing frozen outputs and
+thresholds are preserved.
 
-## Claim support and abstention
+The application is AGPL-3.0-only; owned fixtures keep CC0 terms. Distributions
+retain LICENSE and NOTICE. GitHub Releases is the distribution channel; this
+project has not been registered or published on PyPI. Installing a personal
+ChatGPT skill requires that client's writable skill-installation surface; the
+release's skill archive/export does not silently install one.
 
-The deterministic checkpoint requires the answer text to match its cited
-claims. The query API checks exact-version citation scope, supplied evidence
-membership, and resolvable source locations. It reports table rule support
-separately from citation validity and withholds drafts with missing or invalid
-citations or failed table checks. See [the answer contract](answer_contract.md).
-The optional local text verifier adds per-claim entailment, contradiction,
-insufficiency, and failure metadata. See [the verifier procedure](semantic_support.md).
-Its development and validation audit still needs human review.
-The opt-in [abstention policy](abstention.md) has a provisional threshold
-selected on 16 synthetic validation cases. The [paired evaluation](../reports/ablation_study.md)
-ran BM25 and fixed drafts on 13 development and validation cases. The checked
-arm emitted six answers and zero false answers on four unanswerable cases.
-The baseline emitted 12 answers and three false answers on those four cases.
-Both runs use provisional labels. The [error analysis](../reports/error_analysis.md)
-documents the remaining human review, which the owner deferred. The grounding
-comparison excluded the frozen test. The later release diagnostic scored
-frozen text retrieval with the generator disabled.
+## Historical record
 
-Local verification passed lock and dependency checks, Ruff formatting and lint,
-strict mypy, 187 pytest tests, a separate live Qdrant test, deterministic
-fixture and evaluation-data validation, the E0 and report smoke commands,
-and the paired comparison smoke and inspector behavior tests.
-Compose validation and the candidate image build passed. The container reached
-healthy and ran as UID 10001.
-
-[PR #8](https://github.com/ompatelz/EvidenceRAG/pull/8) merged into main at `02299ee`.
-
-## Grounded QA milestone record
-
-Grounded QA checkpoint 4 was delivered on `codex/grounded-qa`. Phase 2
-baselines merged into `main` at `73c49f8`. All 31 candidate labels remain
-`needs_review`, and the Phase 2 human-review gate is **not passed**. A merged
-implementation must not be described as a validated Phase 2 benchmark.
-Phase 1 PR #4 is merged into `main` at `37e485c`.
-
-Hybrid RRF retrieval is implemented and measured in `docs/hybrid_retrieval.md`.
-The selected validation configuration is RRF constant 60, per-method prefetch
-10, final K=5. Validation nDCG@5 is 0.781 on provisional candidate labels,
-below both BM25 (0.797) and dense (0.814); no quality gain is claimed.
-Optional CPU reranking is implemented and measured in `docs/reranking.md`.
-On provisional validation labels it raises hybrid MRR@5 from 0.727 to 0.773,
-matching dense, with about 45 ms mean additional per-query CPU time. It is
-disabled by default. The bounded structured-answer flow and deterministic
-citation checks are implemented in `docs/answer_contract.md`. The default
-local API abstains without a configured generator; a saved-response test
-generator exercises cited answers. Checkpoint 4 adds the local inspector,
-exact-version citation navigation, page/region preview states, four query
-modes, labelled retrieval scores, and stage timings. The opt-in Atlas fixture
-answer is for the local demonstration only. The default API still abstains.
-See `docs/inspector.md` and ADR-0008. A manual real-model API flow exercised
-BM25, dense, hybrid, and reranked queries on the owned Atlas PDF and opened
-the answer citation's real PNG anchor. No additional private PDF was used.
-The browser's initial desktop workspace was inspected visually; the current
-page is a restrained three-panel layout. Checkpoint 4 local gate passed:
-locked offline sync and lock check, Ruff format/lint, strict mypy (49 source
-files), 151 pytest tests with one opt-in live Qdrant-server skip, deterministic
-fixture check, both evaluation-data validators, Compose config, image build,
-and a healthy non-root container serving all inspector assets. The first
-checkpoint 4 push passed all five hosted CI jobs (Python 3.11, Python 3.14,
-Ingestion end-to-end, Qdrant integration, and Container). Check PR #6 for
-the final head's CI and review state; those are live GitHub facts.
-
-## Phase 2 review expansion
-
-- Two deterministic repository-owned CC0 two-page PDF families add protocol and
-  cache notes with equations, exact identifiers, numeric facts, policy rows,
-  multi-page evidence, and difficult negative questions. All four new pages were
-  rendered and visually inspected; parser evidence IDs, pages, and regions were
-  checked against the proposed labels. The five frozen chart rows are unchanged.
-- The seed now contains 31 candidates: 13 development, 13 validation, 5 frozen
-  test; 5 unanswerable (16.1%), 2 visual-dependent, 0 human verified.
-  `datasets/eval/REVIEW_PACKET.md` gives the owner source links and an unchecked
-  decision line for every item. The packet has no retriever rankings.
-- Both E0/E1 were rerun on the 26 development/validation candidates over 52
-  evidence units. The provisional report has 22 scored answerable nonvisual
-  queries, observed examples for each method winning, and one joint miss at K=5.
-  These numbers are unreviewed diagnostics, not validated performance claims.
-- The expanded tree passed local locked sync/check, Ruff lint/format, strict
-  mypy, 122 pytest tests with one live Qdrant-server skip, deterministic PDF
-  regeneration, and strict source/evidence validation. Commit
-  `15edd0612daa15a29f90a04fcf54de4f92cc56f5` passed all five hosted CI
-  checks: Python 3.11, Python 3.14, Ingestion end-to-end, Qdrant integration,
-  and Container. Both raw runs were regenerated against that committed source
-  with clean source-tree flags and normalized dataset SHA-256
-  `cc8ee84a47f4d1930154b2d466e2a56c26739b0fe45ec267f988ddaf7afb5a46`.
-  Owner source-page decisions remain pending. The assistant's item-by-item
-  source audit is recorded in `docs/phase2_label_audit.md`; it does not count
-  as human verification.
-
-## Phase 2.4 checkpoint
-
-- The shared runner accepts closed E0/E1 configs for development and validation
-  only. It rejects frozen-test selection, changed K values, incompatible E0/E1
-  manifests, malformed configs, duplicate/cross-document rankings, and raw metric
-  inconsistencies. Each retrieval error becomes a per-query failure without saving
-  exception text; failed queries leave the scored denominator.
-- `reports/baselines.md` is generated from the committed raw E0/E1 runs and
-  includes split/category metrics, provenance, failure taxonomy, timing assumptions,
-  and observed E0/E1 wins or misses. Its original 13-question pilot was a
-  provisional diagnostic, not a validated quality or latency claim.
-- Both benchmark configs and report generation passed locally with the cached real
-  MiniLM model. The frozen test was not searched or used for tuning. The full local
-  gate passed after the portability fix: locked sync, lock check, Ruff lint/format,
-  strict mypy, 121 pytest tests passed and one live-server test skipped locally.
-  Deterministic fixture and strict seed validation passed.
-- Principal commit `defdfe2a9b5db2a83131234cdb0ab0b22a293d5b` was pushed.
-  Its Python 3.11/3.14 CI jobs failed because the first report hashed raw
-  Windows CRLF dataset bytes while Linux checked out LF. Dataset and source text
-  hashing now normalize line endings; a regression test confirms the hash equals
-  the committed blob on both platforms. Corrective commit
-  `6eb85989384e83f0de1e32cc5f34e8e2c47c6f29` passed all five hosted checks:
-  Python 3.11, Python 3.14, Ingestion end-to-end, Qdrant integration, Container.
-  Both saved runs were regenerated against that committed source with a clean
-  source tree and normalized dataset SHA-256
-  `77c6e1750a3841c346406c7aca449b11e727963e33531efeda1ac8d917257fe3`.
-- The human-review gate remains open until owner source-page review and a fresh
-  gate run based on corrected labels are complete. The later owner instruction
-  permits merging the implementation as a provisional pilot only.
-
-## Phase 2.3 checkpoint
-
-- Selected FastEmbed `0.9.1` on CPU with the Apache-2.0 MiniLM ONNX model at
-  pinned Qdrant repository revision `d13954661f83248295ba75c1ed411eef3b7b936e`
-  (384 dimensions). Qdrant client `1.20.0` and NumPy `<2.5` are locked; no model
-  download occurs in ordinary CI. Official model, FastEmbed, and Qdrant contracts
-  were checked before implementation; details are in `docs/dense_baseline.md`.
-- E1 uses the same persisted canonical evidence units and development/validation
-  questions as E0. It validates dataset hash, document versions, query IDs, binary
-  evidence-unit relevance, and K=1/3/5 compatibility before running. The frozen
-  chart family was not searched.
-- The Qdrant index checks dimensions, cosine distance, model revision, and active
-  generation; version scope is applied inside Qdrant before results are returned.
-  Duplicate upsert, whole-generation rebuild, stale-version deletion, and outage
-  failure are tested with a deterministic download-free embedding double. A bounded
-  server integration job passed in hosted CI.
-- Real CPU E1 run saved to `reports/runs/e1-phase2-pilot.json`: 8 queries, 6 scored
-  answerable nonvisual candidate labels, 11 evidence units. E0 and E1 have the
-  **same relevant-unit ranks for all six**. In both splits, both methods have
-  Hit Rate@1=2/3, Hit Rate@3=3/3, Recall@3=3/3, MRR@3=5/6, and nDCG@3≈0.877.
-  These are provisional unreviewed-label diagnostics, not evidence of parity on
-  a representative benchmark. Raw rankings, manifests, and separate query embed/
-  vector-search timings support the comparison.
-- Local Docker Desktop was unavailable; live Qdrant behavior passed hosted CI.
-  Final pre-commit local gate passed: `uv sync --all-extras --dev`, `uv lock --check`,
-  Ruff lint/format, strict mypy, and 110 pytest tests in 8.35 seconds; the live
-  Qdrant test was skipped locally because no server URL was configured. Deterministic
-  fixture and strict seed validation also passed. Commit
-  `faf550637da0eeac820fe1fb957ad6cf8b9778d6` is pushed to draft PR #5.
-  GitHub Actions run 41865852141 passed all five checks: Python 3.11, Python
-  3.14, Ingestion end-to-end, Qdrant integration, and Container.
-
-## Phase 2.2 checkpoint
-
-- Corrected the Phase 2 corpus manifest and evaluation rows to use the canonical
-  filename-derived document IDs produced by ingestion. Strict validation now rejects
-  any future manifest/ingestion identity mismatch.
-- E0 BM25 rebuilds from persisted canonical evidence artifacts, retains exact
-  document/version provenance, applies scope before ranking, and gives deterministic
-  evidence-ID ordering on ties. Its tokenizer, parameters, identity, lifecycle,
-  deletion, and metric definitions are documented in `docs/bm25_baseline.md`.
-- The CLI saves raw per-query rankings, timings, source/dataset/manifest hashes,
-  index ID, configuration, environment, and evidence-unit metrics for development
-  and validation only. The frozen-test family was not searched.
-- Candidate-label E0 run: 8 queries, 6 scored answerable nonvisual queries,
-  11 evidence units. Both splits have Hit Rate@1 2/3, Hit Rate@3 3/3,
-  Recall@3 3/3, and MRR@3 5/6. These are **provisional, unreviewed-label**
-  diagnostics from `reports/runs/e0-phase2-pilot.json`, not portfolio claims.
-- Final pre-commit local quality gate passed: `uv sync --all-extras --dev`, Ruff
-  lint/format, strict mypy, and 102 pytest tests in 6.98 seconds. Lock check,
-  deterministic fixture regeneration, strict seed validation, and E0 CLI run
-  passed. Principal Subphase 2.2 commit `eb44a0f21f281633405265a5b260ca60d234d687`
-  was pushed to the existing draft PR #5. The documentation follow-up commit
-  `2654460e1e6ff44b101634eb537e3ad5018d3c81` has all four GitHub Actions
-  checks passing (Python 3.11, Python 3.14, Ingestion end-to-end, Container).
-
-## Phase 2.1 checkpoint
-
-- Branch `codex/phase-2-search-baselines` was created from current `origin/main`.
-- Three deterministic, repository-authored CC0 PDF families are recorded with source,
-  date, SHA-256, content version, and redistribution permission. The new queue chart
-  visually distinguishes scheduler modes without text listing bar values.
-- `datasets/eval/phase2_seed.jsonl` has 13 candidate questions: 4 development,
-  4 validation, and 5 frozen test; 3 unanswerable (23.1%), 2 visual-dependent.
-  All 13 need owner review; **none is claimed human verified**. The older schema-only
-  fixture rows were also marked `needs_review`, and their caption-answerable diagram
-  item is no longer labeled visual-dependent.
-- Source hashes, duplicate/near-duplicate questions, version and split references, and
-  optionally parser-produced evidence ID/page/region consistency are validated. CI now
-  requests strict evidence validation for the Phase 2 seed.
-- The chart family is frozen. Do not run retrieval or tune on its questions. This small
-  synthetic pilot does not cover equations, multi-page documents, or external sources.
-- Subphase 2.1 full local quality gate passed: `uv sync --all-extras --dev`, Ruff
-  lint/format, strict mypy, and 95 pytest tests (final pre-commit run: 4.85 seconds).
-  `uv lock --check`, deterministic PDF regeneration, schema-fixture validation, and
-  strict Phase 2 seed validation also passed.
-- Principal commit `c4b285c8eb7495fe92aaa0d574777ab49369af0d` was pushed to
-  [draft PR #5](https://github.com/ompatelz/EvidenceRAG/pull/5). On that head,
-  GitHub Actions passed Python 3.11 (25s), Python 3.14 (22s), Ingestion end-to-end
-  (10s), and Container (30s). No retrieval result or human-reviewed label is claimed.
-
-## Implemented and verified
-
-- Repository connected to `ompatelz/EvidenceRAG`; default branch was `main` at `8504c3a`
-  before this work.
-- Python package skeleton exposes `evidence_rag.__version__` without runtime integrations.
-- Development dependencies and transitive versions are declared through `pyproject.toml`
-  and `uv.lock`.
-- Local and CI quality gates cover Ruff linting/formatting, strict mypy, and pytest.
-- Foundation architecture and decision boundaries are documented.
-- FastAPI application factory exposes verified `/health` and `/ready` semantics.
-- Typed evidence models enforce immutable document provenance, zero-based page indexes,
-  normalized region bounds, honest anchor precision, stable serialization, and opaque
-  asset references.
-- Versioned evaluation and manifest contracts reject inconsistent answerability, anchors,
-  provenance, hashes, unknown versions, duplicates, malformed JSONL, and split conflicts.
-- Two repository-owned CC0 PDFs regenerate byte-for-byte; both pages were rendered and
-  visually inspected, and extracted text matches the intended narrative, diagram, and table.
-- Multi-stage container installs only runtime dependencies, runs as UID 10001, and exposes
-  a verified HTTP health check. Compose adds a read-only filesystem and no-new-privileges.
-- CI now validates Python quality, deterministic fixtures, evaluation data, Compose, the
-  container build, container health, and the runtime UID without publishing or deploying.
-- Phase 0 PR #2 was merged into `main` at `c2aec908f2d24397a7ba014e19fbe486eafb60df`;
-  all three final Phase 0 CI jobs passed and local `main` was fast-forwarded to that commit.
-- Phase 1.1 implements bounded multipart PDF intake, streamed SHA-256, logical document and
-  immutable content-version identity, safe local artifact allocation, atomic manifests,
-  idempotent duplicates, changed versions, cleanup, and safe metadata/status responses.
-- The focused Phase 1.1 suite covers owned-fixture upload, empty/corrupt/wrong-signature
-  files, unusual/traversal filenames, limits, duplicates, changed versions, interrupted and
-  failed writes, manifest validation/atomicity, confinement, and path-safe responses.
-- Phase 1.2 pins PyMuPDF `1.28.2` after a measured Docling/PyMuPDF feasibility gate and
-  records the dependency, licensing, and replacement conditions in ADR-0004.
-- Explicit parsing extracts deterministic text, conservative headings, captions, captioned
-  embedded figures, and page-local structured tables into versioned evidence artifacts.
-- Evidence retains zero-based page/read order, stable IDs, parser/representation versions,
-  unrotated top-left PDF-point boxes, page geometry/rotation, and normalized top-left boxes.
-- Lifecycle records now distinguish `received`, `parsing`, `parsed`, `partial`, and `failed`;
-  bounded parser issues never expose source content or private paths.
-- Tests cover deterministic fixture extraction, API persistence, parser metadata, tables,
-  captions, source and normalized geometry, rotated pages, page ordering, page-only fallback,
-  blank pages, malformed PDFs, partial extraction, unexpected exceptions, and page limits.
-- Phase 1.3 adds bounded fixed-profile PNG rendering, atomic page-set publication, opaque
-  page asset IDs, source/crop/media/pixel metadata, and manifest-backed preview responses.
-- Anchor resolution maps unrotated source-normalized boxes through page rotation into
-  display-normalized and containing pixel boxes. Page and unavailable precision return no
-  invented region.
-- Rendering lookups are scoped by generated document ID, exact hash/version, evidence ID,
-  and zero-based page index. Cross-document, stale-version, invalid-page, and missing-file
-  requests fail safely without exposing paths.
-- Phase 1.4 connects intake, source-integrity validation, parsing, evidence creation,
-  rendering, and artifact persistence through an explicit validated state machine.
-- `ready` is now a final commit marker written only after complete version-matching evidence
-  and page artifacts are committed. Failures and partial output never claim readiness.
-- One-shot ingestion, detailed status, retry, and re-index APIs use server-generated request
-  IDs, attempt counts, stage timings, safe error codes, and content-safe JSON logs.
-- Retry and re-index regenerate complete derived artifacts from immutable source bytes;
-  stale evidence/pages are removed, and stable evidence IDs are replaced rather than
-  appended. Ready versions with missing/corrupt artifacts are detected and rebuilt.
-- An immutable intake snapshot permits recovery of a missing mutable manifest when the
-  original source remains present and hash-valid.
-- The focused lifecycle suite injects parser, renderer, evidence, and final-manifest
-  failures and checks interruption recovery, cleanup, duplicate/version semantics, rotated
-  and blank PDFs, log privacy, and evidence/page identity consistency.
-
-Verification evidence is updated in this file only after commands have actually run.
-
-## In progress
-
-- Owner review of all 31 candidate labels and visual-region judgments.
-- Apply future owner corrections and rerun the human-review gate without using
-  frozen-test results for tuning.
-
-## Pull requests / links
-
-- [Merged PR #4: Phase 1 — evidence-preserving PDF ingestion](https://github.com/ompatelz/EvidenceRAG/pull/4).
-- [PR #5: Phase 2 — evaluation seed and search baselines](https://github.com/ompatelz/EvidenceRAG/pull/5)
-  contains four implementation subphases, cross-platform correction `6eb8598`,
-  and review-expansion commit `15edd06`. All five hosted checks passed on the
-  expanded corpus. The
-  owner requested code merge with the human-review gate explicitly outstanding;
-  the provisional result and label status must remain clear after merge.
-
-## Last test commands and outcomes
-
-- `uv sync --all-extras --dev` — passed; created a CPython 3.12.9 environment and
-  installed 13 locked packages.
-- `uv lock --check` — passed; lockfile matches project metadata.
-- `uv run ruff check .` — passed.
-- `uv run ruff format --check .` — passed; 2 Python files already formatted.
-- `uv run mypy src tests` — passed; no issues in 2 source files.
-- `uv run pytest` — passed after Phase 0.2; 18 tests passed in 0.46 seconds.
-- `uv run uvicorn evidence_rag.api:create_app --factory --port 8765` — started
-  successfully; live `/health` and `/ready` requests both returned HTTP 200 with the
-  documented JSON, then the server shut down cleanly.
-- `uv run python scripts/generate_fixtures.py --check` — passed; both committed PDFs are
-  byte-for-byte deterministic.
-- Evaluation CLI — passed for the committed manifest and JSONL file.
-- `uv run pytest` — passed after Phase 0.3; 30 tests passed in 0.57 seconds.
-- Complete Phase 0 Python gate — passed; 30 tests passed in 0.70 seconds.
-- `docker compose config --quiet` — passed.
-- Candidate image build — passed using pinned Python and uv base-image digests.
-- Candidate container — reached `healthy`; `/health` and `/ready` returned HTTP 200,
-  runtime UID was 10001, and datasets, tests, Git history, and `.env` were absent.
-- Clean-room Git archive of commit `972c8042380f11cb890a10dba4ba6af2609520ec` — fresh
-  install, complete Python gate, deterministic fixtures, data validation, Compose, pinned
-  image build, container health, and UID 10001 all passed; 30 tests passed in 1.69 seconds.
-- GitHub Actions — Python 3.11, Python 3.14, and Container jobs passed on the complete
-  Phase 0 implementation.
-- Temporary clean-room copy: `uv sync --all-extras --dev` plus the complete Ruff, mypy,
-  and pytest gate passed independently; 2 tests passed in 0.09 seconds. The verified
-  temporary directory was removed afterward.
-- Phase 1 baseline after synchronizing merged `main`: complete quality gate passed; 30
-  tests passed in 0.57 seconds.
-- Phase 1.1 focused tests: 14 passed in 0.86 seconds.
-- Focused Ruff check passed. Strict mypy initially found one incompatible test-stream
-  override; the annotation was corrected before the full gate.
-- Complete Phase 1.1 Python gate — `uv sync`, Ruff lint/format, strict mypy, and pytest
-  passed on the exact pre-commit tree; 44 tests passed in 0.85 seconds. A separate
-  `uv lock --check` passed after dependency resolution.
-- Deterministic fixture regeneration and committed evaluation-data validation passed.
-- `docker compose config --quiet` passed with a named artifact volume preserving the
-  read-only root filesystem boundary.
-- `docker build --build-arg VCS_REF=phase-1.1-local -t evidencerag:phase-1 .` passed.
-- Temporary Phase 1 candidate container reached healthy, ran as UID 10001, accepted the
-  owned Atlas fixture, returned `received`, created exactly one manifest, and was removed.
-- GitHub Actions for PR #4 — Python 3.11 passed in 16 seconds, Python 3.14 passed in
-  18 seconds, and Container passed in 24 seconds.
-- Phase 1.2 parser feasibility — PyMuPDF extracted the owned narrative fixture in 0.018
-  seconds and the owned structured-table fixture in 0.011 seconds. Docling `2.129.0`
-  resolved 106 packages (approximately 1177.8 MiB) plus approximately 494.4 MiB of model
-  data but did not finish the first tiny fixture within the bounded local window.
-- Phase 1.2 focused parser suite — 11 tests passed.
-- Complete Phase 1.2 Python gate — Ruff lint and format checks passed, strict mypy passed
-  for 19 source files, and all 55 tests passed in 1.42 seconds.
-- `uv lock --check`, deterministic fixture regeneration, and committed evaluation-data
-  validation passed after adding pinned PyMuPDF `1.28.2`.
-- `uv sync --all-extras --dev` and `docker compose config --quiet` passed. The Phase 1.2
-  candidate image built with pinned PyMuPDF, reached healthy as UID 10001, accepted the
-  owned table fixture, changed from `received` to `parsed`, persisted five evidence units
-  including one structured table, and was removed after verification.
-- GitHub Actions for PR #4 head `31a38d3` — Python 3.11 passed in 17 seconds, Python 3.14
-  passed in 16 seconds, and Container passed in 17 seconds.
-- Phase 1.3 focused rendering suite — 21 tests passed in 2.04 seconds. Coverage includes all
-  four rotations, inverse round trips, multiple DPI scales, boundary boxes, crop/media
-  offsets, security scopes, stale versions, missing/corrupt artifacts, rendering/per-page/
-  total-pixel limits, geometry mismatches, page-only and unavailable precision, and a
-  pixel-based owned-table regression.
-- Manual 144-DPI overlay inspection — the computed `(144, 319, 1065, 592)` pixel box
-  enclosed the complete owned fixture table border and cells and excluded its separately
-  extracted caption. No clipping, overlap, or alignment defect was observed.
-- Complete Phase 1.3 Python gate — `uv sync`, Ruff lint/format, strict mypy, and pytest
-  passed on the exact pre-commit tree; 76 tests passed in 3.36 seconds. `uv lock --check`,
-  deterministic fixture regeneration, and committed evaluation-data validation also passed.
-- `docker compose config --quiet` and the Phase 1.3 candidate image build passed. The
-  temporary container reached healthy as UID 10001; upload returned `received`, parsing
-  returned `parsed`, rendering produced one PNG, the served 48,106-byte PNG matched its
-  manifest SHA-256, and the table anchor resolved to `(144, 319, 1065, 592)`. The temporary
-  container was removed after verification.
-- GitHub Actions for PR #4 head `07a7da5` — Python 3.11 passed in 21 seconds, Python 3.14
-  passed in 23 seconds, and Container passed in 19 seconds.
-- Phase 1.4 focused lifecycle suite — 16 tests passed in 2.85 seconds. It covers successful
-  owned-fixture ingestion, duplicates, changed versions, re-index, retry, parser/renderer/
-  evidence/final-manifest failures, cleanup, manifest recovery, missing ready assets,
-  corrupt/blank/rotated PDFs, interrupted work, log privacy, and invalid transitions.
-- Complete Phase 1.4 Python gate — `uv sync`, lock check, Ruff lint/format, strict mypy,
-  and all 92 tests passed in 7.96 seconds. Deterministic fixture regeneration and committed
-  evaluation-data validation also passed.
-- Manual 96-DPI inspection passed for the owned Atlas narrative/diagram, owned structured
-  table, and a temporary 90° rotated fixture. Every reported region enclosed its visible
-  source; the table box excluded its caption; rotation metadata and display dimensions
-  agreed. No anchors were downgraded in these three PDFs. Detailed bounded timings and
-  unsupported vector-diagram behavior are recorded in `docs/phase1_gate.md`.
-- `docker compose config --quiet` passed and `evidencerag:phase-1` built successfully with
-  `VCS_REF=phase-1.4-local`. A temporary container became healthy, ran as UID 10001,
-  ingested the owned table fixture through the one-shot endpoint, returned `ready` on the
-  first attempt with five evidence units, one preview, and all five timing stages, then was
-  removed.
-- GitHub Actions for PR #4 principal head `9d302b5` — Python 3.11 passed in 22 seconds,
-  Python 3.14 passed in 21 seconds, Ingestion end-to-end passed in 14 seconds, and Container
-  passed in 23 seconds.
-
-Environment: Windows, `uv 0.12.7`, CPython 3.12.9 managed by uv. GitHub Actions
-passed on Linux for Python 3.11 and Python 3.14 in PR #2.
-
-## Historical experiment registry
-
-- E0 provisional run: `reports/runs/e0-phase2-pilot.json` contains raw rankings
-  for 26 development/validation queries and 22 scored answerable nonvisual
-  candidate labels. All labels await owner review; no validated performance
-  result exists.
-- E1 provisional run: `reports/runs/e1-phase2-pilot.json` uses the same dataset,
-  corpus, query IDs, K values, and relevance unit. The report records observed
-  E0/E1 wins and one joint miss at K=5. No frozen-test run exists.
-- E2 hybrid validation: `reports/runs/e2-hybrid-validation.json`; selected
-  RRF 60, prefetch 10, final K=5. Its candidate-label nDCG@5 is 0.781,
-  compared with BM25 0.797 and dense 0.814 on the same validation rows.
-- E3 reranked validation: `reports/runs/e3-rerank-validation.json`; candidate-
-  label MRR@5 rises from hybrid 0.727 to 0.773, with 45.04 ms mean added
-  CPU rerank time. These are provisional, unreviewed-label diagnostics.
-
-## Known technical debt / risks
-
-- The local inspector and retrieval API support a fixed fixture answer and
-  consent-gated external generation. Benchmark live output quality is unmeasured. The
-  reviewed retrieval corpus consists of a small synthetic sample.
-- Ingestion occupies one HTTP request and uses a process-local lock. It neither coordinates
-  multiple processes nor automatically resumes after a restart; interrupted work requires
-  an explicit retry. ADR-0006 defines the measurements that would justify durable jobs.
-- Table detection is page-local. Complex reading order, multi-page tables, vector diagrams,
-  equations, unusual malformed page boxes, and rotated/cropped production documents are not
-  yet validated broadly.
-- PyMuPDF offers AGPL/commercial licensing. Follow the
-  [release distribution terms](release.md#distribution) for any image publication.
-- Python 3.11 and 3.14 are covered by CI, but other supported minors are not individually
-  exercised in Phase 0.1.
-- Windows is the only locally verified operating system for this first branch; CI provides
-  Linux coverage.
-
-## Decisions changed since master context
-
-- ADR-0003 selects filename-derived logical document identity, exact-byte SHA-256 versions,
-  global local-store deduplication, atomic file/manifest publication, and an honest
-  `received` intake state.
-- ADR-0004 selects pinned PyMuPDF after a bounded feasibility gate and defines parser-native
-  coordinates, normalized regions, table structure, conservative relationships, failure
-  states, licensing constraints, and rollback.
-- ADR-0005 defines the fixed rendering profile, crop/rotation transforms, containing-pixel
-  rounding, atomic page publication, page asset security, manual verification, and rollback.
-- ADR-0006 defines the synchronous state machine, atomic ready boundary, whole-artifact
-  retry/re-index policy, immutable intake recovery, safe telemetry, and durable-job triggers.
-
-## Next tasks
-
-1. Run the optional paid evaluation after explicit source-excerpt consent,
-   provider credentials, and a cost ceiling are available.
-2. Review the raw draft and final answer claims against exact source pages.
-3. Add representative permissioned document families and predeclare
-   a separate held-out split before inspecting any new test results.
+[Project history](PROJECT_HISTORY.md) preserves the earlier milestone log,
+measurements, decisions and historical pending items. It is not the current
+release checklist.

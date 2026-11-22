@@ -1,0 +1,1688 @@
+{
+  "model_identity": "inherited agent; exact revision not exposed",
+  "token_usage": null,
+  "provider_cost": null,
+  "trace": [
+    {
+      "call": "ingest",
+      "arguments": {
+        "path": "datasets/fixtures/atlas-narrative.pdf"
+      },
+      "raw_output": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "state": "ready",
+        "attempt_count": 1,
+        "last_request_id": "sdk_515b40af1243417eaf0a3e968c405cc3",
+        "evidence_count": 6,
+        "page_count": 1,
+        "failure_reason": null,
+        "failure_stage": null,
+        "stage_timings": [
+          {
+            "stage": "validation",
+            "duration_ms": 2.28610000340268
+          },
+          {
+            "stage": "parsing",
+            "duration_ms": 10.54299998213537
+          },
+          {
+            "stage": "rendering",
+            "duration_ms": 31.32569999434054
+          },
+          {
+            "stage": "persistence",
+            "duration_ms": 18.787599983625114
+          },
+          {
+            "stage": "total",
+            "duration_ms": 81.90240000840276
+          }
+        ],
+        "ready_at": "2026-11-22T14:38:31.347819Z",
+        "duplicate": false
+      },
+      "elapsed_ms": 109.80689999996684
+    },
+    {
+      "call": "search",
+      "arguments": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "What is the calibration sampling rate of the Atlas sensor?",
+        "mode": "bm25",
+        "requires_visual_evidence": false
+      },
+      "raw_output": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration."
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Atlas Sensor Note"
+            },
+            {
+              "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Figure 1. Calibration data flow: Sensor -> Filter -> Archive."
+            },
+            {
+              "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Sensor\nFilter\nArchive"
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 1,
+            "score": 3.355221351205551,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.11638258,
+              "x1": 0.53177598,
+              "y1": 0.13546591
+            }
+          },
+          {
+            "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 2,
+            "score": 1.8498255844642482,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.05883838,
+              "x1": 0.3697059,
+              "y1": 0.09361111
+            }
+          },
+          {
+            "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 3,
+            "score": 1.294877909124974,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.11437908,
+              "y0": 0.33244948,
+              "x1": 0.53573514,
+              "y1": 0.34954545
+            }
+          },
+          {
+            "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 4,
+            "score": 0.5554468885793636,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.17378269,
+              "y0": 0.27806818,
+              "x1": 0.82544768,
+              "y1": 0.29719318
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.22739998530596495,
+          "bm25": 0.06299998494796455
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "elapsed_ms": 2.875100006349385
+    },
+    {
+      "call": "search",
+      "arguments": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "What happens to each Atlas sample before it is archived?",
+        "mode": "bm25",
+        "requires_visual_evidence": false
+      },
+      "raw_output": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Each sample passes through a filter before archival."
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Atlas Sensor Note"
+            },
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration."
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 1,
+            "score": 4.066774908100473,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.13910985,
+              "x1": 0.5018136,
+              "y1": 0.15819318
+            }
+          },
+          {
+            "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 2,
+            "score": 1.2943786958848846,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.05883838,
+              "x1": 0.3697059,
+              "y1": 0.09361111
+            }
+          },
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 3,
+            "score": 0.8547783840749239,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.11638258,
+              "x1": 0.53177598,
+              "y1": 0.13546591
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.18390000332146883,
+          "bm25": 0.05060000694356859
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "elapsed_ms": 2.1918999846093357
+    },
+    {
+      "call": "search",
+      "arguments": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "What is the mass of the Atlas sensor?",
+        "mode": "bm25",
+        "requires_visual_evidence": false
+      },
+      "raw_output": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration."
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Atlas Sensor Note"
+            },
+            {
+              "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Sensor\nFilter\nArchive"
+            },
+            {
+              "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Figure 1. Calibration data flow: Sensor -> Filter -> Archive."
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 1,
+            "score": 2.500442967130627,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.11638258,
+              "x1": 0.53177598,
+              "y1": 0.13546591
+            }
+          },
+          {
+            "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 2,
+            "score": 1.8498255844642482,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.05883838,
+              "x1": 0.3697059,
+              "y1": 0.09361111
+            }
+          },
+          {
+            "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 3,
+            "score": 0.5554468885793636,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.17378269,
+              "y0": 0.27806818,
+              "x1": 0.82544768,
+              "y1": 0.29719318
+            }
+          },
+          {
+            "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 4,
+            "score": 0.38881282200555456,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.11437908,
+              "y0": 0.33244948,
+              "x1": 0.53573514,
+              "y1": 0.34954545
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.15880001592449844,
+          "bm25": 0.040799990529194474
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "elapsed_ms": 1.732600008836016
+    },
+    {
+      "call": "ingest",
+      "arguments": {
+        "path": "datasets/fixtures/library-loans.pdf"
+      },
+      "raw_output": {
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "state": "ready",
+        "attempt_count": 1,
+        "last_request_id": "sdk_70199303d2e14af0bc4f761279dd527d",
+        "evidence_count": 10,
+        "page_count": 2,
+        "failure_reason": null,
+        "failure_stage": null,
+        "stage_timings": [
+          {
+            "stage": "validation",
+            "duration_ms": 2.0086000149603933
+          },
+          {
+            "stage": "parsing",
+            "duration_ms": 18.172699987189844
+          },
+          {
+            "stage": "rendering",
+            "duration_ms": 58.455899998079985
+          },
+          {
+            "stage": "persistence",
+            "duration_ms": 18.64579998073168
+          },
+          {
+            "stage": "total",
+            "duration_ms": 114.1230000066571
+          }
+        ],
+        "ready_at": "2026-11-22T14:38:31.496695Z",
+        "duplicate": false
+      },
+      "elapsed_ms": 141.9727000175044
+    },
+    {
+      "call": "search",
+      "arguments": {
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "question": "What is the total loan period for an eligible Resident item after one renewal?",
+        "mode": "bm25",
+        "requires_visual_evidence": false
+      },
+      "raw_output": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "A renewal adds 14 days to the original loan period."
+            },
+            {
+              "evidence_id": "ev_42832a3725e29ba4dbdc6fb2254f4638",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "An item with a pending reservation cannot be renewed."
+            },
+            {
+              "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "text": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+            },
+            {
+              "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "Residents may renew eligible items once."
+            },
+            {
+              "evidence_id": "ev_55272e48a9809a5f5e7f696e2799ba72",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "text": "Membership\nLoan limit\nLoan period"
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 1,
+            "score": 4.879760237284874,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.19728535,
+              "x1": 0.45516329,
+              "y1": 0.21463385
+            }
+          },
+          {
+            "evidence_id": "ev_42832a3725e29ba4dbdc6fb2254f4638",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 2,
+            "score": 3.6151310204688283,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.22885101,
+              "x1": 0.48694436,
+              "y1": 0.2461995
+            }
+          },
+          {
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "rank": 3,
+            "score": 2.2286458465610295,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.21464646,
+              "x1": 0.80065359,
+              "y1": 0.30555556
+            }
+          },
+          {
+            "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 4,
+            "score": 2.138217737716319,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.1657197,
+              "x1": 0.38880713,
+              "y1": 0.18306819
+            }
+          },
+          {
+            "evidence_id": "ev_55272e48a9809a5f5e7f696e2799ba72",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "rank": 5,
+            "score": 2.1001105384278906,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.09803922,
+              "y0": 0.1896149,
+              "x1": 0.69949505,
+              "y1": 0.20869823
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.309199996991083,
+          "bm25": 0.07680000271648169
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "elapsed_ms": 4.0151000139303505
+    },
+    {
+      "call": "search",
+      "arguments": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "mass weight kilograms grams",
+        "mode": "bm25",
+        "requires_visual_evidence": false
+      },
+      "raw_output": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "no_relevant_evidence",
+        "pack": {
+          "items": [],
+          "excluded_ids": []
+        },
+        "ranking": [],
+        "timings_ms": {
+          "index_build": 0.26080000679939985,
+          "bm25": 0.021299987565726042
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "elapsed_ms": 3.648899990366772
+    },
+    {
+      "call": "check_draft",
+      "arguments": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "question": "What is the calibration sampling rate of the Atlas sensor?",
+        "evidence_ids": [
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b",
+          "ev_c395759200fd36e917985b8e305bb305",
+          "ev_082ee3dfe7b3c42856f354385c0ba206"
+        ],
+        "draft": {
+          "status": "answered",
+          "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+          "claims": [
+            {
+              "text": "The Atlas sensor samples at 20 hertz during calibration.",
+              "citations": [
+                {
+                  "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                  "document_id": "doc_cedee38ab4152274426cf3f8",
+                  "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                  "page_index": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "raw_output": {
+        "status": "answered",
+        "reason": "answered",
+        "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+        "claims": [
+          {
+            "text": "The Atlas sensor samples at 20 hertz during calibration.",
+            "citations": [
+              {
+                "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                "semantic_support": "supported"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "supported",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 3.7084604501724243,
+              "conflicting": false,
+              "passage_support": [
+                "supported"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "elapsed_ms": 1801.8273999914527
+    },
+    {
+      "call": "check_draft",
+      "arguments": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "question": "What happens to each Atlas sample before it is archived?",
+        "evidence_ids": [
+          "ev_5cee49445595c480dfc55a1c71a45dfd",
+          "ev_de43c6627b200524dfcf26e84ee4c84b",
+          "ev_db963e2e6b7064f643c914bace118433"
+        ],
+        "draft": {
+          "status": "answered",
+          "answer": "Each sample passes through a filter before archival.",
+          "claims": [
+            {
+              "text": "Each sample passes through a filter before archival.",
+              "citations": [
+                {
+                  "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+                  "document_id": "doc_cedee38ab4152274426cf3f8",
+                  "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                  "page_index": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "raw_output": {
+        "status": "answered",
+        "reason": "answered",
+        "answer": "Each sample passes through a filter before archival.",
+        "claims": [
+          {
+            "text": "Each sample passes through a filter before archival.",
+            "citations": [
+              {
+                "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                "semantic_support": "supported"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "supported",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 4.419362545013428,
+              "conflicting": false,
+              "passage_support": [
+                "supported"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_5cee49445595c480dfc55a1c71a45dfd",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "elapsed_ms": 23.76049998565577
+    },
+    {
+      "call": "check_draft",
+      "arguments": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "question": "What is the mass of the Atlas sensor?",
+        "evidence_ids": [
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b",
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305"
+        ],
+        "draft": {
+          "status": "insufficient_evidence"
+        }
+      },
+      "raw_output": {
+        "status": "insufficient_evidence",
+        "reason": "insufficient_claim_support",
+        "answer": null,
+        "claims": [],
+        "supplied_evidence_ids": [
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b",
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "elapsed_ms": 2.2862000041641295
+    },
+    {
+      "call": "check_draft",
+      "arguments": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "question": "What is the total loan period for an eligible Resident item after one renewal?",
+        "evidence_ids": [
+          "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+          "ev_42832a3725e29ba4dbdc6fb2254f4638",
+          "ev_52c8b6fce9c34ea21994e903fe979df8",
+          "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+          "ev_55272e48a9809a5f5e7f696e2799ba72"
+        ],
+        "draft": {
+          "status": "answered",
+          "answer": "The total loan period for an eligible Resident item after one renewal is 35 days (21 days plus 14 days).",
+          "claims": [
+            {
+              "text": "The total loan period for an eligible Resident item after one renewal is 35 days (21 days plus 14 days).",
+              "citations": [
+                {
+                  "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                  "document_id": "doc_c8797437052fd23adea34e6f",
+                  "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                  "page_index": 1
+                },
+                {
+                  "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                  "document_id": "doc_c8797437052fd23adea34e6f",
+                  "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                  "page_index": 0
+                },
+                {
+                  "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+                  "document_id": "doc_c8797437052fd23adea34e6f",
+                  "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                  "page_index": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "raw_output": {
+        "status": "insufficient_evidence",
+        "reason": "insufficient_claim_support",
+        "answer": null,
+        "claims": [
+          {
+            "text": "The total loan period for an eligible Resident item after one renewal is 35 days (21 days plus 14 days).",
+            "citations": [
+              {
+                "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+                "semantic_support": "insufficient"
+              },
+              {
+                "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+                "semantic_support": "insufficient"
+              },
+              {
+                "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+                "semantic_support": "insufficient"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "insufficient",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 6.191119194030762,
+              "conflicting": false,
+              "passage_support": [
+                "insufficient",
+                "insufficient",
+                "insufficient"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+          "ev_42832a3725e29ba4dbdc6fb2254f4638",
+          "ev_52c8b6fce9c34ea21994e903fe979df8",
+          "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+          "ev_55272e48a9809a5f5e7f696e2799ba72"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "elapsed_ms": 189.28919997415505
+    }
+  ],
+  "results": [
+    {
+      "query_id": "p2_atlas_rate",
+      "question": "What is the calibration sampling rate of the Atlas sensor?",
+      "document": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+      },
+      "retrieval": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration."
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Atlas Sensor Note"
+            },
+            {
+              "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Figure 1. Calibration data flow: Sensor -> Filter -> Archive."
+            },
+            {
+              "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Sensor\nFilter\nArchive"
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 1,
+            "score": 3.355221351205551,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.11638258,
+              "x1": 0.53177598,
+              "y1": 0.13546591
+            }
+          },
+          {
+            "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 2,
+            "score": 1.8498255844642482,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.05883838,
+              "x1": 0.3697059,
+              "y1": 0.09361111
+            }
+          },
+          {
+            "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 3,
+            "score": 1.294877909124974,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.11437908,
+              "y0": 0.33244948,
+              "x1": 0.53573514,
+              "y1": 0.34954545
+            }
+          },
+          {
+            "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 4,
+            "score": 0.5554468885793636,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.17378269,
+              "y0": 0.27806818,
+              "x1": 0.82544768,
+              "y1": 0.29719318
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.22739998530596495,
+          "bm25": 0.06299998494796455
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "draft": {
+        "status": "answered",
+        "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+        "claims": [
+          {
+            "text": "The Atlas sensor samples at 20 hertz during calibration.",
+            "citations": [
+              {
+                "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0
+              }
+            ]
+          }
+        ]
+      },
+      "checker_outcome": {
+        "status": "answered",
+        "reason": "answered",
+        "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+        "claims": [
+          {
+            "text": "The Atlas sensor samples at 20 hertz during calibration.",
+            "citations": [
+              {
+                "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                "semantic_support": "supported"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "supported",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 3.7084604501724243,
+              "conflicting": false,
+              "passage_support": [
+                "supported"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+      "abstained": false,
+      "citations": [
+        {
+          "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "source_quote": "The Atlas sensor samples at 20 hertz during calibration."
+        }
+      ],
+      "explanation": "The source directly states this fact; citation location is valid and the local semantic verifier assessed support. The automated check is fallible."
+    },
+    {
+      "query_id": "p2_atlas_filter",
+      "question": "What happens to each Atlas sample before it is archived?",
+      "document": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+      },
+      "retrieval": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Each sample passes through a filter before archival."
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Atlas Sensor Note"
+            },
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration."
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 1,
+            "score": 4.066774908100473,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.13910985,
+              "x1": 0.5018136,
+              "y1": 0.15819318
+            }
+          },
+          {
+            "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 2,
+            "score": 1.2943786958848846,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.05883838,
+              "x1": 0.3697059,
+              "y1": 0.09361111
+            }
+          },
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 3,
+            "score": 0.8547783840749239,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.11638258,
+              "x1": 0.53177598,
+              "y1": 0.13546591
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.18390000332146883,
+          "bm25": 0.05060000694356859
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "draft": {
+        "status": "answered",
+        "answer": "Each sample passes through a filter before archival.",
+        "claims": [
+          {
+            "text": "Each sample passes through a filter before archival.",
+            "citations": [
+              {
+                "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0
+              }
+            ]
+          }
+        ]
+      },
+      "checker_outcome": {
+        "status": "answered",
+        "reason": "answered",
+        "answer": "Each sample passes through a filter before archival.",
+        "claims": [
+          {
+            "text": "Each sample passes through a filter before archival.",
+            "citations": [
+              {
+                "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                "semantic_support": "supported"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "supported",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 4.419362545013428,
+              "conflicting": false,
+              "passage_support": [
+                "supported"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_5cee49445595c480dfc55a1c71a45dfd",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "answer": "Each sample passes through a filter before archival.",
+      "abstained": false,
+      "citations": [
+        {
+          "evidence_id": "ev_5cee49445595c480dfc55a1c71a45dfd",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "source_quote": "Each sample passes through a filter before archival."
+        }
+      ],
+      "explanation": "The source directly states this fact; citation location is valid and the local semantic verifier assessed support. The automated check is fallible."
+    },
+    {
+      "query_id": "p2_atlas_weight",
+      "question": "What is the mass of the Atlas sensor?",
+      "document": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+      },
+      "retrieval": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration."
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Atlas Sensor Note"
+            },
+            {
+              "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Sensor\nFilter\nArchive"
+            },
+            {
+              "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "text": "Figure 1. Calibration data flow: Sensor -> Filter -> Archive."
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 1,
+            "score": 2.500442967130627,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.11638258,
+              "x1": 0.53177598,
+              "y1": 0.13546591
+            }
+          },
+          {
+            "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 2,
+            "score": 1.8498255844642482,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.05883838,
+              "x1": 0.3697059,
+              "y1": 0.09361111
+            }
+          },
+          {
+            "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 3,
+            "score": 0.5554468885793636,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.17378269,
+              "y0": 0.27806818,
+              "x1": 0.82544768,
+              "y1": 0.29719318
+            }
+          },
+          {
+            "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "rank": 4,
+            "score": 0.38881282200555456,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.11437908,
+              "y0": 0.33244948,
+              "x1": 0.53573514,
+              "y1": 0.34954545
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.15880001592449844,
+          "bm25": 0.040799990529194474
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "targeted_retrieval": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "mode": "bm25",
+        "status": "no_relevant_evidence",
+        "pack": {
+          "items": [],
+          "excluded_ids": []
+        },
+        "ranking": [],
+        "timings_ms": {
+          "index_build": 0.26080000679939985,
+          "bm25": 0.021299987565726042
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "draft": {
+        "status": "insufficient_evidence"
+      },
+      "checker_outcome": {
+        "status": "insufficient_evidence",
+        "reason": "insufficient_claim_support",
+        "answer": null,
+        "claims": [],
+        "supplied_evidence_ids": [
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b",
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "answer": null,
+      "abstained": true,
+      "citations": [],
+      "explanation": "The initial search returned no mass measurement. A targeted BM25 search for mass, weight, kilograms and grams returned no relevant evidence. The explicit abstention was withheld for insufficient claim support."
+    },
+    {
+      "query_id": "harbor_renewed_period",
+      "question": "What is the total loan period for an eligible Resident item after one renewal?",
+      "document": {
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+      },
+      "retrieval": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "A renewal adds 14 days to the original loan period."
+            },
+            {
+              "evidence_id": "ev_42832a3725e29ba4dbdc6fb2254f4638",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "An item with a pending reservation cannot be renewed."
+            },
+            {
+              "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "text": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+            },
+            {
+              "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "Residents may renew eligible items once."
+            },
+            {
+              "evidence_id": "ev_55272e48a9809a5f5e7f696e2799ba72",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "text": "Membership\nLoan limit\nLoan period"
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 1,
+            "score": 4.879760237284874,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.19728535,
+              "x1": 0.45516329,
+              "y1": 0.21463385
+            }
+          },
+          {
+            "evidence_id": "ev_42832a3725e29ba4dbdc6fb2254f4638",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 2,
+            "score": 3.6151310204688283,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.22885101,
+              "x1": 0.48694436,
+              "y1": 0.2461995
+            }
+          },
+          {
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "rank": 3,
+            "score": 2.2286458465610295,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.21464646,
+              "x1": 0.80065359,
+              "y1": 0.30555556
+            }
+          },
+          {
+            "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 4,
+            "score": 2.138217737716319,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.1657197,
+              "x1": 0.38880713,
+              "y1": 0.18306819
+            }
+          },
+          {
+            "evidence_id": "ev_55272e48a9809a5f5e7f696e2799ba72",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "rank": 5,
+            "score": 2.1001105384278906,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.09803922,
+              "y0": 0.1896149,
+              "x1": 0.69949505,
+              "y1": 0.20869823
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.309199996991083,
+          "bm25": 0.07680000271648169
+        },
+        "content_trust": "untrusted_document_data"
+      },
+      "draft": {
+        "status": "answered",
+        "answer": "The total loan period for an eligible Resident item after one renewal is 35 days (21 days plus 14 days).",
+        "claims": [
+          {
+            "text": "The total loan period for an eligible Resident item after one renewal is 35 days (21 days plus 14 days).",
+            "citations": [
+              {
+                "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1
+              },
+              {
+                "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 0
+              },
+              {
+                "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1
+              }
+            ]
+          }
+        ]
+      },
+      "checker_outcome": {
+        "status": "insufficient_evidence",
+        "reason": "insufficient_claim_support",
+        "answer": null,
+        "claims": [
+          {
+            "text": "The total loan period for an eligible Resident item after one renewal is 35 days (21 days plus 14 days).",
+            "citations": [
+              {
+                "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+                "semantic_support": "insufficient"
+              },
+              {
+                "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+                "semantic_support": "insufficient"
+              },
+              {
+                "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+                "semantic_support": "insufficient"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "insufficient",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 6.191119194030762,
+              "conflicting": false,
+              "passage_support": [
+                "insufficient",
+                "insufficient",
+                "insufficient"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+          "ev_42832a3725e29ba4dbdc6fb2254f4638",
+          "ev_52c8b6fce9c34ea21994e903fe979df8",
+          "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+          "ev_55272e48a9809a5f5e7f696e2799ba72"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "answer": null,
+      "abstained": true,
+      "citations": [
+        {
+          "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 1,
+          "source_quote": "A renewal adds 14 days to the original loan period."
+        },
+        {
+          "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 0,
+          "source_quote": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+        },
+        {
+          "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 1,
+          "source_quote": "Residents may renew eligible items once."
+        }
+      ],
+      "explanation": "The table states Resident loan period = 21 days; the renewal passage states an additional 14 days; residents may renew eligible items once. These support the agent arithmetic inference 21 + 14 = 35 days, but the checker withheld the synthesis for insufficient semantic claim support despite valid citations. The inferred total is not presented as a verified answer. Useful source excerpts are retained in citations."
+    }
+  ],
+  "elapsed_ms": 2302.8159999812488,
+  "operation_count": 11,
+  "configuration": {
+    "artifact_root": "tmp/agent-eval/skill-artifacts",
+    "semantic_verifier": true,
+    "model_cache_dir": "../tmp/hf-model-cache",
+    "retrieval_mode": "bm25",
+    "external_requests": false,
+    "operation_limit": 12
+  },
+  "operational_problems": [
+    "Source working tree changes were underway during this trial; an exact loaded-source fingerprint was not captured. Results are an exploratory usability comparison, not a frozen accuracy benchmark."
+  ],
+  "limitations": [
+    "The local semantic checker withheld the cross-passage arithmetic loan-period synthesis.",
+    "Token usage, provider cost, and exact inherited agent revision are unavailable."
+  ],
+  "elapsed_measurement": "Sum of measured SDK execution-stage process durations; excludes agent reasoning and file inspection."
+}

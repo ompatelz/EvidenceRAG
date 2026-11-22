@@ -1,0 +1,96 @@
+{
+  "model_identity": "inherited agent; exact revision not exposed",
+  "elapsed_ms": null,
+  "extraction_elapsed_ms": 24,
+  "token_usage": null,
+  "provider_cost": null,
+  "answers": [
+    {
+      "query_id": "p2_atlas_rate",
+      "answer": "20 hertz during calibration.",
+      "abstained": false,
+      "citations": [
+        {
+          "source": "datasets/fixtures/atlas-narrative.pdf",
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        }
+      ],
+      "explanation": "The sensor note explicitly states the calibration sampling rate."
+    },
+    {
+      "query_id": "p2_atlas_filter",
+      "answer": "Each sample passes through a filter before archival.",
+      "abstained": false,
+      "citations": [
+        {
+          "source": "datasets/fixtures/atlas-narrative.pdf",
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ],
+      "explanation": "The sensor note explicitly describes filtering before archival."
+    },
+    {
+      "query_id": "p2_atlas_weight",
+      "answer": null,
+      "abstained": true,
+      "citations": [],
+      "explanation": "The provided Atlas PDF gives calibration sampling and filtering information but does not state the sensor mass."
+    },
+    {
+      "query_id": "harbor_renewed_period",
+      "answer": "35 days total after one renewal (21 original days + 14 renewal days).",
+      "abstained": false,
+      "citations": [
+        {
+          "source": "datasets/fixtures/library-loans.pdf",
+          "page_index": 0,
+          "quote": "Resident\n6 items\n21 days"
+        },
+        {
+          "source": "datasets/fixtures/library-loans.pdf",
+          "page_index": 1,
+          "quote": "Residents may renew eligible items once.\nA renewal adds 14 days to the original loan period."
+        }
+      ],
+      "explanation": "The Resident row specifies a 21-day original loan period. Adding the stated 14-day renewal yields 35 days."
+    }
+  ],
+  "document_operations": {
+    "count": 2,
+    "page_extractions": 3,
+    "trace": [
+      {
+        "operation_index": 1,
+        "operation": "open_and_extract_all_pages",
+        "source": "datasets/fixtures/atlas-narrative.pdf",
+        "pages": [
+          {
+            "page_index": 0,
+            "text": "Atlas Sensor Note\nThe Atlas sensor samples at 20 hertz during calibration.\nEach sample passes through a filter before archival.\nSensor\nFilter\nArchive\nFigure 1. Calibration data flow: Sensor -> Filter -> Archive.\nRepository-owned evaluation fixture | Page 1\n"
+          }
+        ]
+      },
+      {
+        "operation_index": 2,
+        "operation": "open_and_extract_all_pages",
+        "source": "datasets/fixtures/library-loans.pdf",
+        "pages": [
+          {
+            "page_index": 0,
+            "text": "Harbor Library Loan Schedule\nLoan limits apply to each membership account.\nMembership\nLoan limit\nLoan period\nDay pass\n2 items\n7 days\nResident\n6 items\n21 days\nPartner\n10 items\n28 days\n"
+          },
+          {
+            "page_index": 1,
+            "text": "Harbor Library Loan Schedule\nRenewals\nResidents may renew eligible items once.\nA renewal adds 14 days to the original loan period.\nAn item with a pending reservation cannot be renewed.\nRepository-owned evaluation fixture | Page 2\n"
+          }
+        ]
+      }
+    ]
+  },
+  "operational_problems": [
+    "PyMuPDF emitted a deprecation warning for import fitz; extraction succeeded.",
+    "End-to-end elapsed time was not measured; extraction elapsed time was measured as 24 ms."
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "query_id": "p2_atlas_rate",
+    "question": "What is the calibration sampling rate of the Atlas sensor?",
+    "pdf": "datasets/fixtures/atlas-narrative.pdf"
+  },
+  {
+    "query_id": "p2_atlas_filter",
+    "question": "What happens to each Atlas sample before it is archived?",
+    "pdf": "datasets/fixtures/atlas-narrative.pdf"
+  },
+  {
+    "query_id": "p2_atlas_weight",
+    "question": "What is the mass of the Atlas sensor?",
+    "pdf": "datasets/fixtures/atlas-narrative.pdf"
+  },
+  {
+    "query_id": "harbor_renewed_period",
+    "question": "What is the total loan period for an eligible Resident item after one renewal?",
+    "pdf": "datasets/fixtures/library-loans.pdf"
+  }
+]

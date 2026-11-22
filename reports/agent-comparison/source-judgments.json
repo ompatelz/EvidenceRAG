@@ -1,0 +1,252 @@
+{
+  "reviewer_type": "independent_agent_source_audit",
+  "human_verified": false,
+  "scope": "Only questions.json, blinded-responses.json, and their named source PDFs were read. PDF text was extracted with PyMuPDF using ../.venv/Scripts/python.exe. Only emitted answer text was judged; abstentions have null answer, claim-support, and page-citation judgments. Page indices are zero-based.",
+  "judgments": [
+    {
+      "arm": "A",
+      "query_id": "p2_atlas_rate",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "PDF page_index 0 states exactly: \"The Atlas sensor samples at 20 hertz during calibration.\" The emitted answer and cited page agree.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        }
+      ]
+    },
+    {
+      "arm": "A",
+      "query_id": "p2_atlas_filter",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "PDF page_index 0 states exactly: \"Each sample passes through a filter before archival.\" The emitted answer and cited page agree.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ]
+    },
+    {
+      "arm": "A",
+      "query_id": "p2_atlas_weight",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": false,
+      "answer_correct": null,
+      "all_emitted_claims_supported": null,
+      "page_citations_correct": null,
+      "source_has_enough_information": false,
+      "rationale": "No answer was emitted. The complete one-page source provides sampling and filtering facts but no sensor mass. For example, page_index 0 says \"The Atlas sensor samples at 20 hertz during calibration.\" and \"Each sample passes through a filter before archival.\" Neither states or implies mass.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        },
+        {
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ]
+    },
+    {
+      "arm": "A",
+      "query_id": "harbor_renewed_period",
+      "source_pdf": "datasets/fixtures/library-loans.pdf",
+      "emitted": false,
+      "answer_correct": null,
+      "all_emitted_claims_supported": null,
+      "page_citations_correct": null,
+      "source_has_enough_information": true,
+      "rationale": "No answer was emitted; attached citations are not an emitted answer. The source nevertheless suffices: page_index 0 gives the Resident row exactly as \"Resident\\n6 items\\n21 days\"; page_index 1 states \"Residents may renew eligible items once.\" and \"A renewal adds 14 days to the original loan period.\" Thus 21 + 14 = 35 days. Answer-related judgments are null for this abstention.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "Resident\n6 items\n21 days"
+        },
+        {
+          "page_index": 1,
+          "quote": "Residents may renew eligible items once."
+        },
+        {
+          "page_index": 1,
+          "quote": "A renewal adds 14 days to the original loan period."
+        }
+      ]
+    },
+    {
+      "arm": "B",
+      "query_id": "p2_atlas_rate",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "PDF page_index 0 states exactly: \"The Atlas sensor samples at 20 hertz during calibration.\" The emitted answer and cited page agree.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        }
+      ]
+    },
+    {
+      "arm": "B",
+      "query_id": "p2_atlas_filter",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "PDF page_index 0 states exactly: \"Each sample passes through a filter before archival.\" The emitted answer and cited page agree.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ]
+    },
+    {
+      "arm": "B",
+      "query_id": "p2_atlas_weight",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": false,
+      "answer_correct": null,
+      "all_emitted_claims_supported": null,
+      "page_citations_correct": null,
+      "source_has_enough_information": false,
+      "rationale": "No answer was emitted. The complete one-page source provides sampling and filtering facts but no sensor mass. For example, page_index 0 says \"The Atlas sensor samples at 20 hertz during calibration.\" and \"Each sample passes through a filter before archival.\" Neither states or implies mass.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        },
+        {
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ]
+    },
+    {
+      "arm": "B",
+      "query_id": "harbor_renewed_period",
+      "source_pdf": "datasets/fixtures/library-loans.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "The emitted 35-day answer follows by addition from the source: page_index 0 gives the Resident row exactly as \"Resident\\n6 items\\n21 days\"; page_index 1 states \"Residents may renew eligible items once.\" and \"A renewal adds 14 days to the original loan period.\" Thus 21 + 14 = 35 days. The cited pages and quotations agree with the PDF.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "Resident\n6 items\n21 days"
+        },
+        {
+          "page_index": 1,
+          "quote": "Residents may renew eligible items once."
+        },
+        {
+          "page_index": 1,
+          "quote": "A renewal adds 14 days to the original loan period."
+        }
+      ]
+    },
+    {
+      "arm": "C",
+      "query_id": "p2_atlas_rate",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "PDF page_index 0 states exactly: \"The Atlas sensor samples at 20 hertz during calibration.\" The emitted answer and cited page agree.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        }
+      ]
+    },
+    {
+      "arm": "C",
+      "query_id": "p2_atlas_filter",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "PDF page_index 0 states exactly: \"Each sample passes through a filter before archival.\" The emitted answer and cited page agree.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ]
+    },
+    {
+      "arm": "C",
+      "query_id": "p2_atlas_weight",
+      "source_pdf": "datasets/fixtures/atlas-narrative.pdf",
+      "emitted": false,
+      "answer_correct": null,
+      "all_emitted_claims_supported": null,
+      "page_citations_correct": null,
+      "source_has_enough_information": false,
+      "rationale": "No answer was emitted. The complete one-page source provides sampling and filtering facts but no sensor mass. For example, page_index 0 says \"The Atlas sensor samples at 20 hertz during calibration.\" and \"Each sample passes through a filter before archival.\" Neither states or implies mass.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "The Atlas sensor samples at 20 hertz during calibration."
+        },
+        {
+          "page_index": 0,
+          "quote": "Each sample passes through a filter before archival."
+        }
+      ]
+    },
+    {
+      "arm": "C",
+      "query_id": "harbor_renewed_period",
+      "source_pdf": "datasets/fixtures/library-loans.pdf",
+      "emitted": true,
+      "answer_correct": true,
+      "all_emitted_claims_supported": true,
+      "page_citations_correct": true,
+      "source_has_enough_information": true,
+      "rationale": "The emitted 35-day answer follows by addition from the source: page_index 0 gives the Resident row exactly as \"Resident\\n6 items\\n21 days\"; page_index 1 states \"Residents may renew eligible items once.\" and \"A renewal adds 14 days to the original loan period.\" Thus 21 + 14 = 35 days. The cited pages contain the supporting facts. The Markdown table formatting in arm C is a faithful representation of the page 0 table, not literal PDF text formatting.",
+      "source_quotes": [
+        {
+          "page_index": 0,
+          "quote": "Resident\n6 items\n21 days"
+        },
+        {
+          "page_index": 1,
+          "quote": "Residents may renew eligible items once."
+        },
+        {
+          "page_index": 1,
+          "quote": "A renewal adds 14 days to the original loan period."
+        }
+      ]
+    }
+  ],
+  "issues": [
+    "Arm A abstains on harbor_renewed_period although the source supports a 35-day answer.",
+    "All arms appropriately abstain on p2_atlas_weight because the source supplies no sensor mass.",
+    "No incorrect or unsupported emitted answer or incorrect supporting page citation was found."
+  ]
+}

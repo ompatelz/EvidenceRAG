@@ -29,8 +29,14 @@ from evidence_rag.documents import (
     PyMuPDFPageRenderer,
     PyMuPDFParser,
 )
-from evidence_rag.documents.models import EvidenceArtifact, IngestionManifest, PagePreviewManifest
+from evidence_rag.documents.models import (
+    DocumentIngestionStatusResponse,
+    EvidenceArtifact,
+    IngestionManifest,
+    PagePreviewManifest,
+)
 from evidence_rag.documents.service import DocumentRenderingService
+from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.evidence import EvidenceUnit
 from evidence_rag.policy import AnswerPolicy
 from evidence_rag.retrieval.service import RetrievalMode, retrieve
@@ -59,6 +65,7 @@ class RetrievalResponse(BaseModel):
     pack: EvidencePack
     ranking: tuple[dict[str, object], ...]
     timings_ms: dict[str, float]
+    truncated_evidence_ids: tuple[str, ...] = ()
     content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
 
 
@@ -68,6 +75,23 @@ class EvidenceResponse(BaseModel):
     anchor: EvidenceAnchorResponse
     text_truncated: bool
     original_text_chars: int
+    content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
+
+
+class DocumentList(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    documents: tuple[DocumentIngestionStatusResponse, ...]
+    next_offset: int | None
+    skipped_invalid_records: int = 0
+
+
+class PageEvidenceResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    document: DocumentRef
+    page_index: int
+    pack: EvidencePack
+    truncated_evidence_ids: tuple[str, ...]
+    next_offset: int | None
     content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
 
 
@@ -81,12 +105,18 @@ class EvidenceRAG:
 
     def __init__(
         self,
-        artifact_root: str | Path = "artifacts",
+        artifact_root: str | Path | None = None,
         *,
         settings: AppSettings | None = None,
         verifier: SemanticVerifier | None = None,
     ) -> None:
-        self.settings = settings or AppSettings(artifact_root=Path(artifact_root))
+        if artifact_root is not None and settings is not None:
+            raise ValueError("supply artifact_root or settings, not both")
+        self.settings = settings or (
+            AppSettings(artifact_root=Path(artifact_root))
+            if artifact_root is not None
+            else AppSettings()
+        )
         self.store = LocalArtifactStore(
             self.settings.artifact_root,
             max_upload_bytes=self.settings.max_upload_bytes,
@@ -129,6 +159,40 @@ class EvidenceRAG:
             document.document_sha256,
             request_id=f"sdk_{uuid4().hex}",
             mode=IngestionMode.RETRY,
+        )
+
+    @property
+    def verifier_configured(self) -> bool:
+        """Configuration only; a cached model may still fail to load."""
+        return self._answers.verifier is not None
+
+    def status(self, document: DocumentRef) -> DocumentIngestionStatusResponse:
+        return DocumentIngestionStatusResponse.from_manifest(
+            self.store.get_manifest(document.document_id, document.document_sha256)
+        )
+
+    def documents(self, *, offset: int = 0, limit: int = 20) -> DocumentList:
+        """List only this store's document metadata, never scan source directories."""
+        if offset < 0 or not 1 <= limit <= 100:
+            raise ValueError("invalid catalog pagination")
+        rows = []
+        skipped = 0
+        # Identifiers are derived from path components and checked by the store.
+        for path in sorted(self.store.root.glob("documents/doc_*/versions/*/manifest.json")):
+            try:
+                document = DocumentRef(
+                    document_id=path.parent.parent.parent.name,
+                    document_sha256=path.parent.name,
+                )
+                manifest = self.store.get_manifest(document.document_id, document.document_sha256)
+            except (ValueError, OSError, ArtifactNotFoundError, StorageError):
+                skipped += 1
+                continue
+            rows.append(DocumentIngestionStatusResponse.from_manifest(manifest))
+        return DocumentList(
+            documents=tuple(rows[offset : offset + limit]),
+            next_offset=offset + limit if len(rows) > offset + limit else None,
+            skipped_invalid_records=skipped,
         )
 
     def _ready(
@@ -179,6 +243,42 @@ class EvidenceRAG:
             pack=pack,
             ranking=tuple(asdict(hit) for hit in hits),
             timings_ms=timings,
+            truncated_evidence_ids=tuple(
+                item.evidence_id for item in pack.items if item.text != units[item.evidence_id].text
+            ),
+        )
+
+    def page_evidence(
+        self, document: DocumentRef, page_index: int, *, offset: int = 0, limit: int = 5
+    ) -> PageEvidenceResponse:
+        """Read bounded page context, preserving canonical IDs and document scope."""
+        manifest, artifact, _ = self._ready(document)
+        if not 0 <= page_index < manifest.page_count or offset < 0 or not 1 <= limit <= 5:
+            raise ValueError("invalid page or pagination")
+        ordered = sorted(
+            (unit for unit in artifact.units if unit.page_index == page_index),
+            key=lambda unit: (unit.reading_order or 0, unit.evidence_id),
+        )
+        selected = ordered[offset : offset + limit]
+        units = {unit.evidence_id: unit for unit in selected}
+        pack = build_pack(
+            selected,
+            units,
+            document_id=manifest.document_id,
+            document_version=manifest.document_version,
+            config=self._config,
+        )
+        consumed = len(pack.items)
+        return PageEvidenceResponse(
+            document=document,
+            page_index=page_index,
+            pack=pack,
+            truncated_evidence_ids=tuple(
+                item.evidence_id for item in pack.items if item.text != units[item.evidence_id].text
+            ),
+            next_offset=offset + consumed
+            if consumed and offset + consumed < len(ordered)
+            else None,
         )
 
     def evidence(self, document: DocumentRef, evidence_id: str) -> EvidenceResponse:
@@ -213,8 +313,8 @@ class EvidenceRAG:
         cannot silently gain support from text the agent was not supplied.
         """
         SearchRequest(**document.model_dump(), question=question)
-        if not 1 <= len(evidence_ids) <= self._config.max_candidates:
-            raise ValueError("supply between one and five evidence IDs")
+        if len(evidence_ids) > self._config.max_candidates:
+            raise ValueError("supply at most five evidence IDs")
         if len(set(evidence_ids)) != len(evidence_ids):
             raise ValueError("duplicate evidence IDs")
         manifest, artifact, pages = self._ready(document)

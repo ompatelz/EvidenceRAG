@@ -11,8 +11,7 @@ from pydantic import BaseModel, ValidationError
 
 from evidence_rag import __version__
 from evidence_rag.answers import DraftAnswer
-from evidence_rag.config import AppSettings
-from evidence_rag.documents import IntakeError
+from evidence_rag.documents import DocumentIngestionResponse, IngestionState, IntakeError
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.sdk import DocumentRef, EvidenceRAG, SearchRequest
 
@@ -31,11 +30,14 @@ def export_skill(destination: Path) -> Path:
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(prog="evidence-rag")
     result.add_argument("--version", action="version", version=__version__)
-    result.add_argument("--artifact-root", type=Path, default=Path("artifacts"))
+    result.add_argument("--artifact-root", type=Path, default=None)
     commands = result.add_subparsers(dest="command", required=True)
     ingest = commands.add_parser("ingest", help="Ingest an explicitly selected local PDF")
     ingest.add_argument("path", type=Path)
-    for name in ("search", "evidence", "check", "retry"):
+    catalog = commands.add_parser("documents", help="List this store's ingested versions")
+    catalog.add_argument("--offset", type=int, default=0)
+    catalog.add_argument("--limit", type=int, default=20)
+    for name in ("search", "evidence", "check", "retry", "status", "page"):
         command = commands.add_parser(name)
         command.add_argument("--document-id", required=True)
         command.add_argument("--sha256", required=True)
@@ -48,8 +50,12 @@ def parser() -> argparse.ArgumentParser:
             command.add_argument("--requires-visual-evidence", action="store_true")
         if name == "evidence":
             command.add_argument("--evidence-id", required=True)
+        if name == "page":
+            command.add_argument("--page-index", required=True, type=int)
+            command.add_argument("--offset", type=int, default=0)
+            command.add_argument("--limit", type=int, default=5)
         if name == "check":
-            command.add_argument("--evidence-id", action="append", required=True)
+            command.add_argument("--evidence-id", action="append", default=[])
             command.add_argument(
                 "--draft",
                 type=Path,
@@ -81,10 +87,12 @@ def main(argv: list[str] | None = None) -> int:
 
             serve(args.artifact_root, args.documents_root)
             return 0
-        engine = EvidenceRAG(settings=AppSettings(artifact_root=args.artifact_root))
+        engine = EvidenceRAG(artifact_root=args.artifact_root)
         output: BaseModel
         if args.command == "ingest":
             output = engine.ingest(args.path)
+        elif args.command == "documents":
+            output = engine.documents(offset=args.offset, limit=args.limit)
         else:
             document = DocumentRef(document_id=args.document_id, document_sha256=args.sha256)
             if args.command == "search":
@@ -100,11 +108,24 @@ def main(argv: list[str] | None = None) -> int:
                 output = engine.evidence(document, args.evidence_id)
             elif args.command == "retry":
                 output = engine.retry(document)
+            elif args.command == "status":
+                output = engine.status(document)
+            elif args.command == "page":
+                output = engine.page_evidence(
+                    document, args.page_index, offset=args.offset, limit=args.limit
+                )
             else:
-                draft = DraftAnswer.model_validate_json(args.draft.read_bytes())
+                with args.draft.open("rb") as stream:
+                    draft_bytes = stream.read(65537)
+                if len(draft_bytes) > 65536:
+                    raise ValueError("draft exceeds 64 KiB")
+                draft = DraftAnswer.model_validate_json(draft_bytes)
                 output = engine.check_draft(document, args.question, args.evidence_id, draft)
         print(output.model_dump_json())
-        return 0
+        return int(
+            isinstance(output, DocumentIngestionResponse)
+            and output.state is not IngestionState.READY
+        )
     except IntakeError as exc:
         print(json.dumps({"error": exc.code, "message": exc.message}), file=sys.stderr)
     except (OSError, ValueError, ValidationError, ArtifactNotFoundError, StorageError):

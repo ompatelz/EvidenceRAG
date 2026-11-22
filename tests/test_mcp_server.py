@@ -46,6 +46,9 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
                 "search_evidence",
                 "fetch_evidence",
                 "check_draft",
+                "list_documents",
+                "document_status",
+                "fetch_page_evidence",
             }
             caps = await client.call_tool("capabilities", {})
             assert caps.structuredContent is not None
@@ -59,6 +62,21 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
             document = {
                 key: ingested.structuredContent[key] for key in ("document_id", "document_sha256")
             }
+            catalog = await client.call_tool("list_documents", {})
+            assert catalog.structuredContent is not None
+            assert (
+                catalog.structuredContent["documents"][0]["document_id"] == document["document_id"]
+            )
+            page = await client.call_tool(
+                "fetch_page_evidence",
+                {
+                    **document,
+                    "page_index": 0,
+                    "limit": 1,
+                },
+            )
+            assert page.structuredContent is not None
+            assert len(page.structuredContent["pack"]["items"]) == 1
             result = await client.call_tool(
                 "search_evidence", {**document, "question": "calibration sampling"}
             )

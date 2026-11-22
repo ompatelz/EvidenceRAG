@@ -1,0 +1,108 @@
+{
+  "classification": "exploratory_agent_source_audit_not_a_frozen_accuracy_benchmark",
+  "human_verified": false,
+  "model_revision_exposed": false,
+  "runtime_source_fingerprint_captured": false,
+  "arms": {
+    "tools_and_skill": {
+      "questions": 4,
+      "correct_final_answers_over_answerable": [
+        2,
+        3
+      ],
+      "answerable_coverage": [
+        2,
+        3
+      ],
+      "false_abstentions": [
+        1,
+        3
+      ],
+      "false_answers_on_unanswerable": [
+        0,
+        1
+      ],
+      "supported_emitted_answers": [
+        2,
+        2
+      ],
+      "correctly_paged_emitted_answers": [
+        2,
+        2
+      ],
+      "document_operations": 11
+    },
+    "baseline": {
+      "questions": 4,
+      "correct_final_answers_over_answerable": [
+        3,
+        3
+      ],
+      "answerable_coverage": [
+        3,
+        3
+      ],
+      "false_abstentions": [
+        0,
+        3
+      ],
+      "false_answers_on_unanswerable": [
+        0,
+        1
+      ],
+      "supported_emitted_answers": [
+        3,
+        3
+      ],
+      "correctly_paged_emitted_answers": [
+        3,
+        3
+      ],
+      "document_operations": 3
+    },
+    "tools_only": {
+      "questions": 4,
+      "correct_final_answers_over_answerable": [
+        3,
+        3
+      ],
+      "answerable_coverage": [
+        3,
+        3
+      ],
+      "false_abstentions": [
+        0,
+        3
+      ],
+      "false_answers_on_unanswerable": [
+        0,
+        1
+      ],
+      "supported_emitted_answers": [
+        3,
+        3
+      ],
+      "correctly_paged_emitted_answers": [
+        3,
+        3
+      ],
+      "document_operations": 10
+    }
+  },
+  "text_hashing": "UTF-8 with LF line endings",
+  "input_sha256": {
+    "questions.json": "4d30d4a7aca8ef61daa0b309ca0ac8b5adbba70cc4c2e5d6f380cd792ebea731",
+    "source-judgments.json": "be19c86b17c89d229e80efde8f6d2cefa25492a2dba7617d82ffd85145581453",
+    "baseline.json": "668995ad3bc9af2c19d219960a2d8b969c489566e6d4543ca5cd9b85bf94fd65",
+    "tools_only.json": "b27d605a2ca16ea34864aada3fbabce756ab71965c0fb4f1e18b3dc3fc8a150b",
+    "tools_and_skill.json": "52f75e207e6d5917003e9d50666e7468839b72074aed88b387611de6522a524e"
+  },
+  "limitations": [
+    "Four synthetic development questions; one trial per arm.",
+    "Inherited agent model and sampling settings are not fully exposed.",
+    "Working-tree changes were underway; loaded-source hashes were not captured.",
+    "Latency scopes differ; token usage and provider cost are unobserved.",
+    "Independent agent source judgments are not human judgments.",
+    "No agent-quality improvement or population-risk conclusion is established."
+  ]
+}

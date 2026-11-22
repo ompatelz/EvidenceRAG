@@ -10,7 +10,7 @@ import evidence_rag
 def test_package_exposes_installed_version() -> None:
     """The importable version stays aligned with installed package metadata."""
     assert evidence_rag.__version__ == version("evidence-rag")
-    assert evidence_rag.__version__ == "0.1.0"
+    assert evidence_rag.__version__ == "0.2.0"
 
 
 def test_import_does_not_load_deferred_heavy_dependencies() -> None:

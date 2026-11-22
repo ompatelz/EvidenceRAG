@@ -7,6 +7,10 @@ provider: the calling agent supplies its own draft.
 
 ## Install the package
 
+Use the wheel from [GitHub Releases](https://github.com/ompatelz/EvidenceRAG/releases)
+with `python -m pip install PATH_TO_WHEEL`. A separate skill archive, source
+archive and SHA256SUMS accompany the release. There is no PyPI publication.
+
 From the repository root, with Python 3.12:
 
 ```sh
@@ -21,7 +25,7 @@ python -m pip install '.[dense]'
 ```
 
 Build distributable wheel and source archives with `uv build`. Install a wheel
-with `python -m pip install dist/evidence_rag-0.1.0-py3-none-any.whl`. The skill
+with `python -m pip install dist/evidence_rag-0.2.0-py3-none-any.whl`. The skill
 resources, inspector assets and license notices are included. This is a source
 and wheel installation workflow; no PyPI release has been published by this change.
 
@@ -72,6 +76,9 @@ answers. Use one SDK instance per trusted local application process.
 
 ```sh
 evidence-rag --artifact-root artifacts ingest datasets/fixtures/atlas-narrative.pdf
+evidence-rag --artifact-root artifacts documents
+evidence-rag --artifact-root artifacts status --document-id ID --sha256 SHA
+evidence-rag --artifact-root artifacts page --document-id ID --sha256 SHA --page-index 0
 evidence-rag --artifact-root artifacts search --document-id ID --sha256 SHA --question "calibration sampling"
 evidence-rag --artifact-root artifacts evidence --document-id ID --sha256 SHA --evidence-id EV
 evidence-rag --artifact-root artifacts check --document-id ID --sha256 SHA --question "calibration sampling" --evidence-id EV --draft draft.json
@@ -80,9 +87,12 @@ evidence-rag --artifact-root artifacts check --document-id ID --sha256 SHA --que
 Replace ID, SHA and EV with values from actual results. Repeat `--evidence-id`
 in pack order for multiple units. `python -m evidence_rag` is equivalent to the
 installed console command. Successful commands emit JSON to stdout; request
-errors emit redacted JSON to stderr and exit nonzero. An ingestion response
+errors emit redacted JSON to stderr and exit nonzero. Failed/partial ingestion
+also exits nonzero while preserving its JSON lifecycle response. An ingestion response
 contains a lifecycle state: continue only when it is ready. Use `retry` with
 the same document arguments for an explicitly selected failed/interrupted intake.
+The artifact root defaults to EVIDENCERAG_ARTIFACT_ROOT when set, or artifacts;
+an explicit CLI option takes precedence. Draft input is bounded to 64 KiB.
 
 ## Optional MCP server
 
@@ -92,6 +102,9 @@ Install the transport requirements separately from the core lock:
 python -m pip install . -r integrations/mcp/requirements.txt
 evidence-rag --artifact-root /absolute/path/to/artifacts mcp --documents-root /absolute/path/to/permitted-pdfs
 ```
+
+When installing only a wheel, install `mcp==1.30.0` separately; the requirements
+file is the equivalent source-checkout convenience.
 
 The adapter pins official MCP SDK 1.30.0. Its v1 FastMCP interface is supported
 separately from the incompatible v2 SDK. The optional requirement pins the SDK,
@@ -121,9 +134,12 @@ the example uses the common mcpServers shape. No network MCP listener is started
 | Tool | Behavior |
 | --- | --- |
 | capabilities | Return available modes, evidence budgets and ingestion/verifier configuration |
+| list_documents | Rediscover stored document/version IDs with pagination |
+| document_status | Read lifecycle state and page count |
 | ingest_pdf | Ingest a selected PDF relative to the configured documents root |
 | search_evidence | Retrieve a version-scoped evidence pack and method-specific rankings |
 | fetch_evidence | Return a canonical unit, truncation information and source anchor |
+| fetch_page_evidence | Read bounded explicit-page text context and follow next_offset |
 | check_draft | Validate an agent-written structured answer; return an answer or abstention |
 
 Omitting documents-root disables ingestion. Absolute paths, parent traversal,
@@ -171,3 +187,5 @@ of better agent answer quality.
 
 The [agent evaluation protocol](agent_evaluation.md) defines matched baseline,
 tools-only and tools-plus-skill runs. Keep frozen test families closed to tuning.
+The [exploratory trial](../reports/agent-comparison/README.md) records actual
+three-arm outcomes and independent agent source audits; it establishes no quality gain.
