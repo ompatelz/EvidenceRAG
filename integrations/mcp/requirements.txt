@@ -1,0 +1,3 @@
+# Optional transport dependency; keep it separate from the core runtime lock.
+# The adapter uses the supported SDK v1 line, not the incompatible v2 API.
+mcp==1.30.0

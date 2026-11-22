@@ -1,0 +1,317 @@
+{
+  "audit_sha256": "fa9f57e17026b9119dd369b3f2a26b4c26418803da0b2087a5a5f595954145e9",
+  "model": "cross-encoder/nli-deberta-v3-small",
+  "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+  "preprocessing": "cited-premise-first-v1",
+  "threshold": "argmax; exact top-score ties are insufficient",
+  "runtime": {
+    "python": "3.12.9",
+    "system": "Windows",
+    "onnxruntime": "1.31.1",
+    "tokenizers": "0.23.3"
+  },
+  "results": [
+    {
+      "audit": {
+        "id": "atlas_rate",
+        "split": "development",
+        "passages": [
+          "The Atlas sensor samples at 20 hertz during calibration."
+        ],
+        "claim": "During calibration, the Atlas sensor takes 20 samples each second.",
+        "expected": "supported",
+        "rationale": "Hertz expresses events per second.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "supported",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 3.62294664978981,
+        "conflicting": false,
+        "passage_support": [
+          "supported"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "atlas_wrong_rate",
+        "split": "development",
+        "passages": [
+          "The Atlas sensor samples at 20 hertz during calibration."
+        ],
+        "claim": "During calibration, the Atlas sensor samples at 200 hertz.",
+        "expected": "contradicted",
+        "rationale": "The same quantity and operating condition have mutually exclusive values.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "contradicted",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 7.685924053192139,
+        "conflicting": false,
+        "passage_support": [
+          "contradicted"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "atlas_partial",
+        "split": "development",
+        "passages": [
+          "The Atlas sensor samples at 20 hertz during calibration."
+        ],
+        "claim": "The Atlas sensor samples at 20 hertz during calibration and at 100 hertz during normal operation.",
+        "expected": "insufficient",
+        "rationale": "The normal-operation conjunct is absent.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "insufficient",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 6.635809540748596,
+        "conflicting": false,
+        "passage_support": [
+          "insufficient"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "atlas_context",
+        "split": "development",
+        "passages": [
+          "The Atlas sensor samples at 20 hertz during calibration."
+        ],
+        "claim": "The Atlas sensor always samples at 20 hertz.",
+        "expected": "insufficient",
+        "rationale": "The source limits the claim to calibration.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "insufficient",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 6.068208813667297,
+        "conflicting": false,
+        "passage_support": [
+          "insufficient"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "atlas_absence",
+        "split": "development",
+        "passages": [
+          "The Atlas sensor samples at 20 hertz during calibration."
+        ],
+        "claim": "The Atlas sensor stores its samples in Redis.",
+        "expected": "insufficient",
+        "rationale": "Storage system is unmentioned.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "insufficient",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 4.3651129603385925,
+        "conflicting": false,
+        "passage_support": [
+          "insufficient"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "atlas_negation",
+        "split": "development",
+        "passages": [
+          "The Atlas sensor samples at 20 hertz during calibration."
+        ],
+        "claim": "The Atlas sensor does not sample at 20 hertz during calibration.",
+        "expected": "contradicted",
+        "rationale": "The claim negates the source statement.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "contradicted",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 8.647258281707764,
+        "conflicting": false,
+        "passage_support": [
+          "contradicted"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "checksum_effect",
+        "split": "validation",
+        "passages": [
+          "A checksum mismatch produces a negative acknowledgment."
+        ],
+        "claim": "An acknowledgment indicating failure is sent when a checksum does not match.",
+        "expected": "supported",
+        "rationale": "The claim paraphrases the effect of a mismatch.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "supported",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 5.91941499710083,
+        "conflicting": false,
+        "passage_support": [
+          "supported"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "checksum_reverse",
+        "split": "validation",
+        "passages": [
+          "A checksum mismatch produces a negative acknowledgment."
+        ],
+        "claim": "Every negative acknowledgment means that a checksum mismatch occurred.",
+        "expected": "insufficient",
+        "rationale": "The source provides a sufficient cause, not an exclusive cause.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "insufficient",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 0.9202094078063965,
+        "conflicting": false,
+        "passage_support": [
+          "insufficient"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "cache_numeric",
+        "split": "validation",
+        "passages": [
+          "Study ID CA-09 identifies this synthetic cache experiment.",
+          "The cache capacity is 64 MiB."
+        ],
+        "claim": "Study CA-09 used a cache with a capacity of 64 MiB.",
+        "expected": "supported",
+        "rationale": "The two passages connect the study identifier to the capacity.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "supported",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 5.58310079574585,
+        "conflicting": false,
+        "passage_support": [
+          "insufficient",
+          "insufficient"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "cache_units",
+        "split": "validation",
+        "passages": [
+          "The cache capacity is 64 MiB."
+        ],
+        "claim": "The cache capacity is 64 KiB.",
+        "expected": "contradicted",
+        "rationale": "The quantity and exact binary unit differ by a factor of 1024.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "contradicted",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 2.158670276403427,
+        "conflicting": false,
+        "passage_support": [
+          "contradicted"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "cache_unknown",
+        "split": "validation",
+        "passages": [
+          "The cache capacity is 64 MiB."
+        ],
+        "claim": "The cache admits an entry if it is requested three times.",
+        "expected": "insufficient",
+        "rationale": "Capacity does not specify the admission rule.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "insufficient",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 8.044910192489624,
+        "conflicting": false,
+        "passage_support": [
+          "insufficient"
+        ]
+      }
+    },
+    {
+      "audit": {
+        "id": "cache_wording",
+        "split": "validation",
+        "passages": [
+          "The cache capacity is 64 MiB."
+        ],
+        "claim": "The cache is roughly 64 megabytes.",
+        "expected": "uncertain",
+        "rationale": "Approximation tolerance and decimal versus binary usage need a reviewer decision.",
+        "review": "needs_human_review"
+      },
+      "result": {
+        "support": "supported",
+        "status": "assessed",
+        "model": "cross-encoder/nli-deberta-v3-small",
+        "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+        "preprocessing": "cited-premise-first-v1",
+        "margin": 4.485860824584961,
+        "conflicting": false,
+        "passage_support": [
+          "supported"
+        ]
+      }
+    }
+  ]
+}

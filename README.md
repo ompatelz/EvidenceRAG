@@ -18,6 +18,23 @@ the system can withhold a draft when the evidence is insufficient or conflicting
 *The screenshot shows the opt-in, fixed Atlas fixture answer. Live provider
 answers are configured separately.*
 
+## Use it in your own agent
+
+Use the Python package directly, call the JSON CLI, connect the optional stdio
+MCP server, or export the bundled companion skill. All share the same retrieval
+and evidence checks. Your agent supplies its own model and drafts.
+
+| Interface | Entry point |
+| --- | --- |
+| Python SDK | `from evidence_rag.sdk import EvidenceRAG, DocumentRef, SearchRequest` |
+| CLI | `evidence-rag ingest`, `search`, `evidence`, `check`, `retry` |
+| MCP server | `evidence-rag mcp` with separately installed transport requirements |
+| Agent skill | `evidence-rag export-skill ./evidence-rag-agent` |
+| Web inspector | Existing FastAPI `/inspector` application |
+
+[Package installation and agent setup](docs/agent_integration.md) ·
+[Agent evaluation protocol](docs/agent_evaluation.md)
+
 ## What you can do
 
 | Capability | Implementation |
