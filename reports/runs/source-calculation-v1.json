@@ -1,0 +1,214 @@
+{
+  "scope": "source extraction and exact arithmetic, not answer-quality evaluation",
+  "fixture": "datasets/fixtures/library-loans.pdf",
+  "fixture_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+  "question": "Resident renewal loan period",
+  "provider_calls": 0,
+  "source_sha256": {
+    "src/evidence_rag/calculations.py": "ee7ebda4e3ec210b9ee4b421e5d2512e15fd585431f579b0a452579c1ea4a08d",
+    "src/evidence_rag/sdk.py": "2130d912b4d40a41e346e34c3b9696dc945745f34778f351433c36d7995538a2"
+  },
+  "correct_expected_value": {
+    "document": {
+      "document_id": "doc_c8797437052fd23adea34e6f",
+      "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+    },
+    "calculation": {
+      "status": "arithmetic_verified",
+      "version": "source-arithmetic-v1",
+      "operation": "add",
+      "operands": [
+        {
+          "selector": {
+            "kind": "table_cell",
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "row": "Resident",
+            "column": "Loan period"
+          },
+          "value": "21",
+          "unit": "days",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 0,
+          "source_text": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+        },
+        {
+          "selector": {
+            "kind": "text",
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "unit": "days"
+          },
+          "value": "14",
+          "unit": "days",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 1,
+          "source_text": "A renewal adds 14 days to the original loan period."
+        }
+      ],
+      "result": "35",
+      "unit": "days",
+      "expected_value": "35",
+      "matches_expected": true,
+      "claim_support": "not_assessed",
+      "notice": "Only selected source values and arithmetic were checked. This does not establish that the operation answers the question or that a narrative claim is supported."
+    },
+    "anchors": [
+      {
+        "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "page_index": 0,
+        "precision": "region",
+        "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+        "source_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.21464646,
+          "x1": 0.80065359,
+          "y1": 0.30555556
+        },
+        "display_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.21464646,
+          "x1": 0.80065359,
+          "y1": 0.30555556
+        },
+        "pixel_bbox": {
+          "x0": 107,
+          "y0": 339,
+          "x1": 980,
+          "y1": 485
+        }
+      },
+      {
+        "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "page_index": 1,
+        "precision": "region",
+        "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+        "source_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.19728535,
+          "x1": 0.45516329,
+          "y1": 0.21463385
+        },
+        "display_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.19728535,
+          "x1": 0.45516329,
+          "y1": 0.21463385
+        },
+        "pixel_bbox": {
+          "x0": 107,
+          "y0": 312,
+          "x1": 558,
+          "y1": 340
+        }
+      }
+    ],
+    "content_trust": "untrusted_document_data"
+  },
+  "incorrect_expected_value": {
+    "document": {
+      "document_id": "doc_c8797437052fd23adea34e6f",
+      "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+    },
+    "calculation": {
+      "status": "arithmetic_verified",
+      "version": "source-arithmetic-v1",
+      "operation": "add",
+      "operands": [
+        {
+          "selector": {
+            "kind": "table_cell",
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "row": "Resident",
+            "column": "Loan period"
+          },
+          "value": "21",
+          "unit": "days",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 0,
+          "source_text": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+        },
+        {
+          "selector": {
+            "kind": "text",
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "unit": "days"
+          },
+          "value": "14",
+          "unit": "days",
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+          "page_index": 1,
+          "source_text": "A renewal adds 14 days to the original loan period."
+        }
+      ],
+      "result": "35",
+      "unit": "days",
+      "expected_value": "34",
+      "matches_expected": false,
+      "claim_support": "not_assessed",
+      "notice": "Only selected source values and arithmetic were checked. This does not establish that the operation answers the question or that a narrative claim is supported."
+    },
+    "anchors": [
+      {
+        "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "page_index": 0,
+        "precision": "region",
+        "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+        "source_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.21464646,
+          "x1": 0.80065359,
+          "y1": 0.30555556
+        },
+        "display_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.21464646,
+          "x1": 0.80065359,
+          "y1": 0.30555556
+        },
+        "pixel_bbox": {
+          "x0": 107,
+          "y0": 339,
+          "x1": 980,
+          "y1": 485
+        }
+      },
+      {
+        "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "page_index": 1,
+        "precision": "region",
+        "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+        "source_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.19728535,
+          "x1": 0.45516329,
+          "y1": 0.21463385
+        },
+        "display_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.19728535,
+          "x1": 0.45516329,
+          "y1": 0.21463385
+        },
+        "pixel_bbox": {
+          "x0": 107,
+          "y0": 312,
+          "x1": 558,
+          "y1": 340
+        }
+      }
+    ],
+    "content_trust": "untrusted_document_data"
+  },
+  "narrative_claim_support": "not_assessed; grounding-v1 remains unchanged"
+}

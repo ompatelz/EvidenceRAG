@@ -1,0 +1,617 @@
+{
+  "question": "What is the total loan period for an eligible Resident item after one renewal?",
+  "operations": [
+    {
+      "operation": "documents",
+      "call": {
+        "offset": 0,
+        "limit": 20
+      },
+      "result": {
+        "documents": [],
+        "next_offset": null,
+        "skipped_invalid_records": 0
+      }
+    },
+    {
+      "operation": "ingest",
+      "call": {
+        "path": "datasets/fixtures/library-loans.pdf"
+      },
+      "result": {
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "state": "ready",
+        "attempt_count": 1,
+        "last_request_id": "sdk_ed6cc53fa81a4bfd978f1b995ffc0d17",
+        "evidence_count": 10,
+        "page_count": 2,
+        "failure_reason": null,
+        "failure_stage": null,
+        "stage_timings": [
+          {
+            "stage": "validation",
+            "duration_ms": 1.976699975784868
+          },
+          {
+            "stage": "parsing",
+            "duration_ms": 23.91589997569099
+          },
+          {
+            "stage": "rendering",
+            "duration_ms": 52.36640002112836
+          },
+          {
+            "stage": "persistence",
+            "duration_ms": 17.532700032461435
+          },
+          {
+            "stage": "total",
+            "duration_ms": 114.17400004575029
+          }
+        ],
+        "ready_at": "2026-11-23T13:59:03.028026Z",
+        "duplicate": false
+      }
+    },
+    {
+      "operation": "search",
+      "call": {
+        "document_id": "doc_c8797437052fd23adea34e6f",
+        "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+        "question": "What is the total loan period for an eligible Resident item after one renewal?",
+        "mode": "bm25",
+        "requires_visual_evidence": false
+      },
+      "result": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "mode": "bm25",
+        "status": "ok",
+        "pack": {
+          "items": [
+            {
+              "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "A renewal adds 14 days to the original loan period."
+            },
+            {
+              "evidence_id": "ev_42832a3725e29ba4dbdc6fb2254f4638",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "An item with a pending reservation cannot be renewed."
+            },
+            {
+              "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "text": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+            },
+            {
+              "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "text": "Residents may renew eligible items once."
+            },
+            {
+              "evidence_id": "ev_55272e48a9809a5f5e7f696e2799ba72",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "text": "Membership\nLoan limit\nLoan period"
+            }
+          ],
+          "excluded_ids": []
+        },
+        "ranking": [
+          {
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 1,
+            "score": 4.879760237284874,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.19728535,
+              "x1": 0.45516329,
+              "y1": 0.21463385
+            }
+          },
+          {
+            "evidence_id": "ev_42832a3725e29ba4dbdc6fb2254f4638",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 2,
+            "score": 3.6151310204688283,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.22885101,
+              "x1": 0.48694436,
+              "y1": 0.2461995
+            }
+          },
+          {
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "rank": 3,
+            "score": 2.2286458465610295,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.21464646,
+              "x1": 0.80065359,
+              "y1": 0.30555556
+            }
+          },
+          {
+            "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "rank": 4,
+            "score": 2.138217737716319,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.08823529,
+              "y0": 0.1657197,
+              "x1": 0.38880713,
+              "y1": 0.18306819
+            }
+          },
+          {
+            "evidence_id": "ev_55272e48a9809a5f5e7f696e2799ba72",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "rank": 5,
+            "score": 2.1001105384278906,
+            "anchor_precision": "region",
+            "bbox": {
+              "x0": 0.09803922,
+              "y0": 0.1896149,
+              "x1": 0.69949505,
+              "y1": 0.20869823
+            }
+          }
+        ],
+        "timings_ms": {
+          "index_build": 0.3103999770246446,
+          "bm25": 0.0838999985717237
+        },
+        "truncated_evidence_ids": [],
+        "content_trust": "untrusted_document_data"
+      }
+    },
+    {
+      "operation": "calculate",
+      "call": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "request": {
+          "operation": "add",
+          "operands": [
+            {
+              "kind": "table_cell",
+              "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+              "row": "Resident",
+              "column": "Loan period"
+            },
+            {
+              "kind": "text",
+              "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+              "unit": "days"
+            }
+          ],
+          "expected_value": "35"
+        }
+      },
+      "result": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "calculation": {
+          "status": "arithmetic_verified",
+          "version": "source-arithmetic-v1",
+          "operation": "add",
+          "operands": [
+            {
+              "selector": {
+                "kind": "table_cell",
+                "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                "row": "Resident",
+                "column": "Loan period"
+              },
+              "value": "21",
+              "unit": "days",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 0,
+              "source_text": "| Membership | Loan limit | Loan period |\n| --- | --- | --- |\n| Day pass | 2 items | 7 days |\n| Resident | 6 items | 21 days |\n| Partner | 10 items | 28 days |"
+            },
+            {
+              "selector": {
+                "kind": "text",
+                "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                "unit": "days"
+              },
+              "value": "14",
+              "unit": "days",
+              "document_id": "doc_c8797437052fd23adea34e6f",
+              "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+              "page_index": 1,
+              "source_text": "A renewal adds 14 days to the original loan period."
+            }
+          ],
+          "result": "35",
+          "unit": "days",
+          "expected_value": "35",
+          "matches_expected": true,
+          "claim_support": "not_assessed",
+          "notice": "Only selected source values and arithmetic were checked. This does not establish that the operation answers the question or that a narrative claim is supported."
+        },
+        "anchors": [
+          {
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "precision": "region",
+            "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+            "source_bbox": {
+              "x0": 0.08823529,
+              "y0": 0.21464646,
+              "x1": 0.80065359,
+              "y1": 0.30555556
+            },
+            "display_bbox": {
+              "x0": 0.08823529,
+              "y0": 0.21464646,
+              "x1": 0.80065359,
+              "y1": 0.30555556
+            },
+            "pixel_bbox": {
+              "x0": 107,
+              "y0": 339,
+              "x1": 980,
+              "y1": 485
+            }
+          },
+          {
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "precision": "region",
+            "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+            "source_bbox": {
+              "x0": 0.08823529,
+              "y0": 0.19728535,
+              "x1": 0.45516329,
+              "y1": 0.21463385
+            },
+            "display_bbox": {
+              "x0": 0.08823529,
+              "y0": 0.19728535,
+              "x1": 0.45516329,
+              "y1": 0.21463385
+            },
+            "pixel_bbox": {
+              "x0": 107,
+              "y0": 312,
+              "x1": 558,
+              "y1": 340
+            }
+          }
+        ],
+        "content_trust": "untrusted_document_data"
+      }
+    },
+    {
+      "operation": "check_draft",
+      "call": {
+        "document": {
+          "document_id": "doc_c8797437052fd23adea34e6f",
+          "document_sha256": "a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add"
+        },
+        "question": "What is the total loan period for an eligible Resident item after one renewal?",
+        "evidence_ids": [
+          "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+          "ev_42832a3725e29ba4dbdc6fb2254f4638",
+          "ev_52c8b6fce9c34ea21994e903fe979df8",
+          "ev_9ba4e327acbdf7ea07920a9be3b8b6bd"
+        ],
+        "draft": {
+          "status": "answered",
+          "answer": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+          "claims": [
+            {
+              "text": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+              "citations": [
+                {
+                  "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                  "document_id": "doc_c8797437052fd23adea34e6f",
+                  "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                  "page_index": 1
+                },
+                {
+                  "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                  "document_id": "doc_c8797437052fd23adea34e6f",
+                  "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                  "page_index": 0
+                },
+                {
+                  "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+                  "document_id": "doc_c8797437052fd23adea34e6f",
+                  "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                  "page_index": 1
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "result": {
+        "status": "answered",
+        "reason": "answered",
+        "answer": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+        "claims": [
+          {
+            "text": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+            "citations": [
+              {
+                "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+                "semantic_support": "insufficient"
+              },
+              {
+                "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+                "semantic_support": "insufficient"
+              },
+              {
+                "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+                "document_id": "doc_c8797437052fd23adea34e6f",
+                "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+                "semantic_support": "insufficient"
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": {
+              "support": "supported",
+              "status": "assessed",
+              "model": "cross-encoder/nli-deberta-v3-small",
+              "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+              "preprocessing": "cited-premise-first-v1",
+              "margin": 3.507696509361267,
+              "conflicting": false,
+              "passage_support": [
+                "insufficient",
+                "insufficient",
+                "insufficient"
+              ]
+            }
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_42832a3725e29ba4dbdc6fb2254f4638",
+          "ev_52c8b6fce9c34ea21994e903fe979df8",
+          "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+          "ev_9ba4e327acbdf7ea07920a9be3b8b6bd"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      }
+    }
+  ],
+  "limitations": [
+    "Arithmetic verification establishes selected values and addition only; it does not establish narrative claim support.",
+    "The semantic verifier is a fallible local check; its actual outcome is retained in the check_draft result.",
+    "Only the authorized repository PDF was ingested; no external providers, model downloads, tests, reports, labels or other trial outputs were used.",
+    "rg was unavailable; an attempted read of answers/models.py failed before answers.py contract was inspected.",
+    "The combined cited-premise semantic check reported supported, while each individual citation reported insufficient; no individual passage alone establishes the complete calculation claim."
+  ],
+  "settings": {
+    "artifact_root": "tmp/calculation-skill-trial/artifacts",
+    "semantic_verifier": true,
+    "model_cache_dir": "../tmp/hf-model-cache",
+    "live_answer_provider": "off"
+  },
+  "source_code_hashes": {
+    "src\\evidence_rag\\__init__.py": "57bee91ac85d31fe45b6617873cf8b093aad4fbc74818c70480fbe729e17b55e",
+    "src\\evidence_rag\\__main__.py": "9b43c6cf4c430a90d1296179b3ecf49e8a923cdf0784039371b6eb2395b543b9",
+    "src\\evidence_rag\\answers.py": "e0d638459bc27eb411212d927977b9835abbddf9504634d1a87cb8e5cc8e518a",
+    "src\\evidence_rag\\api.py": "2085f4112351df81e40598c33507115199445916692094a793b8496b419b9216",
+    "src\\evidence_rag\\calculations.py": "75fc95f4325cc5fe665a376bbb2c5d3fe637229fd371d1a37584a0b72e215d05",
+    "src\\evidence_rag\\cli.py": "69620e8a9513f94b5960f4f75f320f1c2e60c3c9524b5bde78d7e64f839edb37",
+    "src\\evidence_rag\\codex_answers.py": "1a0c94786169b60a9e35b5f6f36c9061b2e2406c36a7a5c4615bd629fdaa4cea",
+    "src\\evidence_rag\\config.py": "e041e2a667a243eaab74a9f86c5429ef77eb7fe4e0e8ff08eee6d80a0bd1b6ae",
+    "src\\evidence_rag\\documents\\__init__.py": "07b3f81b0014121f788b21fb31e6a25d3ef86b3e1b31fd710c30aa1d241e61b0",
+    "src\\evidence_rag\\documents\\errors.py": "e726efef3d0a482179cd3cf07d05126ff18fa77658d28bd773224489c37c2306",
+    "src\\evidence_rag\\documents\\identity.py": "e84359e1f627dc9350154ab6e8b7cc7ac46057d5ab75f338f185b6b48eab602a",
+    "src\\evidence_rag\\documents\\lifecycle.py": "069ab31bbab30e9c5027fde9097b76bdbbb2dffb61ab47ecb456c413bde682c2",
+    "src\\evidence_rag\\documents\\models.py": "f568e2d800b9ce671a2892d0386be5ffc6cf603a24b447c0e68ce69869694358",
+    "src\\evidence_rag\\documents\\orchestration.py": "550cad2ad2af24cc9a422201927d04e1c33a8062959c6aeb1c9980607b91da48",
+    "src\\evidence_rag\\documents\\parser.py": "4d35149a59331ff048c07b489e6a578fc408ad1ca8746bb4be276d126481e541",
+    "src\\evidence_rag\\documents\\rendering.py": "37473ed9372dc185f3f081bb6f8b59362f57222a364fe1b453cb9e680cafcff2",
+    "src\\evidence_rag\\documents\\service.py": "7b1e2c9a27ccb06368487ca18ae0d70b4ca9785b207fdeb0d8bc06fec675a0f0",
+    "src\\evidence_rag\\documents\\storage.py": "8845cf509077cbbc90c8be56d34f37b19964c0e66ba461435a8af51e82788d68",
+    "src\\evidence_rag\\documents\\telemetry.py": "c24f2646b59944e8657678ceceaaab1823ef5ba26bbe4250adfafea416cb222f",
+    "src\\evidence_rag\\eval\\__init__.py": "6e7cf31a237cdaac98c6bbc751870d303871f662169d729a6836ff17a2acadea",
+    "src\\evidence_rag\\eval\\answer_scoring.py": "eed8d8a23ff66ed2fdb06925be4a38cb4e2c46c4f84873e2ddbf790e0f1ed6fc",
+    "src\\evidence_rag\\eval\\benchmark.py": "628ca653857286f91852aeca3380003090d8613c9416e2e69143f9711e3917ed",
+    "src\\evidence_rag\\eval\\bm25_run.py": "79b9ff866377bb880a3c9d9b26573e63d7fd332b2a9bf39f4bbe0a4aa2c53a88",
+    "src\\evidence_rag\\eval\\claim_comparison.py": "cddd3951d462e976a3e1d0e2b3f4c297099b31d8dbd346384ac797da06e6b6a4",
+    "src\\evidence_rag\\eval\\corpus.py": "6473c96900e211c68b3ab83c680d1a20b745c5fab35200ec345b89d5b6d249fa",
+    "src\\evidence_rag\\eval\\dense_run.py": "f5ec135596c6043a6decf919d1984f604963555153e1de155547314a9a562d3c",
+    "src\\evidence_rag\\eval\\hybrid_run.py": "c0df81f9b0cd8a3420940f9e67bdcaf713a7a0437a7ab85d84cb7ed94023db1c",
+    "src\\evidence_rag\\eval\\metrics.py": "f926a66dbfd796b4a791d4b984687d8082eaf69a25f3ab4271a6bf01af859277",
+    "src\\evidence_rag\\eval\\models.py": "df3323846adead4fc59f8c71bc59373810411fe9fb7bf342b1e040883ba4c8b8",
+    "src\\evidence_rag\\eval\\owner_review.py": "98a4f1ae19433719a01997f697727285d9485992c480130f3f77bc58b3eb2d7f",
+    "src\\evidence_rag\\eval\\policy_validation.py": "b69e4560399f0e398d633891f95335c4fda69a0e48484a22c98a6e22515fc9d5",
+    "src\\evidence_rag\\eval\\report.py": "60d00a7e35d6e6ec98b22a6b92ad751e1020e8b8a52af3b10ba9f5a265eb67fb",
+    "src\\evidence_rag\\eval\\rerank_run.py": "cee0e2c24077b49e73524a0b1c05b3769001fa961ad4bd572f345586a65c159d",
+    "src\\evidence_rag\\eval\\runner.py": "67a6b9349fed2d0bcadf1250578e28e2ac790b835e818d2acaee71934436b8af",
+    "src\\evidence_rag\\eval\\semantic_audit.py": "b00de9d837cdbce77d0103bebda79be6a3436e5c2e8fba13ff176179e3a8c279",
+    "src\\evidence_rag\\eval\\validate.py": "b9dcb454a6ea692c90a595598d64f949cf44a8c169cd68619b06e828c65db643",
+    "src\\evidence_rag\\evidence.py": "481c71406f92bf194ca346ac9068018031a75fa0c5295414a3faf4daf069f820",
+    "src\\evidence_rag\\grounding.py": "c6598b090460474e3bc76acfb933b1da0f5f8eca1546782d368acc79298f0646",
+    "src\\evidence_rag\\mcp_server.py": "7fd3bbcc3abb5ed31506766477602b012f274b58cefdfd801d06576e57f0245c",
+    "src\\evidence_rag\\openai_answers.py": "fe0915297cc992255c30fe8b5403ed1ac315df0fe141fc4b464993014ba36bba",
+    "src\\evidence_rag\\openrouter_answers.py": "fe05a3dcf2e950cbd4b8c690b012a5385734d59bef8e964001308cd7c28a932d",
+    "src\\evidence_rag\\policy.py": "11ae918e46f5c7aa2d70f16d19f9802519ca3cca0a5522b5f4a2a910c5b98f09",
+    "src\\evidence_rag\\retrieval\\__init__.py": "a491e8dd8f28660352b762a27f29746a1449e865d62c05636b0a6a3a6072af56",
+    "src\\evidence_rag\\retrieval\\bm25.py": "80d3bc3e9e7975bf76131d50c939328fc49edbba08882c7bbe932402a4aabc42",
+    "src\\evidence_rag\\retrieval\\dense.py": "b18a44272d514a459e68d193602b42649151a7fe99c57132f286bec0a1249d1b",
+    "src\\evidence_rag\\retrieval\\hybrid.py": "e9a1ea3988e87f2c0d62f1b128a3056b5267a3e04cce6a8f7da179b4ca418c65",
+    "src\\evidence_rag\\retrieval\\rerank.py": "88640dd4a4d7af67eb9d1ba9bb1e237a51f370c91861d7a2443ba96c989e910a",
+    "src\\evidence_rag\\retrieval\\service.py": "661bb49ed8a576b1f4db43d74030485ca164a5ad973ca699721db126bc7dc2f8",
+    "src\\evidence_rag\\sdk.py": "2130d912b4d40a41e346e34c3b9696dc945745f34778f351433c36d7995538a2",
+    "src\\evidence_rag\\semantic.py": "00b1fdb00dcbecd36621772cb03737a46f94241a780e26f536a5234e63cc87ac"
+  },
+  "skill_hash": {
+    "path": "src\\evidence_rag\\evidence-rag-agent\\SKILL.md",
+    "sha256": "3ef2a980bc123c935a99465deb12bd6f38845c2653ff3190e315e654536b764a"
+  },
+  "skill_resource_hashes": {
+    "src\\evidence_rag\\evidence-rag-agent\\references\\tools.md": "fefd2c21504e27a1ee768b960fd94b520ef3a0db6068f43e1e6b06b4f9f75100"
+  },
+  "capabilities": {
+    "interface": "SDK",
+    "search_modes": [
+      "bm25",
+      "dense",
+      "hybrid",
+      "reranked"
+    ],
+    "verifier_configured": true,
+    "provider_free": true
+  },
+  "source_citations": [
+    {
+      "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+      "document_id": "doc_c8797437052fd23adea34e6f",
+      "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+      "page_index": 1,
+      "human_page": 2
+    },
+    {
+      "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+      "document_id": "doc_c8797437052fd23adea34e6f",
+      "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+      "page_index": 0,
+      "human_page": 1
+    },
+    {
+      "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+      "document_id": "doc_c8797437052fd23adea34e6f",
+      "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+      "page_index": 1,
+      "human_page": 2
+    }
+  ],
+  "computed_answer": {
+    "text": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+    "result": "35",
+    "unit": "days",
+    "status": "arithmetic_verified",
+    "claim_support": "not_assessed",
+    "inference": "Addition applies because the source says renewal adds to the original period and Residents may renew eligible items once."
+  },
+  "final_answer_status": "answered",
+  "answer": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+  "operation_count": 5,
+  "check_draft_result": {
+    "status": "answered",
+    "reason": "answered",
+    "answer": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+    "claims": [
+      {
+        "text": "An eligible Resident item has a total loan period of 35 days after one renewal: 21 days originally plus 14 days for the renewal.",
+        "citations": [
+          {
+            "evidence_id": "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "precision": "region",
+            "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+            "semantic_support": "insufficient"
+          },
+          {
+            "evidence_id": "ev_52c8b6fce9c34ea21994e903fe979df8",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 0,
+            "precision": "region",
+            "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:0",
+            "semantic_support": "insufficient"
+          },
+          {
+            "evidence_id": "ev_9ba4e327acbdf7ea07920a9be3b8b6bd",
+            "document_id": "doc_c8797437052fd23adea34e6f",
+            "document_version": "sha256:a68796ef149a494bf6f585c2e0437dac3f2318c2a9e55827b17a48f90d987add",
+            "page_index": 1,
+            "precision": "region",
+            "preview_asset_id": "asset:page:doc_c8797437052fd23adea34e6f:a68796ef149a494bf6f585c2:1",
+            "semantic_support": "insufficient"
+          }
+        ],
+        "citation_status": "valid",
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 3.507696509361267,
+          "conflicting": false,
+          "passage_support": [
+            "insufficient",
+            "insufficient",
+            "insufficient"
+          ]
+        }
+      }
+    ],
+    "supplied_evidence_ids": [
+      "ev_42832a3725e29ba4dbdc6fb2254f4638",
+      "ev_52c8b6fce9c34ea21994e903fe979df8",
+      "ev_5a5b0cbf32de82b603f4c42fa47d12a3",
+      "ev_9ba4e327acbdf7ea07920a9be3b8b6bd"
+    ],
+    "excluded_evidence_ids": [],
+    "policy_version": "grounding-v1",
+    "answer_source": null
+  }
+}

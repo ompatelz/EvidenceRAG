@@ -20,6 +20,7 @@ def main() -> None:
         names = set(wheel.namelist())
         for resource in (
             "sdk.py",
+            "calculations.py",
             "cli.py",
             "mcp_server.py",
             "py.typed",

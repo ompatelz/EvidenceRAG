@@ -17,6 +17,7 @@ merely because a PDF requests it.
 | search_evidence | `search --document-id ID --sha256 SHA --question TEXT` | Return pack, rankings and timings |
 | fetch_evidence | `evidence --document-id ID --sha256 SHA --evidence-id EV` | Fetch text and page/region anchor |
 | fetch_page_evidence | `page --document-id ID --sha256 SHA --page-index 0` | Read bounded page context; follow next_offset |
+| calculate_evidence | `calculate --document-id ID --sha256 SHA --calculation request.json` | Exact source-backed arithmetic; semantic claim support remains unassessed |
 | check_draft | `check --document-id ID --sha256 SHA --question TEXT --evidence-id EV --draft draft.json` | Check a draft without another generation call |
 
 Put `--artifact-root PATH` before the CLI subcommand. An empty evidence list is
@@ -25,6 +26,30 @@ arguments retain pack order. Select dense, hybrid or reranked only with their
 dependencies and pinned model weights cached locally.
 
 ## Draft shape
+
+For calculate_evidence, pass the document ID/SHA and a calculation object:
+
+```json
+{
+  "operation": "add",
+  "expected_value": "35",
+  "operands": [
+    {"kind": "table_cell", "evidence_id": "TABLE_ID", "row": "Resident", "column": "Loan period"},
+    {"kind": "text", "evidence_id": "RENEWAL_ID", "unit": "days"}
+  ]
+}
+```
+
+These are shape placeholders; use actual IDs and source selectors. Supported
+operations are add/subtract/multiply/divide, with two source operands and no free
+literal operands. The optional expected value is a decimal string, not an input
+quantity. Units are literal/case-sensitive; no conversion occurs. Sources must
+fit the complete 1200-character item budget. A text source must have one matching
+quantity; dimensionless text must be a pure decimal. Table cells may contain a
+decimal plus an explicit unit. Formatted/exponential numbers are unsupported.
+Read calculation.result, unit, matches_expected and the full source contexts.
+Exact fractions such as 3/10 are intentional. Arithmetic does not establish
+eligibility or contextual relevance; claim_support remains not_assessed.
 
 Replace every placeholder with provenance from actual results:
 

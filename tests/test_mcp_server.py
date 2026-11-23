@@ -49,10 +49,46 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
                 "list_documents",
                 "document_status",
                 "fetch_page_evidence",
+                "calculate_evidence",
             }
             caps = await client.call_tool("capabilities", {})
             assert caps.structuredContent is not None
             assert caps.structuredContent["generation"] == "agent_supplied_draft_only"
+            assert caps.structuredContent["arithmetic_proves_narrative_claims"] is False
+            loan = await client.call_tool("ingest_pdf", {"relative_path": "library-loans.pdf"})
+            assert loan.structuredContent is not None
+            loan_ref = {
+                key: loan.structuredContent[key] for key in ("document_id", "document_sha256")
+            }
+            sources = await client.call_tool(
+                "search_evidence", {**loan_ref, "question": "Resident renewal loan period"}
+            )
+            assert sources.structuredContent is not None
+            items = sources.structuredContent["pack"]["items"]
+            table = next(item for item in items if "| Resident |" in item["text"])
+            renewal = next(item for item in items if item["text"].startswith("A renewal adds"))
+            computed = await client.call_tool(
+                "calculate_evidence",
+                {
+                    **loan_ref,
+                    "calculation": {
+                        "operation": "add",
+                        "expected_value": "35",
+                        "operands": [
+                            {
+                                "kind": "table_cell",
+                                "evidence_id": table["evidence_id"],
+                                "row": "Resident",
+                                "column": "Loan period",
+                            },
+                            {"kind": "text", "evidence_id": renewal["evidence_id"], "unit": "days"},
+                        ],
+                    },
+                },
+            )
+            assert computed.structuredContent is not None
+            assert computed.structuredContent["calculation"]["result"] == "35"
+            assert computed.structuredContent["calculation"]["claim_support"] == "not_assessed"
             bad = await client.call_tool("ingest_pdf", {"relative_path": "../secrets.pdf"})
             assert bad.structuredContent == {"error": "invalid_request_or_artifact"}
             ingested = await client.call_tool(
@@ -64,9 +100,10 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
             }
             catalog = await client.call_tool("list_documents", {})
             assert catalog.structuredContent is not None
-            assert (
-                catalog.structuredContent["documents"][0]["document_id"] == document["document_id"]
-            )
+            assert {item["document_id"] for item in catalog.structuredContent["documents"]} == {
+                document["document_id"],
+                loan_ref["document_id"],
+            }
             page = await client.call_tool(
                 "fetch_page_evidence",
                 {

@@ -2,7 +2,7 @@
 
 **Answers you can trace back to the PDF.**
 
-[Download v0.2.0](https://github.com/ompatelz/EvidenceRAG/releases/tag/v0.2.0) ·
+[Download v0.3.0](https://github.com/ompatelz/EvidenceRAG/releases/tag/v0.3.0) ·
 [Install and connect an agent](docs/agent_integration.md) ·
 [Current status](docs/PROJECT_STATUS.md)
 
@@ -31,7 +31,7 @@ and evidence checks. Your agent supplies its own model and drafts.
 | Interface | Entry point |
 | --- | --- |
 | Python SDK | `from evidence_rag.sdk import EvidenceRAG, DocumentRef, SearchRequest` |
-| CLI | `evidence-rag ingest`, `documents`, `status`, `page`, `search`, `evidence`, `check`, `retry` |
+| CLI | `evidence-rag ingest`, `documents`, `status`, `page`, `search`, `evidence`, `calculate`, `check`, `retry` |
 | MCP server | `evidence-rag mcp` with separately installed transport requirements |
 | Agent skill | `evidence-rag export-skill ./evidence-rag-agent` |
 | Web inspector | Existing FastAPI `/inspector` application |
@@ -51,6 +51,9 @@ and evidence checks. Your agent supplies its own model and drafts.
 | Reproduce experiments | Owned PDF fixtures, reviewed labels, saved rankings, raw outcomes, and evaluation protocols |
 
 **Stack:** Python · FastAPI · Pydantic · PyMuPDF · FastEmbed · Qdrant · vanilla JavaScript · Docker · GitHub Actions
+
+Source-backed [calculations](docs/source_calculations.md) now check arithmetic
+without silently approving a narrative claim.
 
 ## Quickstart
 

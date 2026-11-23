@@ -25,7 +25,7 @@ python -m pip install '.[dense]'
 ```
 
 Build distributable wheel and source archives with `uv build`. Install a wheel
-with `python -m pip install dist/evidence_rag-0.2.0-py3-none-any.whl`. The skill
+with `python -m pip install dist/evidence_rag-0.3.0-py3-none-any.whl`. The skill
 resources, inspector assets and license notices are included. This is a source
 and wheel installation workflow; no PyPI release has been published by this change.
 
@@ -140,6 +140,7 @@ the example uses the common mcpServers shape. No network MCP listener is started
 | search_evidence | Retrieve a version-scoped evidence pack and method-specific rankings |
 | fetch_evidence | Return a canonical unit, truncation information and source anchor |
 | fetch_page_evidence | Read bounded explicit-page text context and follow next_offset |
+| calculate_evidence | Exact arithmetic from two selected source quantities; claim support is not assessed |
 | check_draft | Validate an agent-written structured answer; return an answer or abstention |
 
 Omitting documents-root disables ingestion. Absolute paths, parent traversal,
@@ -189,3 +190,9 @@ The [agent evaluation protocol](agent_evaluation.md) defines matched baseline,
 tools-only and tools-plus-skill runs. Keep frozen test families closed to tuning.
 The [exploratory trial](../reports/agent-comparison/README.md) records actual
 three-arm outcomes and independent agent source audits; it establishes no quality gain.
+
+## Source calculations
+
+Use SDK `calculate`, CLI `calculate`, or MCP `calculate_evidence` for exact
+source-backed arithmetic. Read the [payload and support boundaries](source_calculations.md).
+Arithmetic receipts never bypass narrative draft verification.
