@@ -108,6 +108,7 @@ def test_unit_mismatch_zero_divisor_truncation_and_foreign_source_fail() -> None
         calculate(
             request("divide"), {"ev_first": first, "ev_second": text_unit("ev_second", "0 days")}
         )
+
     with pytest.raises(CalculationError, match="source_truncated"):
         calculate(request(), {"ev_first": text_unit("ev_first", "x" * 1201), "ev_second": second})
     with pytest.raises(CalculationError, match="evidence_not_supplied"):
@@ -120,6 +121,18 @@ def test_unit_mismatch_zero_divisor_truncation_and_foreign_source_fail() -> None
                 "ev_second": text_unit(
                     "ev_second", "14 days", document_version="sha256:" + "b" * 64
                 ),
+            },
+        )
+
+
+@pytest.mark.parametrize("text", ["14 ms^-1", "14 ms\u207b\u00b9", "14 ms.s"])
+def test_partial_compound_unit_is_not_treated_as_a_simple_unit(text: str) -> None:
+    with pytest.raises(CalculationError, match="ambiguous_or_missing"):
+        calculate(
+            request(first_unit="ms", second_unit="ms"),
+            {
+                "ev_first": text_unit("ev_first", text),
+                "ev_second": text_unit("ev_second", "1 ms"),
             },
         )
 

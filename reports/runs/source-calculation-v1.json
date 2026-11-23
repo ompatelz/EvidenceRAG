@@ -5,7 +5,7 @@
   "question": "Resident renewal loan period",
   "provider_calls": 0,
   "source_sha256": {
-    "src/evidence_rag/calculations.py": "ee7ebda4e3ec210b9ee4b421e5d2512e15fd585431f579b0a452579c1ea4a08d",
+    "src/evidence_rag/calculations.py": "f32ce85dde5fcf6273041b18698c83eb4db5c1016f0476eedadb152f07303ec6",
     "src/evidence_rag/sdk.py": "2130d912b4d40a41e346e34c3b9696dc945745f34778f351433c36d7995538a2"
   },
   "correct_expected_value": {

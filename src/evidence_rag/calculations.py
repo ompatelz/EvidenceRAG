@@ -109,7 +109,7 @@ def resolve_operand(selector: TextOperand | TableOperand, unit: EvidenceUnit) ->
                 raise CalculationError("calculation_dimensionless_text_ambiguous")
             number = match.group()
         else:
-            suffix = rf"\s+{re.escape(source_unit)}(?![\w/%-])"
+            suffix = rf"\s+{re.escape(source_unit)}(?=$|\s|[.,;:!?)\]]+(?=\s|$))"
             candidates = re.findall(
                 rf"(?<!\w)[+\-\u2212]?[0-9][0-9.,'_eE/+\-\u2212]*{suffix}", unit.text
             )

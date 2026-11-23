@@ -29,8 +29,8 @@ citations jointly supply the inputs; neither passage alone states the whole sum.
 
 [Raw trial, calls, source contexts, model outcomes and code/skill hashes](source-calculation-forward-trial.json)
 
-The trial snapshot precedes an additional rejection guard for clock-style
-number formatting. Recorded source hashes preserve that distinction; current
+The trial snapshot precedes additional rejection guards for clock-style
+numbers and partial compound-unit matches. Recorded source hashes preserve that distinction; current
 regression tests and the deterministic smoke exercise the release source.
 This is one usability trial, not an accuracy comparison or evidence that the
 semantic false-abstention issue is resolved. Existing withheld outputs are
