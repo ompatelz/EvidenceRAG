@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.0 - 2026-11-23
+
+- Add source-backed exact arithmetic through the Python SDK, JSON CLI and ninth
+  MCP tool, with typed table/text selectors, source context and resolved anchors.
+- Check add/subtract/multiply/divide, literal units and optional expected results
+  without a generation call or floating-point rounding.
+- Reject ambiguous/missing cells, unsupported formatted numbers, mixed-unit sums,
+  zero division, truncated sources and foreign-version operands.
+- Preserve grounding-v1 and the distinction between arithmetic and claim support.
+  Calculator receipts cannot automatically approve a natural-language answer.
+- Add deterministic development-fixture smoke results and adversarial regression
+  tests. No answer-accuracy gain or fix to semantic false abstention is claimed.
+
 ## 0.2.0 - 2026-11-22
 
 ### Added

@@ -37,6 +37,16 @@ when selecting an interface or preparing a draft payload.
 
 ## Draft and check
 
+- For numerical derivations, use calculate_evidence (or SDK calculate / CLI
+  calculate) with actual evidence IDs. Select table cells by row and column,
+  or a unique textual quantity by its explicit unit. Read the returned source
+  contexts, units and qualifiers before deciding whether the operation applies.
+- Treat arithmetic_verified as a calculation result only. Check matches_expected
+  when supplied; a false value rejects the proposed result. claim_support stays
+  not_assessed. Never treat a calculator receipt as semantic approval, bypass a
+  withheld draft, or invent a unit conversion. Distinguish a computed quantity
+  from a source quotation and a verified narrative answer.
+
 - Draft a concise answer split into material claims, each with source citations.
   Make the answer exactly the claim texts joined by one space.
 - Submit the structured draft and at most five selected evidence IDs in pack

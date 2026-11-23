@@ -16,6 +16,12 @@ from evidence_rag.answers import (
     GroundedAnswerService,
     build_pack,
 )
+from evidence_rag.calculations import (
+    CalculationError,
+    CalculationRequest,
+    CalculationResult,
+    calculate,
+)
 from evidence_rag.config import AppSettings
 from evidence_rag.documents import (
     DocumentIngestionResponse,
@@ -37,7 +43,7 @@ from evidence_rag.documents.models import (
 )
 from evidence_rag.documents.service import DocumentRenderingService
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
-from evidence_rag.evidence import EvidenceUnit
+from evidence_rag.evidence import AnchorPrecision, EvidenceUnit
 from evidence_rag.policy import AnswerPolicy
 from evidence_rag.retrieval.service import RetrievalMode, retrieve
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
@@ -75,6 +81,14 @@ class EvidenceResponse(BaseModel):
     anchor: EvidenceAnchorResponse
     text_truncated: bool
     original_text_chars: int
+    content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
+
+
+class SourceCalculationResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    document: DocumentRef
+    calculation: CalculationResult
+    anchors: tuple[EvidenceAnchorResponse, ...]
     content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
 
 
@@ -324,4 +338,26 @@ class EvidenceRAG:
         hits = [units[evidence_id] for evidence_id in evidence_ids]
         return self._answers.answer(
             question, manifest, pages, artifact.units, hits, generate=lambda _q, _p: draft
+        )
+
+    def calculate(
+        self, document: DocumentRef, request: CalculationRequest
+    ) -> SourceCalculationResponse:
+        """Check source values and exact arithmetic, not a narrative interpretation."""
+        _, artifact, _ = self._ready(document)
+        units = {unit.evidence_id: unit for unit in artifact.units}
+        result = calculate(request, units)
+        anchors = []
+        for evidence_id in dict.fromkeys(item.evidence_id for item in request.operands):
+            anchor = self._rendering.anchor(
+                document.document_id, document.document_sha256, evidence_id
+            )
+            if anchor.precision is AnchorPrecision.UNAVAILABLE:
+                raise CalculationError("calculation_source_location_unavailable")
+            self.store.preview_path(
+                document.document_id, document.document_sha256, anchor.page_index
+            )
+            anchors.append(anchor)
+        return SourceCalculationResponse(
+            document=document, calculation=result, anchors=tuple(anchors)
         )

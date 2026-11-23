@@ -15,6 +15,13 @@ def main() -> None:
         [sys.executable, "-m", "pytest"],
         [
             sys.executable,
+            "scripts/source_calculation_smoke.py",
+            "--output",
+            "reports/runs/source-calculation-v1.json",
+            "--check",
+        ],
+        [
+            sys.executable,
             "scripts/summarize_agent_trial.py",
             "--output",
             "reports/agent-comparison/summary.json",

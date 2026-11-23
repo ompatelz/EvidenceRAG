@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import ValidationError
 
 from evidence_rag.answers import DraftAnswer
+from evidence_rag.calculations import CalculationError, CalculationRequest
 from evidence_rag.documents import IntakeError
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.sdk import DocumentRef, EvidenceRAG, SearchRequest
@@ -21,6 +22,8 @@ def _safe(operation: Callable[[], Any]) -> dict[str, Any]:
         return dict(result.model_dump(mode="json"))
     except IntakeError as exc:
         return {"error": exc.code, "message": exc.message}
+    except CalculationError as exc:
+        return {"error": exc.code}
     except (ValueError, ValidationError, OSError, ArtifactNotFoundError, StorageError):
         return {"error": "invalid_request_or_artifact"}
 
@@ -69,6 +72,8 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
             "max_item_chars": 1200,
             "max_pack_chars": 4000,
             "visual_interpretation": False,
+            "source_arithmetic": "source-arithmetic-v1",
+            "arithmetic_proves_narrative_claims": False,
         }
 
     def ingest_pdf(relative_path: str) -> dict[str, Any]:
@@ -178,6 +183,24 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
             )
         )
 
+    def calculate_evidence(
+        document_id: str,
+        document_sha256: str,
+        calculation: CalculationRequest,
+    ) -> dict[str, Any]:
+        """Check exact arithmetic over two cited source quantities, with source anchors.
+
+        Select table_cell by evidence_id/row/column, or text by evidence_id/unit.
+        Text must contain exactly one quantity in that explicit unit. No unit
+        conversion or free numeric operands. Arithmetic verification does not
+        establish contextual relevance or semantic support; check_draft is unchanged.
+        """
+        return _safe(
+            lambda: engine.calculate(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256), calculation
+            )
+        )
+
     server.add_tool(capabilities, annotations=read)
     server.add_tool(list_documents, annotations=read)
     server.add_tool(document_status, annotations=read)
@@ -185,6 +208,7 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
     server.add_tool(search_evidence, annotations=read)
     server.add_tool(fetch_evidence, annotations=read)
     server.add_tool(check_draft, annotations=read)
+    server.add_tool(calculate_evidence, annotations=read)
     server.add_tool(
         ingest_pdf,
         annotations=ToolAnnotations(

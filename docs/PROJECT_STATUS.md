@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-11-22. Current release line: **v0.2.0 (alpha)**.
+Updated: 2026-11-23. Current release line: **v0.3.0 (alpha)**.
 
 EvidenceRAG is a local, single-user toolkit for technical PDF retrieval and
 traceable, checked answers. It can be embedded as Python, called through a JSON
@@ -14,17 +14,23 @@ FastAPI inspector and optional live answer adapters remain available.
 | PDF ingestion | Immutable versions, text/tables, previews, explicit lifecycle/retry | tests/test_lifecycle.py, tests/test_parser.py |
 | Retrieval | BM25, optional dense/hybrid/reranking with pinned offline models | reports/reviewed-answer-benchmark/ |
 | Grounding | Exact-version citations, source anchors, table checks, optional semantic support and abstention | tests/test_answers.py, tests/test_semantic.py, tests/test_policy.py |
-| Agent interfaces | SDK, JSON CLI, document discovery/status, bounded page context and eight MCP tools | tests/test_sdk.py, tests/test_mcp_server.py |
+| Agent interfaces | SDK, JSON CLI, document discovery/status, bounded page context and nine MCP tools | tests/test_sdk.py, tests/test_mcp_server.py |
+| Arithmetic | Exact source-backed operations with context/anchors; semantic support remains unassessed | docs/source_calculations.md, tests/test_calculations.py |
 | Skill | Bundled/exportable workflow and tool contract | src/evidence_rag/evidence-rag-agent/ |
 | Distribution | Wheel, source archive, standalone skill archive, provenance and checksums | scripts/check_distribution.py, scripts/package_release.py |
 | CI/release | Full quality gate, real MCP protocol, fresh wheel installation, ingestion, Qdrant and container; release after successful main CI | .github/workflows/ci.yml, .github/workflows/release.yml |
 
-[Installation](agent_integration.md) and [release notes](releases/v0.2.0.md) are
+[Installation](agent_integration.md) and [release notes](releases/v0.3.0.md) are
 the current entry points. The Release workflow publishes only the exact commit
 whose main-branch CI succeeded. See the GitHub Actions run for that commit's
 verification status and the GitHub Release for downloadable artifacts.
 
 ## What the evaluation establishes
+
+v0.3.0 adds exact source arithmetic, not a new semantic verification policy.
+The [delivery record](../reports/source_calculations.md) includes deterministic
+positive/incorrect-result controls and a single skill usability trial. It does
+not establish an answer-accuracy gain or remove the known false-abstention limit.
 
 The owner reviewed 36 labels across seven owned synthetic PDF families. The
 four-method retrieval comparison scores 24 answerable nonvisual development and
