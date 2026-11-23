@@ -73,9 +73,13 @@ def diagnose(settings: AppSettings) -> DoctorReport:
         HealthCheck(
             name="semantic_verifier",
             status="ok" if settings.semantic_verifier and cached else "warning",
-            detail="configured with cached files; inference not exercised"
-            if cached
-            else "pinned files missing; natural-language support may be withheld",
+            detail=(
+                "configured with cached files; inference not exercised"
+                if settings.semantic_verifier and cached
+                else "cached files present; verifier disabled"
+                if cached
+                else "pinned files missing; natural-language support may be withheld"
+            ),
             repair=None
             if settings.semantic_verifier and cached
             else "Follow docs/semantic_support.md and set EVIDENCERAG_SEMANTIC_VERIFIER=true.",

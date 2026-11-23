@@ -10,6 +10,7 @@ from pathlib import Path
 from evidence_rag.sdk import CollectionSearchRequest, DocumentRef, EvidenceRAG
 
 SOURCE = "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf"
+DOWNLOAD = "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=936225"
 # Zero-based relevant page alternatives, audited against the official PDF by an
 # agent. Development probes only; these are not human-approved gold judgments.
 PROBES = [
@@ -83,7 +84,14 @@ def main() -> None:
         pdf = args.pdf
         if args.download:
             pdf = Path(work) / "NIST.AI.100-1.pdf"
-            with urllib.request.urlopen(SOURCE, timeout=30) as response:
+            request = urllib.request.Request(
+                DOWNLOAD,
+                headers={
+                    "User-Agent": "EvidenceRAG/0.4.0 (+https://github.com/ompatelz/EvidenceRAG)",
+                    "Accept": "application/pdf",
+                },
+            )
+            with urllib.request.urlopen(request, timeout=30) as response:
                 content = response.read(10 * 1024 * 1024 + 1)
             if len(content) > 10 * 1024 * 1024 or not content.startswith(b"%PDF-"):
                 raise ValueError("invalid or oversized official source PDF")
@@ -95,6 +103,7 @@ def main() -> None:
         ):
             raise ValueError("natural source fingerprint changed")
         record = run(pdf)
+        record["download_url"] = DOWNLOAD if args.download else None
         args.output.parent.mkdir(parents=True, exist_ok=True)
         with args.output.open("x", encoding="utf-8") as target:
             target.write(json.dumps(record, indent=2) + "\n")

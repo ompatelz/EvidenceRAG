@@ -127,4 +127,3 @@ SDK equivalents: `doctor`, `context`, `search_collection`, `explain_check`,
 explain --draft FILE, recipe --calculation FILE, visual --page-index N. All except
 doctor/collection require --document-id ID --sha256 SHA. CLI context also requires
 --evidence-id EV, explain requires --question Q and repeated --evidence-id EV.
-
