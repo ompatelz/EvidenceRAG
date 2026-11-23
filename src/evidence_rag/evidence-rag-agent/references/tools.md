@@ -94,6 +94,33 @@ externally hosted agent still leaves the machine through that agent's client;
 respect the user's data authorization independently of the local MCP transport.
 # Extended tools (v0.4.0)
 
+## Retrieval traces and enforced recovery (v0.5.0)
+
+Collection search additionally accepts `candidate_limit` (5–50, default 5) and
+`diversify_pages` (default false). Diversity prefers two results per exact
+document/version/page, then fills by original rank. It changes selection, not
+scores or support. `ranking` preserves every candidate's retrieval_rank,
+selected_rank, score and packed flag; `coverage` reports actual packed pages,
+documents, characters and truncation. All packs retain existing limits.
+
+- `start_recovery(document_id, document_sha256, question, evidence_ids, draft)`:
+  initial check plus an engine-owned session receipt. Identical normalized
+  question/version returns the existing receipt, including closed state.
+- `search_recovery(session_id, query)`: one additional BM25 search; two attempts
+  maximum, including execution failures. Returns session and retrieval. Only IDs
+  observed in the initial pack or these search packs may enter the final check.
+- `recheck_recovery(session_id, evidence_ids, draft)`: one final check under the
+  original question/version. Success, withholding and execution errors all close.
+- `recovery_status(session_id)`: read counters, checked outcomes and event receipt.
+
+Sessions are in-memory, expire 30 minutes after creation and are limited to 64
+per engine. SDK equivalents are `rag.recovery.start`, `.search` (snapshot/result
+tuple), `.recheck`, `.status`. CLI commands start new processes and cannot resume
+these sessions. Exported JSON receipts are records, not resumable authority.
+Terminal reasons such as contradiction and unavailable verifier stop immediately.
+This is process-local workflow enforcement, not a security boundary for arbitrary
+callers or a global budget across all tools/documents/processes.
+
 - `doctor()`: offline dependency, storage and pinned-file checks; warnings include repairs.
 - `fetch_connected_evidence(document_id, document_sha256, evidence_id, radius=1)`:
   seed first, related caption/table, preceding heading, nearby reading-order units.

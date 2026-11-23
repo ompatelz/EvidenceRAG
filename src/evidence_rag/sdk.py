@@ -48,7 +48,9 @@ from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.evidence import AnchorPrecision, EvidenceUnit
 from evidence_rag.policy import AnswerPolicy
 from evidence_rag.recipes import CalculationRecipe, RecipeResult, calculate_recipe
+from evidence_rag.recovery import RecoveryManager
 from evidence_rag.retrieval.bm25 import BM25Index
+from evidence_rag.retrieval.diversity import select_candidates
 from evidence_rag.retrieval.service import RetrievalMode, retrieve
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
 
@@ -126,6 +128,31 @@ class CollectionSearchRequest(BaseModel):
     documents: tuple[DocumentRef, ...] = Field(min_length=1, max_length=20)
     question: str = Field(min_length=1, max_length=500)
     contextual_indexing: bool = True
+    candidate_limit: int = Field(default=5, ge=5, le=50)
+    diversify_pages: bool = False
+
+
+class CollectionRank(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    evidence_id: str
+    document_id: str
+    document_version: str
+    page_index: int
+    retrieval_rank: int
+    selected_rank: int | None
+    score: float
+    packed: bool
+
+
+class RetrievalCoverage(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    candidates: int
+    selected: int
+    packed: int
+    packed_pages: int
+    packed_documents: int
+    text_characters: int
+    truncated_items: int
 
 
 class CollectionSearchResponse(BaseModel):
@@ -135,6 +162,10 @@ class CollectionSearchResponse(BaseModel):
     search_ms: float
     index_reused: bool
     status: str
+    ranking: tuple[CollectionRank, ...]
+    coverage: RetrievalCoverage
+    candidate_limit: int
+    diversify_pages: bool
     conflict_assessment: Literal["not_assessed"] = "not_assessed"
     truncated_evidence_ids: tuple[str, ...] = ()
     content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
@@ -214,6 +245,7 @@ class EvidenceRAG:
         self._answers = GroundedAnswerService(
             self.store, None, config=self._config, verifier=verifier, policy=AnswerPolicy()
         )
+        self.recovery = RecoveryManager(self)
 
     def ingest(self, path: str | Path) -> DocumentIngestionResponse:
         """Ingest a caller-selected local PDF. No directory scan or URL fetch."""
@@ -528,10 +560,11 @@ class EvidenceRAG:
                     raise ValueError("collection evidence ID collision")
                 units[unit.evidence_id] = unit
         index, reused = self._cached_index(tuple(units.values()), request.contextual_indexing)
-        ranking = index.search(request.question, k=5)
+        ranking = index.search(request.question, k=request.candidate_limit)
+        selected = select_candidates(ranking.hits, diversify_pages=request.diversify_pages)
         items = []
         remaining = self._config.max_pack_chars
-        for hit in ranking.hits:
+        for hit in selected:
             unit = units[hit.evidence_id]
             text = unit.text[: min(remaining, self._config.max_item_chars)]
             if not text:
@@ -559,6 +592,39 @@ class EvidenceRAG:
             search_ms=ranking.search_ms,
             index_reused=reused,
             status="ok" if items else "no_relevant_evidence",
+            ranking=tuple(
+                CollectionRank(
+                    evidence_id=hit.evidence_id,
+                    document_id=hit.document_id,
+                    document_version=hit.document_version,
+                    page_index=hit.page_index,
+                    retrieval_rank=hit.rank,
+                    score=hit.score,
+                    selected_rank=next(
+                        (
+                            i
+                            for i, selected_hit in enumerate(selected, 1)
+                            if selected_hit.evidence_id == hit.evidence_id
+                        ),
+                        None,
+                    ),
+                    packed=hit.evidence_id in {i.evidence_id for i in items},
+                )
+                for hit in ranking.hits
+            ),
+            coverage=RetrievalCoverage(
+                candidates=len(ranking.hits),
+                selected=len(selected),
+                packed=len(items),
+                packed_pages=len(
+                    {(i.document_id, i.document_version, i.page_index) for i in items}
+                ),
+                packed_documents=len({(i.document_id, i.document_version) for i in items}),
+                text_characters=sum(len(i.text) for i in items),
+                truncated_items=sum(i.text != units[i.evidence_id].text for i in items),
+            ),
+            candidate_limit=request.candidate_limit,
+            diversify_pages=request.diversify_pages,
             truncated_evidence_ids=tuple(
                 i.evidence_id for i in items if i.text != units[i.evidence_id].text
             ),

@@ -1,0 +1,986 @@
+{
+  "question": "What calibration sampling rate does the Atlas sensor document specify?",
+  "initial_draft": {
+    "status": "insufficient_evidence"
+  },
+  "initial_evidence_ids": [],
+  "hashes": {
+    "PROJECT\\datasets\\fixtures\\atlas-narrative.pdf": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+    "PROJECT\\agent-integration\\src\\evidence_rag\\evidence-rag-agent\\SKILL.md": "851eb1c38fb2cdaecffd73aced78bf071552daa3e182a6d66aa26e1ab20faf1b",
+    "PROJECT\\agent-integration\\src\\evidence_rag\\evidence-rag-agent\\references\\tools.md": "91dabd9dd4e32a6a6c0fe3c85c0820eac66772354edd634b7ae87b46e323d5d0"
+  },
+  "operations": [
+    {
+      "operation": "capabilities",
+      "arguments": {},
+      "receipt": {
+        "interface": "Python SDK",
+        "verifier_configured": true,
+        "retrieval_mode": "bm25",
+        "recovery_search_budget": 2,
+        "recovery_recheck_budget": 1
+      }
+    },
+    {
+      "operation": "documents",
+      "arguments": {},
+      "receipt": {
+        "documents": [
+          {
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "state": "ready",
+            "attempt_count": 1,
+            "last_request_id": "sdk_09656f484570487ba3bbc5b234da96ac",
+            "evidence_count": 6,
+            "page_count": 1,
+            "failure_reason": null,
+            "failure_stage": null,
+            "stage_timings": [
+              {
+                "stage": "validation",
+                "duration_ms": 2.0447999704629183
+              },
+              {
+                "stage": "parsing",
+                "duration_ms": 9.477399988099933
+              },
+              {
+                "stage": "rendering",
+                "duration_ms": 28.99500000057742
+              },
+              {
+                "stage": "persistence",
+                "duration_ms": 16.41760003985837
+              },
+              {
+                "stage": "total",
+                "duration_ms": 72.24170002155006
+              }
+            ],
+            "ready_at": "2026-11-23T15:23:48.339178Z"
+          }
+        ],
+        "next_offset": null,
+        "skipped_invalid_records": 0
+      }
+    },
+    {
+      "operation": "ingest",
+      "arguments": {
+        "path": "PROJECT\\datasets\\fixtures\\atlas-narrative.pdf"
+      },
+      "receipt": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "state": "ready",
+        "attempt_count": 1,
+        "last_request_id": "sdk_09656f484570487ba3bbc5b234da96ac",
+        "evidence_count": 6,
+        "page_count": 1,
+        "failure_reason": null,
+        "failure_stage": null,
+        "stage_timings": [
+          {
+            "stage": "validation",
+            "duration_ms": 2.0447999704629183
+          },
+          {
+            "stage": "parsing",
+            "duration_ms": 9.477399988099933
+          },
+          {
+            "stage": "rendering",
+            "duration_ms": 28.99500000057742
+          },
+          {
+            "stage": "persistence",
+            "duration_ms": 16.41760003985837
+          },
+          {
+            "stage": "total",
+            "duration_ms": 72.24170002155006
+          }
+        ],
+        "ready_at": "2026-11-23T15:23:48.339178Z",
+        "duplicate": true
+      }
+    },
+    {
+      "operation": "status",
+      "arguments": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+      },
+      "receipt": {
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "state": "ready",
+        "attempt_count": 1,
+        "last_request_id": "sdk_09656f484570487ba3bbc5b234da96ac",
+        "evidence_count": 6,
+        "page_count": 1,
+        "failure_reason": null,
+        "failure_stage": null,
+        "stage_timings": [
+          {
+            "stage": "validation",
+            "duration_ms": 2.0447999704629183
+          },
+          {
+            "stage": "parsing",
+            "duration_ms": 9.477399988099933
+          },
+          {
+            "stage": "rendering",
+            "duration_ms": 28.99500000057742
+          },
+          {
+            "stage": "persistence",
+            "duration_ms": 16.41760003985837
+          },
+          {
+            "stage": "total",
+            "duration_ms": 72.24170002155006
+          }
+        ],
+        "ready_at": "2026-11-23T15:23:48.339178Z"
+      }
+    },
+    {
+      "operation": "recovery.start",
+      "arguments": {
+        "document": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "question": "What calibration sampling rate does the Atlas sensor document specify?",
+        "evidence_ids": [],
+        "draft": {
+          "status": "insufficient_evidence"
+        }
+      },
+      "receipt": {
+        "session_id": "rec_930447dd81a244328f85d5a2f0d3249b",
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "What calibration sampling rate does the Atlas sensor document specify?",
+        "status": "active",
+        "reason": "waiting_for_evidence",
+        "budget": {
+          "searches_used": 0,
+          "rechecks_used": 0
+        },
+        "observed_evidence_ids": [],
+        "initial_check": {
+          "result": {
+            "status": "insufficient_evidence",
+            "reason": "no_relevant_evidence",
+            "answer": null,
+            "claims": [],
+            "supplied_evidence_ids": [],
+            "excluded_evidence_ids": [],
+            "policy_version": "grounding-v1",
+            "answer_source": null
+          },
+          "diagnostics": [],
+          "max_additional_searches": 2,
+          "max_rechecks": 1,
+          "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+          "content_trust": "untrusted_document_data"
+        },
+        "last_check": null,
+        "events": [
+          {
+            "operation": "initial_check",
+            "outcome": "no_relevant_evidence",
+            "evidence_ids": []
+          }
+        ],
+        "ttl_seconds": 1800,
+        "content_trust": "untrusted_document_data"
+      }
+    },
+    {
+      "operation": "recovery.search",
+      "arguments": {
+        "session_id": "rec_930447dd81a244328f85d5a2f0d3249b",
+        "query": "What calibration sampling rate does the Atlas sensor document specify?"
+      },
+      "receipt": {
+        "session": {
+          "session_id": "rec_930447dd81a244328f85d5a2f0d3249b",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "question": "What calibration sampling rate does the Atlas sensor document specify?",
+          "status": "active",
+          "reason": "waiting_for_evidence",
+          "budget": {
+            "searches_used": 1,
+            "rechecks_used": 0
+          },
+          "observed_evidence_ids": [
+            "ev_082ee3dfe7b3c42856f354385c0ba206",
+            "ev_c395759200fd36e917985b8e305bb305",
+            "ev_db963e2e6b7064f643c914bace118433",
+            "ev_de43c6627b200524dfcf26e84ee4c84b"
+          ],
+          "initial_check": {
+            "result": {
+              "status": "insufficient_evidence",
+              "reason": "no_relevant_evidence",
+              "answer": null,
+              "claims": [],
+              "supplied_evidence_ids": [],
+              "excluded_evidence_ids": [],
+              "policy_version": "grounding-v1",
+              "answer_source": null
+            },
+            "diagnostics": [],
+            "max_additional_searches": 2,
+            "max_rechecks": 1,
+            "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+            "content_trust": "untrusted_document_data"
+          },
+          "last_check": null,
+          "events": [
+            {
+              "operation": "initial_check",
+              "outcome": "no_relevant_evidence",
+              "evidence_ids": []
+            },
+            {
+              "operation": "search",
+              "outcome": "ok",
+              "evidence_ids": [
+                "ev_db963e2e6b7064f643c914bace118433",
+                "ev_de43c6627b200524dfcf26e84ee4c84b",
+                "ev_c395759200fd36e917985b8e305bb305",
+                "ev_082ee3dfe7b3c42856f354385c0ba206"
+              ]
+            }
+          ],
+          "ttl_seconds": 1800,
+          "content_trust": "untrusted_document_data"
+        },
+        "retrieval": {
+          "document": {
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+          },
+          "mode": "bm25",
+          "status": "ok",
+          "pack": {
+            "items": [
+              {
+                "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "text": "The Atlas sensor samples at 20 hertz during calibration."
+              },
+              {
+                "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "text": "Atlas Sensor Note"
+              },
+              {
+                "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "text": "Figure 1. Calibration data flow: Sensor -> Filter -> Archive."
+              },
+              {
+                "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+                "document_id": "doc_cedee38ab4152274426cf3f8",
+                "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                "page_index": 0,
+                "text": "Sensor\nFilter\nArchive"
+              }
+            ],
+            "excluded_ids": []
+          },
+          "ranking": [
+            {
+              "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "rank": 1,
+              "score": 3.355221351205551,
+              "anchor_precision": "region",
+              "bbox": {
+                "x0": 0.08823529,
+                "y0": 0.11638258,
+                "x1": 0.53177598,
+                "y1": 0.13546591
+              }
+            },
+            {
+              "evidence_id": "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "rank": 2,
+              "score": 1.8498255844642482,
+              "anchor_precision": "region",
+              "bbox": {
+                "x0": 0.08823529,
+                "y0": 0.05883838,
+                "x1": 0.3697059,
+                "y1": 0.09361111
+              }
+            },
+            {
+              "evidence_id": "ev_c395759200fd36e917985b8e305bb305",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "rank": 3,
+              "score": 1.294877909124974,
+              "anchor_precision": "region",
+              "bbox": {
+                "x0": 0.11437908,
+                "y0": 0.33244948,
+                "x1": 0.53573514,
+                "y1": 0.34954545
+              }
+            },
+            {
+              "evidence_id": "ev_082ee3dfe7b3c42856f354385c0ba206",
+              "document_id": "doc_cedee38ab4152274426cf3f8",
+              "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+              "page_index": 0,
+              "rank": 4,
+              "score": 0.5554468885793636,
+              "anchor_precision": "region",
+              "bbox": {
+                "x0": 0.17378269,
+                "y0": 0.27806818,
+                "x1": 0.82544768,
+                "y1": 0.29719318
+              }
+            }
+          ],
+          "timings_ms": {
+            "index_build": 0.000200001522898674,
+            "bm25": 0.06120000034570694
+          },
+          "truncated_evidence_ids": [],
+          "content_trust": "untrusted_document_data"
+        }
+      }
+    },
+    {
+      "operation": "evidence",
+      "arguments": {
+        "op": "evidence",
+        "evidence_id": "ev_db963e2e6b7064f643c914bace118433"
+      },
+      "receipt": {
+        "evidence": {
+          "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "element_type": "text",
+          "section_title": "Atlas Sensor Note",
+          "text": "The Atlas sensor samples at 20 hertz during calibration.",
+          "anchor_precision": "region",
+          "bbox": {
+            "x0": 0.08823529,
+            "y0": 0.11638258,
+            "x1": 0.53177598,
+            "y1": 0.13546591
+          },
+          "coordinate_system": "normalized_top_left",
+          "source_region": {
+            "bbox": {
+              "x0": 54.0,
+              "y0": 92.17500305175781,
+              "x1": 325.4468994140625,
+              "y1": 107.28900146484375
+            },
+            "coordinate_system": "pymupdf_points_top_left_unrotated",
+            "page_width": 612.0,
+            "page_height": 792.0,
+            "page_rotation": 0
+          },
+          "parser_element_id": "p0-block-1",
+          "reading_order": 1,
+          "related_element_id": null,
+          "table": null,
+          "versions": {
+            "parser": "pymupdf:1.28.2",
+            "representation": "evidence-unit-v2"
+          },
+          "asset_ref": null
+        },
+        "anchor": {
+          "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "page_index": 0,
+          "precision": "region",
+          "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+          "source_bbox": {
+            "x0": 0.08823529,
+            "y0": 0.11638258,
+            "x1": 0.53177598,
+            "y1": 0.13546591
+          },
+          "display_bbox": {
+            "x0": 0.08823529,
+            "y0": 0.11638258,
+            "x1": 0.53177598,
+            "y1": 0.13546591
+          },
+          "pixel_bbox": {
+            "x0": 107,
+            "y0": 184,
+            "x1": 651,
+            "y1": 215
+          }
+        },
+        "text_truncated": false,
+        "original_text_chars": 56,
+        "content_trust": "untrusted_document_data"
+      }
+    },
+    {
+      "operation": "recovery.recheck",
+      "arguments": {
+        "op": "recheck",
+        "evidence_ids": [
+          "ev_db963e2e6b7064f643c914bace118433"
+        ],
+        "source_reasoning": "The first BM25 result explicitly states the calibration rate as 20 hertz. The fetched complete 56-character unit confirms the calibration qualifier and region anchor on page_index 0. No calculation or conversion is needed; the draft quotes the sentence exactly. The initial missing-evidence problem is corrected with this observed evidence ID.",
+        "draft": {
+          "status": "answered",
+          "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+          "claims": [
+            {
+              "text": "The Atlas sensor samples at 20 hertz during calibration.",
+              "citations": [
+                {
+                  "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                  "document_id": "doc_cedee38ab4152274426cf3f8",
+                  "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                  "page_index": 0
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "receipt": {
+        "session_id": "rec_930447dd81a244328f85d5a2f0d3249b",
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "What calibration sampling rate does the Atlas sensor document specify?",
+        "status": "closed",
+        "reason": "answered",
+        "budget": {
+          "searches_used": 1,
+          "rechecks_used": 1
+        },
+        "observed_evidence_ids": [
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "initial_check": {
+          "result": {
+            "status": "insufficient_evidence",
+            "reason": "no_relevant_evidence",
+            "answer": null,
+            "claims": [],
+            "supplied_evidence_ids": [],
+            "excluded_evidence_ids": [],
+            "policy_version": "grounding-v1",
+            "answer_source": null
+          },
+          "diagnostics": [],
+          "max_additional_searches": 2,
+          "max_rechecks": 1,
+          "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+          "content_trust": "untrusted_document_data"
+        },
+        "last_check": {
+          "result": {
+            "status": "answered",
+            "reason": "answered",
+            "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+            "claims": [
+              {
+                "text": "The Atlas sensor samples at 20 hertz during calibration.",
+                "citations": [
+                  {
+                    "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                    "document_id": "doc_cedee38ab4152274426cf3f8",
+                    "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                    "page_index": 0,
+                    "precision": "region",
+                    "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                    "semantic_support": "supported"
+                  }
+                ],
+                "citation_status": "valid",
+                "rule_support": "not_assessed",
+                "semantic_support": {
+                  "support": "supported",
+                  "status": "assessed",
+                  "model": "cross-encoder/nli-deberta-v3-small",
+                  "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+                  "preprocessing": "cited-premise-first-v1",
+                  "margin": 3.7084604501724243,
+                  "conflicting": false,
+                  "passage_support": [
+                    "supported"
+                  ]
+                }
+              }
+            ],
+            "supplied_evidence_ids": [
+              "ev_db963e2e6b7064f643c914bace118433"
+            ],
+            "excluded_evidence_ids": [],
+            "policy_version": "grounding-v1",
+            "answer_source": null
+          },
+          "diagnostics": [
+            {
+              "claim_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration.",
+              "evidence_ids": [
+                "ev_db963e2e6b7064f643c914bace118433"
+              ],
+              "reason": "answered",
+              "next_action": "Retain the checked claim and its citations."
+            }
+          ],
+          "max_additional_searches": 2,
+          "max_rechecks": 1,
+          "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+          "content_trust": "untrusted_document_data"
+        },
+        "events": [
+          {
+            "operation": "initial_check",
+            "outcome": "no_relevant_evidence",
+            "evidence_ids": []
+          },
+          {
+            "operation": "search",
+            "outcome": "ok",
+            "evidence_ids": [
+              "ev_db963e2e6b7064f643c914bace118433",
+              "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "ev_c395759200fd36e917985b8e305bb305",
+              "ev_082ee3dfe7b3c42856f354385c0ba206"
+            ]
+          },
+          {
+            "operation": "recheck",
+            "outcome": "answered",
+            "evidence_ids": [
+              "ev_db963e2e6b7064f643c914bace118433"
+            ]
+          }
+        ],
+        "ttl_seconds": 1800,
+        "content_trust": "untrusted_document_data"
+      }
+    },
+    {
+      "operation": "recovery.status",
+      "arguments": {
+        "session_id": "rec_930447dd81a244328f85d5a2f0d3249b"
+      },
+      "receipt": {
+        "session_id": "rec_930447dd81a244328f85d5a2f0d3249b",
+        "document_id": "doc_cedee38ab4152274426cf3f8",
+        "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+        "question": "What calibration sampling rate does the Atlas sensor document specify?",
+        "status": "closed",
+        "reason": "answered",
+        "budget": {
+          "searches_used": 1,
+          "rechecks_used": 1
+        },
+        "observed_evidence_ids": [
+          "ev_082ee3dfe7b3c42856f354385c0ba206",
+          "ev_c395759200fd36e917985b8e305bb305",
+          "ev_db963e2e6b7064f643c914bace118433",
+          "ev_de43c6627b200524dfcf26e84ee4c84b"
+        ],
+        "initial_check": {
+          "result": {
+            "status": "insufficient_evidence",
+            "reason": "no_relevant_evidence",
+            "answer": null,
+            "claims": [],
+            "supplied_evidence_ids": [],
+            "excluded_evidence_ids": [],
+            "policy_version": "grounding-v1",
+            "answer_source": null
+          },
+          "diagnostics": [],
+          "max_additional_searches": 2,
+          "max_rechecks": 1,
+          "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+          "content_trust": "untrusted_document_data"
+        },
+        "last_check": {
+          "result": {
+            "status": "answered",
+            "reason": "answered",
+            "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+            "claims": [
+              {
+                "text": "The Atlas sensor samples at 20 hertz during calibration.",
+                "citations": [
+                  {
+                    "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+                    "document_id": "doc_cedee38ab4152274426cf3f8",
+                    "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+                    "page_index": 0,
+                    "precision": "region",
+                    "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+                    "semantic_support": "supported"
+                  }
+                ],
+                "citation_status": "valid",
+                "rule_support": "not_assessed",
+                "semantic_support": {
+                  "support": "supported",
+                  "status": "assessed",
+                  "model": "cross-encoder/nli-deberta-v3-small",
+                  "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+                  "preprocessing": "cited-premise-first-v1",
+                  "margin": 3.7084604501724243,
+                  "conflicting": false,
+                  "passage_support": [
+                    "supported"
+                  ]
+                }
+              }
+            ],
+            "supplied_evidence_ids": [
+              "ev_db963e2e6b7064f643c914bace118433"
+            ],
+            "excluded_evidence_ids": [],
+            "policy_version": "grounding-v1",
+            "answer_source": null
+          },
+          "diagnostics": [
+            {
+              "claim_index": 0,
+              "text": "The Atlas sensor samples at 20 hertz during calibration.",
+              "evidence_ids": [
+                "ev_db963e2e6b7064f643c914bace118433"
+              ],
+              "reason": "answered",
+              "next_action": "Retain the checked claim and its citations."
+            }
+          ],
+          "max_additional_searches": 2,
+          "max_rechecks": 1,
+          "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+          "content_trust": "untrusted_document_data"
+        },
+        "events": [
+          {
+            "operation": "initial_check",
+            "outcome": "no_relevant_evidence",
+            "evidence_ids": []
+          },
+          {
+            "operation": "search",
+            "outcome": "ok",
+            "evidence_ids": [
+              "ev_db963e2e6b7064f643c914bace118433",
+              "ev_de43c6627b200524dfcf26e84ee4c84b",
+              "ev_c395759200fd36e917985b8e305bb305",
+              "ev_082ee3dfe7b3c42856f354385c0ba206"
+            ]
+          },
+          {
+            "operation": "recheck",
+            "outcome": "answered",
+            "evidence_ids": [
+              "ev_db963e2e6b7064f643c914bace118433"
+            ]
+          }
+        ],
+        "ttl_seconds": 1800,
+        "content_trust": "untrusted_document_data"
+      }
+    }
+  ],
+  "limitations": [
+    "Semantic support is a fallible local model judgment, not proof. The actual receipt reports supported, assessed, valid citation, with no excluded or truncated evidence.",
+    "The first process exited after the initial check because its stdin closed. Its actual receipt is preserved under prior_aborted_execution. The operational restart occurred before any searches or rechecks were consumed; no limit was bypassed. All retrieval and final checking occurred in the second single live process.",
+    "Only the authorized source PDF and workflow/SDK documentation/signatures were read; no tests, reports, evaluation labels, unrelated tmp folders, live providers, or model downloads were used."
+  ],
+  "prior_aborted_execution": {
+    "question": "What calibration sampling rate does the Atlas sensor document specify?",
+    "initial_draft": {
+      "status": "insufficient_evidence"
+    },
+    "initial_evidence_ids": [],
+    "hashes": {
+      "PROJECT\\datasets\\fixtures\\atlas-narrative.pdf": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+      "PROJECT\\agent-integration\\src\\evidence_rag\\evidence-rag-agent\\SKILL.md": "851eb1c38fb2cdaecffd73aced78bf071552daa3e182a6d66aa26e1ab20faf1b",
+      "PROJECT\\agent-integration\\src\\evidence_rag\\evidence-rag-agent\\references\\tools.md": "91dabd9dd4e32a6a6c0fe3c85c0820eac66772354edd634b7ae87b46e323d5d0"
+    },
+    "operations": [
+      {
+        "operation": "capabilities",
+        "arguments": {},
+        "receipt": {
+          "interface": "Python SDK",
+          "verifier_configured": true,
+          "retrieval_mode": "bm25",
+          "recovery_search_budget": 2,
+          "recovery_recheck_budget": 1
+        }
+      },
+      {
+        "operation": "documents",
+        "arguments": {},
+        "receipt": {
+          "documents": [],
+          "next_offset": null,
+          "skipped_invalid_records": 0
+        }
+      },
+      {
+        "operation": "ingest",
+        "arguments": {
+          "path": "PROJECT\\datasets\\fixtures\\atlas-narrative.pdf"
+        },
+        "receipt": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "state": "ready",
+          "attempt_count": 1,
+          "last_request_id": "sdk_09656f484570487ba3bbc5b234da96ac",
+          "evidence_count": 6,
+          "page_count": 1,
+          "failure_reason": null,
+          "failure_stage": null,
+          "stage_timings": [
+            {
+              "stage": "validation",
+              "duration_ms": 2.0447999704629183
+            },
+            {
+              "stage": "parsing",
+              "duration_ms": 9.477399988099933
+            },
+            {
+              "stage": "rendering",
+              "duration_ms": 28.99500000057742
+            },
+            {
+              "stage": "persistence",
+              "duration_ms": 16.41760003985837
+            },
+            {
+              "stage": "total",
+              "duration_ms": 72.24170002155006
+            }
+          ],
+          "ready_at": "2026-11-23T15:23:48.339178Z",
+          "duplicate": false
+        }
+      },
+      {
+        "operation": "status",
+        "arguments": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+        },
+        "receipt": {
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "state": "ready",
+          "attempt_count": 1,
+          "last_request_id": "sdk_09656f484570487ba3bbc5b234da96ac",
+          "evidence_count": 6,
+          "page_count": 1,
+          "failure_reason": null,
+          "failure_stage": null,
+          "stage_timings": [
+            {
+              "stage": "validation",
+              "duration_ms": 2.0447999704629183
+            },
+            {
+              "stage": "parsing",
+              "duration_ms": 9.477399988099933
+            },
+            {
+              "stage": "rendering",
+              "duration_ms": 28.99500000057742
+            },
+            {
+              "stage": "persistence",
+              "duration_ms": 16.41760003985837
+            },
+            {
+              "stage": "total",
+              "duration_ms": 72.24170002155006
+            }
+          ],
+          "ready_at": "2026-11-23T15:23:48.339178Z"
+        }
+      },
+      {
+        "operation": "recovery.start",
+        "arguments": {
+          "document": {
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa"
+          },
+          "question": "What calibration sampling rate does the Atlas sensor document specify?",
+          "evidence_ids": [],
+          "draft": {
+            "status": "insufficient_evidence"
+          }
+        },
+        "receipt": {
+          "session_id": "rec_6ac2f5489d3a42e883f95a3ef5ed5c1f",
+          "document_id": "doc_cedee38ab4152274426cf3f8",
+          "document_sha256": "b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+          "question": "What calibration sampling rate does the Atlas sensor document specify?",
+          "status": "active",
+          "reason": "waiting_for_evidence",
+          "budget": {
+            "searches_used": 0,
+            "rechecks_used": 0
+          },
+          "observed_evidence_ids": [],
+          "initial_check": {
+            "result": {
+              "status": "insufficient_evidence",
+              "reason": "no_relevant_evidence",
+              "answer": null,
+              "claims": [],
+              "supplied_evidence_ids": [],
+              "excluded_evidence_ids": [],
+              "policy_version": "grounding-v1",
+              "answer_source": null
+            },
+            "diagnostics": [],
+            "max_additional_searches": 2,
+            "max_rechecks": 1,
+            "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+            "content_trust": "untrusted_document_data"
+          },
+          "last_check": null,
+          "events": [
+            {
+              "operation": "initial_check",
+              "outcome": "no_relevant_evidence",
+              "evidence_ids": []
+            }
+          ],
+          "ttl_seconds": 1800,
+          "content_trust": "untrusted_document_data"
+        }
+      }
+    ],
+    "limitations": [],
+    "configuration": {
+      "semantic_verifier": true,
+      "model_cache_dir": "PROJECT\\tmp\\hf-model-cache",
+      "artifact_root": "PROJECT\\tmp\\v05-recovery-forward\\artifacts",
+      "live_answer_provider": "off",
+      "offline": true
+    }
+  },
+  "operational_restart": "The first executor closed stdin and terminated the process after start, before any search or recheck. Restart is solely execution recovery; shared consumed budgets were zero. The prior receipt is preserved and is not used as resumable authority.",
+  "configuration": {
+    "semantic_verifier": true,
+    "model_cache_dir": "PROJECT\\tmp\\hf-model-cache",
+    "artifact_root": "PROJECT\\tmp\\v05-recovery-forward\\artifacts",
+    "live_answer_provider": "off",
+    "offline": true
+  },
+  "source_reasoning": "The first BM25 result explicitly states the calibration rate as 20 hertz. The fetched complete 56-character unit confirms the calibration qualifier and region anchor on page_index 0. No calculation or conversion is needed; the draft quotes the sentence exactly. The initial missing-evidence problem is corrected with this observed evidence ID.",
+  "final_draft": {
+    "status": "answered",
+    "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+    "claims": [
+      {
+        "text": "The Atlas sensor samples at 20 hertz during calibration.",
+        "citations": [
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0
+          }
+        ]
+      }
+    ]
+  },
+  "final_answer": {
+    "status": "answered",
+    "reason": "answered",
+    "answer": "The Atlas sensor samples at 20 hertz during calibration.",
+    "claims": [
+      {
+        "text": "The Atlas sensor samples at 20 hertz during calibration.",
+        "citations": [
+          {
+            "evidence_id": "ev_db963e2e6b7064f643c914bace118433",
+            "document_id": "doc_cedee38ab4152274426cf3f8",
+            "document_version": "sha256:b6a8b1d7f3fda491b08adf9aeb1bc40d1b073804ab63045e3cf090ff1dff4aaa",
+            "page_index": 0,
+            "precision": "region",
+            "preview_asset_id": "asset:page:doc_cedee38ab4152274426cf3f8:b6a8b1d7f3fda491b08adf9a:0",
+            "semantic_support": "supported"
+          }
+        ],
+        "citation_status": "valid",
+        "rule_support": "not_assessed",
+        "semantic_support": {
+          "support": "supported",
+          "status": "assessed",
+          "model": "cross-encoder/nli-deberta-v3-small",
+          "revision": "98f45e15fc3e6c918f51a7e858cda1139cbc9e59",
+          "preprocessing": "cited-premise-first-v1",
+          "margin": 3.7084604501724243,
+          "conflicting": false,
+          "passage_support": [
+            "supported"
+          ]
+        }
+      }
+    ],
+    "supplied_evidence_ids": [
+      "ev_db963e2e6b7064f643c914bace118433"
+    ],
+    "excluded_evidence_ids": [],
+    "policy_version": "grounding-v1",
+    "answer_source": null
+  },
+  "delivery_source_sha256": {
+    "src/evidence_rag/recovery.py": "1c593d6030684eec538668555f94b443c3f43b89ac61fb9365e044d605173557",
+    "src/evidence_rag/sdk.py": "8188bf180606dfaa8e4395a755971de05a5a37eca45136a05c30b3066f991a10"
+  },
+  "scope": "One owned development usability task with a cached local verifier, not an accuracy comparison. Operational restart before any search/recheck is preserved."
+}

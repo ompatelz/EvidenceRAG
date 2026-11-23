@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 - 2026-11-23
+
+- Add process-local recovery sessions with fixed scope, bounded attempts and event receipts.
+- Reject unobserved evidence in rechecks and close after one recheck, including errors.
+- Add optional page-diverse collection selection and complete candidate/coverage traces.
+- Expand pinned natural-document probes with matched 20-candidate variants.
+- Preserve default ranked selection, grounding-v1 and historical frozen outcomes.
+
 ## 0.4.0 - 2026-11-23
 
 - Add connected context, per-claim recovery guidance and an immutable recovery ledger.

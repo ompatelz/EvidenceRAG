@@ -72,7 +72,7 @@ jobs:
       - name: Install optional MCP transport
         run: uv pip install -r integrations/mcp/requirements.txt
       - name: Check SDK, CLI and real MCP protocol
-        run: uv run --no-sync pytest tests/test_sdk.py tests/test_calculations.py tests/test_mcp_server.py tests/test_agent_improvements.py -q
+        run: uv run --no-sync pytest tests/test_sdk.py tests/test_calculations.py tests/test_mcp_server.py tests/test_agent_improvements.py tests/test_recovery.py tests/test_diversity.py -q
       - name: Install local OCR language data
         run: sudo apt-get update -qq && sudo apt-get install -y tesseract-ocr-eng
       - name: Exercise real scanned-page OCR

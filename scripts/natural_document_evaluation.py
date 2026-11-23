@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 import tempfile
 import urllib.request
 from pathlib import Path
@@ -39,19 +40,31 @@ def run(pdf: Path) -> dict[str, object]:
         rows = []
         for identifier, question, relevant in PROBES:
             variants = {}
-            for contextual in (False, True):
+            for name, contextual, candidate_limit, diversify in (
+                ("false", False, 5, False),
+                ("true", True, 5, False),
+                ("plain20", False, 20, False),
+                ("headings20", True, 20, False),
+                ("headings20_spread", True, 20, True),
+            ):
                 result = engine.search_collection(
                     CollectionSearchRequest(
                         documents=(document,),
                         question=question,
                         contextual_indexing=contextual,
+                        candidate_limit=candidate_limit,
+                        diversify_pages=diversify,
                     )
                 )
-                variants[str(contextual).lower()] = {
+                variants[name] = {
                     "pages": [i.page_index for i in result.pack.items],
                     "page_hit_at_5": any(i.page_index in relevant for i in result.pack.items),
                     "pack": result.pack.model_dump(mode="json"),
                     "search_ms": result.search_ms,
+                    "candidate_limit": candidate_limit,
+                    "diversify_pages": diversify,
+                    "coverage": result.coverage.model_dump(mode="json"),
+                    "ranking": [hit.model_dump(mode="json") for hit in result.ranking],
                 }
             rows.append(
                 {
@@ -69,6 +82,16 @@ def run(pdf: Path) -> dict[str, object]:
             "scope": "development page-retrieval probes; no generated answers",
             "rows": rows,
             "provider_calls": 0,
+            "code_commit": os.environ.get("GITHUB_SHA"),
+            "source_code_sha256": {
+                str(p).replace("\\", "/"): hashlib.sha256(
+                    p.read_bytes().replace(b"\r\n", b"\n")
+                ).hexdigest()
+                for p in (
+                    Path("src/evidence_rag/sdk.py"),
+                    Path("src/evidence_rag/retrieval/diversity.py"),
+                )
+            },
         }
 
 
@@ -92,7 +115,7 @@ def main() -> None:
             request = urllib.request.Request(
                 DOWNLOAD,
                 headers={
-                    "User-Agent": "EvidenceRAG/0.4.0 (+https://github.com/ompatelz/EvidenceRAG)",
+                    "User-Agent": "EvidenceRAG/0.5.0 (+https://github.com/ompatelz/EvidenceRAG)",
                     "Accept": "application/pdf",
                 },
             )
@@ -119,6 +142,18 @@ def main() -> None:
         "pages": record["page_count"],
         "queries": len(rows),
         "record": str(args.output),
+        "page_hits_at_5": {
+            name: sum(row["variants"][name]["page_hit_at_5"] for row in rows)
+            for name in rows[0]["variants"]
+        },
+        "query_results": [
+            {
+                "id": row["question_id"],
+                "pages": {name: value["pages"] for name, value in row["variants"].items()},
+            }
+            for row in rows
+        ],
+        "label_status": "agent-audited development pages; human review pending",
     }
     print("::notice title=Natural PDF retrieval::" + json.dumps(summary))
 
