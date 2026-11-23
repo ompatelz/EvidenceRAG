@@ -25,6 +25,7 @@ def retrieve(
     units: Sequence[EvidenceUnit],
     manifest: IngestionManifest,
     settings: AppSettings,
+    lexical_index: BM25Index | None = None,
 ) -> tuple[Sequence[RankedEvidence | HybridHit | RerankedHit], dict[str, float], str]:
     """Retrieve five canonical units with offline-only model loading."""
     scope = [(manifest.document_id, manifest.document_version)]
@@ -33,9 +34,10 @@ def retrieve(
     hits: Sequence[RankedEvidence | HybridHit | RerankedHit]
     if mode == "bm25":
         started = perf_counter()
-        index = BM25Index()
+        index = lexical_index or BM25Index()
         try:
-            index.rebuild(units)
+            if lexical_index is None:
+                index.rebuild(units)
             timings["index_build"] = (perf_counter() - started) * 1000
             ranking = index.search(question, k=5, versions=scope)
         except Exception as exc:

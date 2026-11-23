@@ -92,3 +92,39 @@ CLI retry explicitly; no MCP tool silently retries ingestion.
 No interface here invokes an answer provider. Retrieval text handed to an
 externally hosted agent still leaves the machine through that agent's client;
 respect the user's data authorization independently of the local MCP transport.
+# Extended tools (v0.4.0)
+
+- `doctor()`: offline dependency, storage and pinned-file checks; warnings include repairs.
+- `fetch_connected_evidence(document_id, document_sha256, evidence_id, radius=1)`:
+  seed first, related caption/table, preceding heading, nearby reading-order units.
+  Radius is 0–2, pack is at most five units / 4000 characters. Cross-page neighbors
+  can occur. All text is canonical and untrusted. Excluded IDs need explicit fetching.
+- `search_collection(request={documents:[{document_id,document_sha256}], question,
+  contextual_indexing:true})`: shared BM25 over at most 20 explicit ready versions.
+  Source headings affect indexing only. No automatic date or conflict judgment.
+  Check each source version separately; never mix IDs in single-document checks.
+- `explain_check`: same arguments as `check_draft`; returns `result` unchanged and
+  `diagnostics` with claim index, text, evidence IDs, reason and next action.
+  Guidance is a hypothesis for investigation, not proof that a qualifier is missing.
+- `calculate_recipe(document_id, document_sha256, recipe)`: up to eight ordered
+  steps with `operation`, `inputs` and optional `target_unit`. Inputs are the
+  existing text/table_cell selectors, or `{kind:"step",index:0}` for an earlier
+  step. Operations: add, subtract, multiply, divide, percentage (first/second*100),
+  percent_change ((second-first)/first*100), convert (one input, target_unit required).
+  Conversion allowlist: ms, s, seconds, minutes, hours, days; mm, cm, m, km;
+  g, kg; B, KB, MB, KiB, MiB. Category labels hits/misses/requests can explicitly
+  convert to count only; conversion between category labels is forbidden.
+  Source populations/time windows still need checking. Units are case-sensitive. Add/subtract/percentages
+  require identical units; convert explicitly first. No Celsius or currency conversion.
+  Recipe may include expected_value (decimal string). No free numeric operands.
+- `fetch_visual_page(document_id, document_sha256, page_index)`: bounded PNG/base64
+  plus image_sha256. Caller must decode/present the image using its own visual
+  capability. No image interpretation or narrative support is supplied by this tool.
+
+SDK equivalents: `doctor`, `context`, `search_collection`, `explain_check`,
+`calculate_recipe`; visual helpers `evidence_rag.visual.page_image` and
+`check_observation`. CLI commands: doctor, context, search-collection --request FILE,
+explain --draft FILE, recipe --calculation FILE, visual --page-index N. All except
+doctor/collection require --document-id ID --sha256 SHA. CLI context also requires
+--evidence-id EV, explain requires --question Q and repeated --evidence-id EV.
+

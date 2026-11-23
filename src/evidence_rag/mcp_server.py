@@ -10,7 +10,14 @@ from evidence_rag.answers import DraftAnswer
 from evidence_rag.calculations import CalculationError, CalculationRequest
 from evidence_rag.documents import IntakeError
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
-from evidence_rag.sdk import DocumentRef, EvidenceRAG, SearchRequest
+from evidence_rag.recipes import CalculationRecipe
+from evidence_rag.sdk import (
+    CollectionDraftRequest,
+    CollectionSearchRequest,
+    DocumentRef,
+    EvidenceRAG,
+    SearchRequest,
+)
 
 if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
@@ -74,6 +81,12 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
             "visual_interpretation": False,
             "source_arithmetic": "source-arithmetic-v1",
             "arithmetic_proves_narrative_claims": False,
+            "source_recipes": "source-recipe-v1",
+            "context_expansion": True,
+            "collection_search": "bm25-explicit-versions",
+            "visual_handoff": "explicit-page-image-unverified",
+            "ocr_enabled": engine.settings.ocr_enabled,
+            "recovery_budget": {"additional_searches": 2, "rechecks": 1},
         }
 
     def ingest_pdf(relative_path: str) -> dict[str, Any]:
@@ -201,6 +214,104 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
             )
         )
 
+    def doctor() -> dict[str, Any]:
+        """Check local dependencies, model files and writable storage; no downloads."""
+        return _safe(engine.doctor)
+
+    def search_collection(request: CollectionSearchRequest) -> dict[str, Any]:
+        """Search up to 20 explicitly authorized document versions with shared BM25.
+
+        Returned statements may conflict; no latest-version or conflict decision is inferred.
+        Check each document's claims separately; check_draft is single-version scoped.
+        """
+        return _safe(lambda: engine.search_collection(request))
+
+    def check_collection(request: CollectionDraftRequest) -> dict[str, Any]:
+        """Check scoped drafts separately and surface observed cross-source contradictions.
+
+        Use identical claim text to compare the same proposition. Does not infer
+        publication dates or prove the absence of other conflicts in a collection.
+        """
+        return _safe(lambda: engine.check_collection(request))
+
+    def fetch_connected_evidence(
+        document_id: str,
+        document_sha256: str,
+        evidence_id: str,
+        radius: int = 1,
+    ) -> dict[str, Any]:
+        """Fetch source relationships, preceding heading and neighbors within existing budgets."""
+        return _safe(
+            lambda: engine.context(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256),
+                evidence_id,
+                radius=radius,
+            )
+        )
+
+    def explain_check(
+        document_id: str,
+        document_sha256: str,
+        question: str,
+        evidence_ids: list[str],
+        draft: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Check a draft and return per-claim observed signals and bounded recovery guidance.
+
+        A missing qualifier is a hypothesis to investigate, never an inferred source fact.
+        Retain the original question; never paraphrase repeatedly to force acceptance.
+        """
+        return _safe(
+            lambda: engine.explain_check(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256),
+                question,
+                evidence_ids,
+                DraftAnswer.model_validate(draft),
+            )
+        )
+
+    def calculate_recipe(
+        document_id: str,
+        document_sha256: str,
+        recipe: CalculationRecipe,
+    ) -> dict[str, Any]:
+        """Execute up to eight source-backed steps, percentages and explicit linear conversions."""
+        return _safe(
+            lambda: engine.calculate_recipe(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256), recipe
+            )
+        )
+
+    def fetch_visual_page(
+        document_id: str,
+        document_sha256: str,
+        page_index: int,
+    ) -> dict[str, Any]:
+        """Explicitly hand a page PNG to a visual-capable agent. No interpretation is verified.
+
+        Use only when authorized to send the page to the caller's model. The text checker
+        cannot validate chart/diagram claims. Image packet is bounded to 4 MiB.
+        """
+        from evidence_rag.visual import page_image
+
+        return _safe(
+            lambda: page_image(
+                engine,
+                DocumentRef(document_id=document_id, document_sha256=document_sha256),
+                page_index,
+            )
+        )
+
+    server.add_tool(
+        doctor,
+        annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False),
+    )
+    server.add_tool(search_collection, annotations=read)
+    server.add_tool(check_collection, annotations=read)
+    server.add_tool(fetch_connected_evidence, annotations=read)
+    server.add_tool(explain_check, annotations=read)
+    server.add_tool(calculate_recipe, annotations=read)
+    server.add_tool(fetch_visual_page, annotations=read)
     server.add_tool(capabilities, annotations=read)
     server.add_tool(list_documents, annotations=read)
     server.add_tool(document_status, annotations=read)

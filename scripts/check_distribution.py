@@ -21,6 +21,11 @@ def main() -> None:
         for resource in (
             "sdk.py",
             "calculations.py",
+            "assistance.py",
+            "doctor.py",
+            "recipes.py",
+            "visual.py",
+            "eval/agent_trials.py",
             "cli.py",
             "mcp_server.py",
             "py.typed",

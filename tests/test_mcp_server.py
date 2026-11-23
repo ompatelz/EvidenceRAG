@@ -32,6 +32,16 @@ def test_registered_tool_functions_without_transport(tmp_path: Path) -> None:
     )
     assert result["pack"]["items"]
     assert result["content_trust"] == "untrusted_document_data"
+    context = server._tool_manager.get_tool("fetch_connected_evidence")
+    collection = server._tool_manager.get_tool("search_collection")
+    assert context is not None and collection is not None
+    connected = context.fn(
+        document_id=ingested["document_id"],
+        document_sha256=ingested["document_sha256"],
+        evidence_id=result["pack"]["items"][0]["evidence_id"],
+    )
+    assert connected["pack"]["items"]
+    assert "request" in collection.parameters["properties"]
 
 
 def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
@@ -50,6 +60,13 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
                 "document_status",
                 "fetch_page_evidence",
                 "calculate_evidence",
+                "doctor",
+                "search_collection",
+                "check_collection",
+                "fetch_connected_evidence",
+                "explain_check",
+                "calculate_recipe",
+                "fetch_visual_page",
             }
             caps = await client.call_tool("capabilities", {})
             assert caps.structuredContent is not None
@@ -120,6 +137,29 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
             assert result.structuredContent is not None
             item = result.structuredContent["pack"]["items"][0]
             assert result.structuredContent["content_trust"] == "untrusted_document_data"
+            connected = await client.call_tool(
+                "fetch_connected_evidence",
+                {
+                    **document,
+                    "evidence_id": item["evidence_id"],
+                },
+            )
+            assert connected.structuredContent is not None
+            assert (
+                connected.structuredContent["pack"]["items"][0]["evidence_id"]
+                == item["evidence_id"]
+            )
+            collection = await client.call_tool(
+                "search_collection",
+                {
+                    "request": {
+                        "documents": [document, loan_ref],
+                        "question": "calibration Resident",
+                    }
+                },
+            )
+            assert collection.structuredContent is not None
+            assert collection.structuredContent["pack"]["items"]
             source = await client.call_tool(
                 "fetch_evidence", {**document, "evidence_id": item["evidence_id"]}
             )

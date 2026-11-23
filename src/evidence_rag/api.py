@@ -130,6 +130,9 @@ def create_app(
     parser = PyMuPDFParser(
         max_pages=resolved_settings.max_pdf_pages,
         max_units=resolved_settings.max_evidence_units,
+        ocr_enabled=resolved_settings.ocr_enabled,
+        tessdata=resolved_settings.ocr_tessdata,
+        ocr_language=resolved_settings.ocr_language,
     )
     renderer = PyMuPDFPageRenderer(
         dpi=resolved_settings.render_dpi,
