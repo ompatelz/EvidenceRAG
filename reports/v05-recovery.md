@@ -40,6 +40,12 @@ source/code hashes and timings; CI summaries expose per-query page selections.
 These agent-audited page judgments still await human review. A page hit is not
 answer accuracy, full premise recall, citation support or reliable abstention.
 
+The hosted comparison returned a relevant labeled page in the packed top five
+for all six queries in every variant, including the unchanged baseline. Diversity
+changed the functions query from three distinct pages to four, without changing
+the page-hit count. This sample therefore establishes no retrieval improvement
+on that metric. [Saved CI summary and artifact provenance](runs/v05-natural-summary.json)
+
 Default ranked selection, current pack budgets and historical frozen test
 families/outcomes are preserved. Optional diversity can displace useful same-page
 material and is therefore explicit, inspectable and disabled by default.
