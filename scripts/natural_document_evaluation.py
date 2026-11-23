@@ -11,6 +11,7 @@ from evidence_rag.sdk import CollectionSearchRequest, DocumentRef, EvidenceRAG
 
 SOURCE = "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf"
 DOWNLOAD = "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=936225"
+EXPECTED_SOURCE_SHA256 = "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1"
 # Zero-based relevant page alternatives, audited against the official PDF by an
 # agent. Development probes only; these are not human-approved gold judgments.
 PROBES = [
@@ -75,7 +76,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pdf", type=Path)
     parser.add_argument("--download", action="store_true")
-    parser.add_argument("--expected-sha256", help="Require a previously frozen source fingerprint")
+    parser.add_argument(
+        "--expected-sha256",
+        default=EXPECTED_SOURCE_SHA256,
+        help="Require a frozen source fingerprint (defaults to recorded NIST copy)",
+    )
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     if (args.pdf is None) == (not args.download):

@@ -36,7 +36,10 @@ Real OCR, HTTP/MCP protocol, container and external natural-PDF evaluation are
 verified in hosted CI; use the release commit's Actions results for final status.
 
 The natural-PDF probes use the official NIST AI RMF 1.0 publication and preserve
-its downloaded fingerprint. Page relevance judgments were audited by an agent
+its downloaded fingerprint. The hosted natural-document job completed all six
+queries on the 48-page PDF. The [manifest](../datasets/manifests/natural-development.json)
+records the run/artifact and freezes that source fingerprint for future runs.
+Page relevance judgments were audited by an agent
 and await human review. The separate matched-three-arm evaluation record format
 supports repeated comparisons and explicit human judgments; no such new
 human-reviewed answer comparison has been completed in this delivery.

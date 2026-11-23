@@ -84,9 +84,17 @@ def summarize_trials(trials: list[AgentTrial]) -> dict[str, object]:
             "human_supported_emitted_answers": sum(t.supported is True for t in emitted),
             "tool_calls": sum(t.tool_calls for t in rows),
             "mean_elapsed_ms": sum(t.elapsed_ms for t in rows) / len(rows),
-            "observed_tokens": sum(t.tokens for t in rows if t.tokens is not None),
+            "observed_tokens": (
+                sum(t.tokens for t in rows if t.tokens is not None)
+                if any(t.tokens is not None for t in rows)
+                else None
+            ),
             "token_observations": sum(t.tokens is not None for t in rows),
-            "observed_cost_usd": sum(t.cost_usd for t in rows if t.cost_usd is not None),
+            "observed_cost_usd": (
+                sum(t.cost_usd for t in rows if t.cost_usd is not None)
+                if any(t.cost_usd is not None for t in rows)
+                else None
+            ),
             "cost_observations": sum(t.cost_usd is not None for t in rows),
         }
     return {

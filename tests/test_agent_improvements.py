@@ -385,6 +385,8 @@ def test_matched_agent_evaluation_keeps_unknown_costs_and_judgments_unknown() ->
     arms = summary["arms"]
     assert isinstance(arms, dict)
     assert arms["tools_skill"]["cost_observations"] == 0
+    assert arms["tools_skill"]["observed_cost_usd"] is None
+    assert arms["tools_skill"]["observed_tokens"] is None
     assert arms["tools_skill"]["human_answerable_judgments"] == 0
     with pytest.raises(ValueError, match="incomplete"):
         summarize_trials(rows[:-1])

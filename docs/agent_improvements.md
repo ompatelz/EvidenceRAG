@@ -143,7 +143,10 @@ PDF version and are clearly marked as untrusted, not recomputed by the browser.
 downloads the official 48-page NIST AI RMF 1.0 PDF and records its SHA-256,
 canonical packs, page rankings and search times for six development probes with
 and without source headings. Use `--pdf FILE` for an existing copy and
-`--expected-sha256 SHA` to require a frozen source. The CI record is an artifact;
+`--expected-sha256 SHA` to select a different explicitly frozen source fingerprint.
+The default is the recorded publisher PDF SHA-256 in
+[the development manifest](../datasets/manifests/natural-development.json).
+The CI record is an artifact;
 page relevance labels are agent audits pending human review. No generated-answer
 accuracy or quality improvement follows from this retrieval smoke.
 
