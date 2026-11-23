@@ -17,7 +17,7 @@ def main() -> None:
             sys.executable,
             "scripts/source_calculation_smoke.py",
             "--output",
-            "reports/runs/source-calculation-v1.json",
+            "reports/runs/source-calculation-v04.json",
             "--check",
         ],
         [

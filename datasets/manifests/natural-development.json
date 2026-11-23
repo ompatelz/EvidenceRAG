@@ -1,0 +1,13 @@
+{
+  "cohort": "natural-document-development-v1",
+  "source_title": "NIST AI 100-1: Artificial Intelligence Risk Management Framework (AI RMF 1.0)",
+  "source_url": "https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf",
+  "download_url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=936225",
+  "source_sha256": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+  "page_count": 48,
+  "fingerprint_recorded_from": "https://github.com/ompatelz/EvidenceRAG/actions/runs/45201730916",
+  "retrieval_artifact": "https://github.com/ompatelz/EvidenceRAG/actions/runs/45201730916/artifacts/14831287792",
+  "label_provenance": "agent source audit; human review pending",
+  "scope": "six development page-retrieval probes; no generated-answer comparison",
+  "redistribution": "PDF is downloaded explicitly from the publisher and is not bundled"
+}

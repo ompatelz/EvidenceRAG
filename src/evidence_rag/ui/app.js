@@ -47,6 +47,7 @@
     $("source-text").textContent = "";
     $("mode-label").textContent = "No search yet";
     $("result-count").textContent = "";
+    $("receipt-view").replaceChildren();
   }
 
   async function openEvidence(evidenceId) {
@@ -152,6 +153,12 @@
       else if (semantic?.status === "assessed") support = modelLabels[semantic.support];
       else if (semantic) support = "Verifier assessment incomplete";
       item.append(node("span", "helper", ` · ${support}`));
+      const details = node("details");
+      details.append(node("summary", "", "Inspect claim decision"));
+      details.append(node("p", "helper", `Answer policy: ${result.policy_version || "not configured"}. Result: ${result.reason}.`));
+      if (semantic) details.append(node("pre", "source-text", JSON.stringify(semantic, null, 2)));
+      details.append(node("p", "helper", "Check source qualifiers, exceptions and units. A valid location alone does not establish support."));
+      item.append(details);
       if (claim.citation_status === "valid") {
         for (const citation of claim.citations) {
           const label = citation.semantic_support === "contradicted" ? "Estimated contradiction"
@@ -289,6 +296,37 @@
       renderAnswer({ status: "insufficient_evidence", reason: "search_unavailable" });
     } finally {
       $("query-button").disabled = false;
+    }
+  });
+
+  $("receipt-file").addEventListener("change", async () => {
+    const view = $("receipt-view");
+    view.replaceChildren();
+    try {
+      const file = $("receipt-file").files[0];
+      if (!file || file.size > 65536) throw new Error("Select a receipt of at most 64 KiB.");
+      const receipt = JSON.parse(await file.text());
+      if (!state.document || receipt.document?.document_id !== state.document.document_id ||
+          receipt.document?.document_sha256 !== state.document.document_sha256) {
+        throw new Error("Load the exact PDF version named in this receipt first.");
+      }
+      const calc = receipt.calculation;
+      if (!calc || typeof calc.result !== "string" || calc.claim_support !== "not_assessed" ||
+          !Array.isArray(receipt.anchors) || receipt.anchors.length > 16) {
+        throw new Error("Invalid calculation receipt.");
+      }
+      view.append(node("p", "", `Imported result: ${calc.result} ${calc.unit || ""}`));
+      view.append(node("p", "helper", "Imported file; arithmetic has not been recomputed here. Narrative support is not assessed."));
+      view.append(node("pre", "source-text", JSON.stringify(calc, null, 2)));
+      for (const anchor of receipt.anchors) {
+        if (!state.units.has(anchor.evidence_id)) throw new Error("Receipt cites unavailable evidence.");
+        const button = node("button", "citation-button", "Inspect calculation source");
+        button.type = "button";
+        button.addEventListener("click", () => openEvidence(anchor.evidence_id));
+        view.append(button);
+      }
+    } catch (error) {
+      view.replaceChildren(node("p", "error", error.message));
     }
   });
 

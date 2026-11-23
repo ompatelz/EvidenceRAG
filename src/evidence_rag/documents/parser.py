@@ -68,16 +68,31 @@ class _Candidate:
 class PyMuPDFParser:
     """Extract page-local text, headings, captions, images, and tables."""
 
-    def __init__(self, *, max_pages: int = 200, max_units: int = 10_000) -> None:
+    def __init__(
+        self,
+        *,
+        max_pages: int = 200,
+        max_units: int = 10_000,
+        ocr_enabled: bool = False,
+        tessdata: Path | None = None,
+        ocr_language: str = "eng",
+    ) -> None:
         self.max_pages = max_pages
         self.max_units = max_units
+        self.ocr_enabled = ocr_enabled
+        self.tessdata = tessdata
+        self.ocr_language = ocr_language
 
     @property
     def metadata(self) -> ParserMetadata:
         return ParserMetadata(
             name="pymupdf",
             version=pymupdf.__version__,
-            representation_version=REPRESENTATION_VERSION,
+            representation_version=(
+                f"{REPRESENTATION_VERSION}-ocr-{self.ocr_language}-v1"
+                if self.ocr_enabled
+                else REPRESENTATION_VERSION
+            ),
         )
 
     def parse(self, path: Path, manifest: IngestionManifest) -> ParseResult:
@@ -152,6 +167,30 @@ class PyMuPDFParser:
             "dict", flags=flags, sort=True
         )
         blocks = [block for block in page_dict["blocks"] if block.get("type") == 0]
+        if self.ocr_enabled and not any(self._block_text(b).strip() for b in blocks):
+            # OCR is explicit and local. Keep digital pages byte-for-byte unchanged.
+            if (
+                self.tessdata is None
+                or not (self.tessdata / (self.ocr_language + ".traineddata")).is_file()
+            ):
+                raise ParserError("ocr_unavailable", "Local OCR language data is missing.")
+            if page.rect.width * page.rect.height * (144 / 72) ** 2 > 20_000_000:
+                raise ParserError("ocr_pixel_limit", "OCR page exceeds the pixel budget.")
+            try:
+                textpage = page.get_textpage_ocr(  # type: ignore[no-untyped-call]
+                    language=self.ocr_language,
+                    dpi=144,
+                    full=True,
+                    tessdata=str(self.tessdata),
+                )
+                page_dict = page.get_text(  # type: ignore[no-untyped-call]
+                    "dict",
+                    textpage=textpage,
+                    sort=True,
+                )
+                blocks = [block for block in page_dict["blocks"] if block.get("type") == 0]
+            except Exception as exc:
+                raise ParserError("ocr_failed", "Local OCR could not process the page.") from exc
 
         try:
             tables: list[Any] = list(page.find_tables().tables)  # type: ignore[no-untyped-call]

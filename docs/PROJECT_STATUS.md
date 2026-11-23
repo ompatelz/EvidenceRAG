@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-11-23. Current release line: **v0.3.0 (alpha)**.
+Updated: 2026-11-23. Current release line: **v0.4.0 (alpha)**.
 
 EvidenceRAG is a local, single-user toolkit for technical PDF retrieval and
 traceable, checked answers. It can be embedded as Python, called through a JSON
@@ -14,20 +14,28 @@ FastAPI inspector and optional live answer adapters remain available.
 | PDF ingestion | Immutable versions, text/tables, previews, explicit lifecycle/retry | tests/test_lifecycle.py, tests/test_parser.py |
 | Retrieval | BM25, optional dense/hybrid/reranking with pinned offline models | reports/reviewed-answer-benchmark/ |
 | Grounding | Exact-version citations, source anchors, table checks, optional semantic support and abstention | tests/test_answers.py, tests/test_semantic.py, tests/test_policy.py |
-| Agent interfaces | SDK, JSON CLI, document discovery/status, bounded page context and nine MCP tools | tests/test_sdk.py, tests/test_mcp_server.py |
+| Agent interfaces | SDK, JSON CLI, setup doctor, connected context, explanations and sixteen MCP tools | tests/test_sdk.py, tests/test_mcp_server.py, tests/test_agent_improvements.py |
 | Arithmetic | Exact source-backed operations with context/anchors; semantic support remains unassessed | docs/source_calculations.md, tests/test_calculations.py |
+| Collections and recipes | Shared scoped BM25, process cache, cross-source checks, percentages and explicit conversions | docs/agent_improvements.md, tests/test_agent_improvements.py |
+| Scan/visual support | Explicit local OCR fallback and provenance-bound page-image handoff; visual interpretations unverified | src/evidence_rag/visual.py, tests/test_agent_improvements.py |
 | Skill | Bundled/exportable workflow and tool contract | src/evidence_rag/evidence-rag-agent/ |
 | Distribution | Wheel, source archive, standalone skill archive, provenance and checksums | scripts/check_distribution.py, scripts/package_release.py |
 | CI/release | Full quality gate, real MCP protocol, fresh wheel installation, ingestion, Qdrant and container; release after successful main CI | .github/workflows/ci.yml, .github/workflows/release.yml |
 
-[Installation](agent_integration.md) and [release notes](releases/v0.3.0.md) are
+[Installation](agent_integration.md) and [release notes](releases/v0.4.0.md) are
 the current entry points. The Release workflow publishes only the exact commit
 whose main-branch CI succeeded. See the GitHub Actions run for that commit's
 verification status and the GitHub Release for downloadable artifacts.
 
 ## What the evaluation establishes
 
-v0.3.0 adds exact source arithmetic, not a new semantic verification policy.
+v0.4.0 adds source workflows without changing the semantic verification policy.
+The natural-document development probes use an official 48-page NIST PDF;
+their agent-audited page labels await human review. Matched three-arm comparison
+records are supported, but a human-reviewed comparative accuracy result is not
+available. [Workflow scope](agent_improvements.md)
+
+v0.3.0 added exact source arithmetic.
 The [delivery record](../reports/source_calculations.md) includes deterministic
 positive/incorrect-result controls and a single skill usability trial. It does
 not establish an answer-accuracy gain or remove the known false-abstention limit.
@@ -51,8 +59,10 @@ benchmark. It establishes no accuracy improvement. [Trial report](../reports/age
 
 ## Boundaries
 
-The release supports one trusted local process on loopback. It has no OCR,
-pixel-level chart/diagram interpretation, shared-host authentication, multi-tenant
+The release supports one trusted local process on loopback. OCR requires explicit
+local language data and may misread scans. Visual handoff requires a capable
+calling model; no native chart/diagram support verifier is provided. It has no
+shared-host authentication, multi-tenant
 service, distributed ingestion, or arbitrary-document accuracy guarantee. These
 are outside the release scope. Semantic verification can reject supported drafts.
 Missing model weights or support verification are explicit failures/abstentions.

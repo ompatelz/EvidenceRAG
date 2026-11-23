@@ -12,7 +12,7 @@ test(`inspector sends explicit ${provider} consent and shows evidence decisions`
     classList: { toggle() {}, remove() {} },
     addEventListener(name, handler) { this.handlers[name] = handler; },
     append(...children) { this.children.push(...children); },
-    replaceChildren() { this.children = []; }
+    replaceChildren(...children) { this.children = children; }
   });
   const get = (id) => {
     if (!elements.has(id)) elements.set(id, createElement());
@@ -93,5 +93,19 @@ test(`inspector sends explicit ${provider} consent and shows evidence decisions`
   await get("query-form").handlers.submit(event);
   assert.equal(query.requires_visual_evidence, true);
   assert.match(read(get("answer")), /requires inspecting pixels/);
+
+  const receipt = {
+    document: { document_id: "fixture", document_sha256: "hash" },
+    calculation: { result: "35", unit: "days", claim_support: "not_assessed" },
+    anchors: []
+  };
+  get("receipt-file").files = [{ size: 200, text: async () => JSON.stringify(receipt) }];
+  await get("receipt-file").handlers.change();
+  assert.match(read(get("receipt-view")), /Imported result: 35 days/);
+  assert.match(read(get("receipt-view")), /has not been recomputed/);
+  receipt.document.document_sha256 = "other-version";
+  await get("receipt-file").handlers.change();
+  assert.match(read(get("receipt-view")), /exact PDF version/);
+  assert.doesNotMatch(read(get("receipt-view")), /Imported result/);
 });
 }

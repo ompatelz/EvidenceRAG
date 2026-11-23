@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 - 2026-11-23
+
+- Add connected context, per-claim recovery guidance and an immutable recovery ledger.
+- Add scoped collection BM25 search/checks, source-heading indexing and process caching.
+- Add offline doctor, exact calculation recipes and explicit unit/count normalization.
+- Add opt-in local OCR and provenance-bound visual page handoff.
+- Extend inspector decisions/receipts and natural-document/agent evaluation tooling.
+- Preserve grounding-v1 thresholds and historical frozen evaluation outcomes.
+
 ## 0.3.0 - 2026-11-23
 
 - Add source-backed exact arithmetic through the Python SDK, JSON CLI and ninth

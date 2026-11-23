@@ -16,6 +16,7 @@ from evidence_rag.answers import (
     GroundedAnswerService,
     build_pack,
 )
+from evidence_rag.assistance import CheckExplanation, connected_units, explain
 from evidence_rag.calculations import (
     CalculationError,
     CalculationRequest,
@@ -23,6 +24,7 @@ from evidence_rag.calculations import (
     calculate,
 )
 from evidence_rag.config import AppSettings
+from evidence_rag.doctor import DoctorReport, diagnose
 from evidence_rag.documents import (
     DocumentIngestionResponse,
     DocumentIngestionService,
@@ -45,6 +47,8 @@ from evidence_rag.documents.service import DocumentRenderingService
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.evidence import AnchorPrecision, EvidenceUnit
 from evidence_rag.policy import AnswerPolicy
+from evidence_rag.recipes import CalculationRecipe, RecipeResult, calculate_recipe
+from evidence_rag.retrieval.bm25 import BM25Index
 from evidence_rag.retrieval.service import RetrievalMode, retrieve
 from evidence_rag.semantic import LocalDeberta, SemanticVerifier
 
@@ -92,6 +96,14 @@ class SourceCalculationResponse(BaseModel):
     content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
 
 
+class SourceRecipeResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    document: DocumentRef
+    calculation: RecipeResult
+    anchors: tuple[EvidenceAnchorResponse, ...]
+    content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
+
+
 class DocumentList(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     documents: tuple[DocumentIngestionStatusResponse, ...]
@@ -106,6 +118,50 @@ class PageEvidenceResponse(BaseModel):
     pack: EvidencePack
     truncated_evidence_ids: tuple[str, ...]
     next_offset: int | None
+    content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
+
+
+class CollectionSearchRequest(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    documents: tuple[DocumentRef, ...] = Field(min_length=1, max_length=20)
+    question: str = Field(min_length=1, max_length=500)
+    contextual_indexing: bool = True
+
+
+class CollectionSearchResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    documents: tuple[DocumentRef, ...]
+    pack: EvidencePack
+    search_ms: float
+    index_reused: bool
+    status: str
+    conflict_assessment: Literal["not_assessed"] = "not_assessed"
+    truncated_evidence_ids: tuple[str, ...] = ()
+    content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
+
+
+class ScopedDraft(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    document: DocumentRef
+    evidence_ids: tuple[str, ...] = Field(max_length=5)
+    draft: DraftAnswer
+
+
+class CollectionDraftRequest(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    question: str = Field(min_length=1, max_length=500)
+    sources: tuple[ScopedDraft, ...] = Field(min_length=1, max_length=20)
+
+
+class CollectionCheckResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    documents: tuple[DocumentRef, ...]
+    checks: tuple[CheckExplanation, ...]
+    conflicting_claim_texts: tuple[str, ...]
+    notice: str = (
+        "Conflicts are observed support/contradiction signals for identical claim text. "
+        "No absence-of-conflict, publication-date or latest-source judgment is implied."
+    )
     content_trust: Literal["untrusted_document_data"] = "untrusted_document_data"
 
 
@@ -137,7 +193,11 @@ class EvidenceRAG:
             chunk_bytes=self.settings.upload_chunk_bytes,
         )
         parser = PyMuPDFParser(
-            max_pages=self.settings.max_pdf_pages, max_units=self.settings.max_evidence_units
+            max_pages=self.settings.max_pdf_pages,
+            max_units=self.settings.max_evidence_units,
+            ocr_enabled=self.settings.ocr_enabled,
+            tessdata=self.settings.ocr_tessdata,
+            ocr_language=self.settings.ocr_language,
         )
         renderer = PyMuPDFPageRenderer(
             dpi=self.settings.render_dpi,
@@ -148,6 +208,7 @@ class EvidenceRAG:
         self._ingestion = DocumentIngestionService(self.store, parser, renderer)
         self._rendering = DocumentRenderingService(self.store, renderer)
         self._config = AnswerConfig()
+        self._collection_cache: tuple[str, BM25Index] | None = None
         if verifier is None and self.settings.semantic_verifier:
             verifier = SemanticVerifier(LocalDeberta(self.settings.model_cache_dir))
         self._answers = GroundedAnswerService(
@@ -239,8 +300,9 @@ class EvidenceRAG:
                 ranking=(),
                 timings_ms={},
             )
+        lexical = self._cached_index(evidence.units, False)[0] if request.mode == "bm25" else None
         hits, timings, status = retrieve(
-            request.question, request.mode, evidence.units, manifest, self.settings
+            request.question, request.mode, evidence.units, manifest, self.settings, lexical
         )
         units = {unit.evidence_id: unit for unit in evidence.units}
         pack = build_pack(
@@ -361,3 +423,175 @@ class EvidenceRAG:
         return SourceCalculationResponse(
             document=document, calculation=result, anchors=tuple(anchors)
         )
+
+    def doctor(self) -> DoctorReport:
+        return diagnose(self.settings)
+
+    def calculate_recipe(
+        self,
+        document: DocumentRef,
+        request: CalculationRecipe,
+    ) -> SourceRecipeResponse:
+        _, artifact, _ = self._ready(document)
+        result = calculate_recipe(request, {u.evidence_id: u for u in artifact.units})
+        anchors = []
+        for evidence_id in dict.fromkeys(s.selector.evidence_id for s in result.sources):
+            source = self.evidence(document, evidence_id)
+            if source.anchor.precision is AnchorPrecision.UNAVAILABLE:
+                raise CalculationError("calculation_source_location_unavailable")
+            self.store.preview_path(
+                document.document_id, document.document_sha256, source.anchor.page_index
+            )
+            anchors.append(source.anchor)
+        return SourceRecipeResponse(document=document, calculation=result, anchors=tuple(anchors))
+
+    def explain_check(
+        self,
+        document: DocumentRef,
+        question: str,
+        evidence_ids: Sequence[str],
+        draft: DraftAnswer,
+    ) -> CheckExplanation:
+        return explain(self.check_draft(document, question, evidence_ids, draft), draft)
+
+    def check_collection(self, request: CollectionDraftRequest) -> CollectionCheckResponse:
+        if len(
+            {(s.document.document_id, s.document.document_sha256) for s in request.sources}
+        ) != len(request.sources):
+            raise ValueError("duplicate collection versions")
+        checks = tuple(
+            self.explain_check(s.document, request.question, s.evidence_ids, s.draft)
+            for s in request.sources
+        )
+        signals: dict[str, set[str]] = {}
+        for checked in checks:
+            for diagnostic in checked.diagnostics:
+                key = " ".join(diagnostic.text.split())
+                signals.setdefault(key, set()).add(diagnostic.reason)
+        return CollectionCheckResponse(
+            documents=tuple(s.document for s in request.sources),
+            checks=checks,
+            conflicting_claim_texts=tuple(
+                text
+                for text, reasons in signals.items()
+                if {"answered", "contradicted_evidence"} <= reasons
+                or "conflicting_evidence" in reasons
+            ),
+        )
+
+    def context(
+        self,
+        document: DocumentRef,
+        evidence_id: str,
+        *,
+        radius: int = 1,
+    ) -> PageEvidenceResponse:
+        manifest, artifact, _ = self._ready(document)
+        selected = connected_units(artifact.units, evidence_id, radius)
+        units = {u.evidence_id: u for u in selected}
+        pack = build_pack(
+            selected,
+            units,
+            document_id=manifest.document_id,
+            document_version=manifest.document_version,
+            config=self._config,
+        )
+        return PageEvidenceResponse(
+            document=document,
+            page_index=selected[0].page_index,
+            pack=pack,
+            truncated_evidence_ids=tuple(
+                i.evidence_id for i in pack.items if i.text != units[i.evidence_id].text
+            ),
+            next_offset=None,
+        )
+
+    def search_collection(self, request: CollectionSearchRequest) -> CollectionSearchResponse:
+        """One shared BM25 ranking over only explicitly selected ready versions.
+
+        A bounded process cache is keyed by the full evidence content and indexing
+        option. Source-derived section headings affect indexing only; returned
+        excerpts and citations remain canonical. Date and conflict judgments are
+        deliberately left to the calling agent inspecting the returned sources.
+        """
+        from evidence_rag.answers import PackItem
+
+        if len(set((d.document_id, d.document_sha256) for d in request.documents)) != len(
+            request.documents
+        ):
+            raise ValueError("duplicate collection versions")
+        units = {}
+        for document in request.documents:
+            _, artifact, _ = self._ready(document)
+            for unit in artifact.units:
+                if unit.evidence_id in units:
+                    raise ValueError("collection evidence ID collision")
+                units[unit.evidence_id] = unit
+        index, reused = self._cached_index(tuple(units.values()), request.contextual_indexing)
+        ranking = index.search(request.question, k=5)
+        items = []
+        remaining = self._config.max_pack_chars
+        for hit in ranking.hits:
+            unit = units[hit.evidence_id]
+            text = unit.text[: min(remaining, self._config.max_item_chars)]
+            if not text:
+                break
+            items.append(
+                PackItem(
+                    evidence_id=unit.evidence_id,
+                    document_id=unit.document_id,
+                    document_version=unit.document_version,
+                    page_index=unit.page_index,
+                    text=text,
+                )
+            )
+            remaining -= len(text)
+        return CollectionSearchResponse(
+            documents=request.documents,
+            pack=EvidencePack(
+                items=tuple(items),
+                excluded_ids=tuple(
+                    h.evidence_id
+                    for h in ranking.hits
+                    if h.evidence_id not in {i.evidence_id for i in items}
+                ),
+            ),
+            search_ms=ranking.search_ms,
+            index_reused=reused,
+            status="ok" if items else "no_relevant_evidence",
+            truncated_evidence_ids=tuple(
+                i.evidence_id for i in items if i.text != units[i.evidence_id].text
+            ),
+        )
+
+    def _cached_index(
+        self,
+        units: Sequence[EvidenceUnit],
+        contextual: bool,
+    ) -> tuple[BM25Index, bool]:
+        import hashlib
+
+        if len(units) > self.settings.max_evidence_units:
+            raise ValueError("collection exceeds configured evidence-unit limit")
+        indexed = [
+            u.model_copy(
+                update={
+                    "text": (u.section_title + "\n" + u.text)
+                    if contextual and u.section_title
+                    else u.text
+                }
+            )
+            for u in units
+        ]
+        fingerprint = hashlib.sha256(
+            "\n".join(u.model_dump_json() for u in indexed).encode()
+        ).hexdigest()
+        reused = self._collection_cache is not None and self._collection_cache[0] == fingerprint
+        if reused:
+            assert self._collection_cache is not None
+            index = self._collection_cache[1]
+        else:
+            index = BM25Index()
+            index.rebuild(indexed)
+            self._collection_cache = (fingerprint, index)
+        return index, reused

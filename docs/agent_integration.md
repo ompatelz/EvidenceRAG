@@ -5,6 +5,10 @@ code: a Python SDK, JSON CLI, optional stdio MCP server, and bundled agent skill
 The web inspector remains available. The SDK and tools never invoke an answer
 provider: the calling agent supplies its own draft.
 
+[v0.4.0 workflow guide](agent_improvements.md) covers connected context, per-claim
+diagnostics, collection search/checks, recipe arithmetic, setup doctor, explicit
+OCR/visual handoff, index reuse and natural-document evaluation.
+
 ## Install the package
 
 Use the wheel from [GitHub Releases](https://github.com/ompatelz/EvidenceRAG/releases)
@@ -25,7 +29,7 @@ python -m pip install '.[dense]'
 ```
 
 Build distributable wheel and source archives with `uv build`. Install a wheel
-with `python -m pip install dist/evidence_rag-0.3.0-py3-none-any.whl`. The skill
+with `python -m pip install dist/evidence_rag-0.4.0-py3-none-any.whl`. The skill
 resources, inspector assets and license notices are included. This is a source
 and wheel installation workflow; no PyPI release has been published by this change.
 
@@ -142,6 +146,13 @@ the example uses the common mcpServers shape. No network MCP listener is started
 | fetch_page_evidence | Read bounded explicit-page text context and follow next_offset |
 | calculate_evidence | Exact arithmetic from two selected source quantities; claim support is not assessed |
 | check_draft | Validate an agent-written structured answer; return an answer or abstention |
+| doctor | Check local installation and cached files; no downloads |
+| fetch_connected_evidence | Fetch bounded relationships, heading and neighbors |
+| explain_check | Preserve check result and explain observed per-claim signals |
+| search_collection | Shared BM25 over explicitly selected ready versions |
+| check_collection | Independently check scoped drafts and surface observed contradictions |
+| calculate_recipe | Exact multi-step arithmetic, percentages and explicit unit conversions |
+| fetch_visual_page | Explicit bounded page-image handoff; no verified interpretation |
 
 Omitting documents-root disables ingestion. Absolute paths, parent traversal,
 and symlinks resolving outside that root are rejected. Tools do not scan the

@@ -61,6 +61,13 @@
       <p class="scale-note">BM25, cosine, RRF, and reranker scores use different scales. Compare ranks within a method.</p>
       <ol id="candidates" class="candidates"></ol>
       <details class="timings"><summary>Stage timings</summary><dl id="timings-list"></dl></details>
+      <details class="timings">
+        <summary>Inspect a saved calculation</summary>
+        <p class="helper">Open a calculation receipt exported by the SDK, CLI, or agent. Source links require the same PDF version loaded above. Imported receipts are untrusted until recomputed.</p>
+        <label for="receipt-file">Calculation receipt (JSON, up to 64 KiB)</label>
+        <input id="receipt-file" type="file" accept="application/json,.json">
+        <div id="receipt-view" aria-live="polite"></div>
+      </details>
     </section>
 
     <section class="source" aria-labelledby="source-title">

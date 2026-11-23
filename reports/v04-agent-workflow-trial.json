@@ -1,0 +1,346 @@
+{
+  "question": "What cache hit percentage can be derived from the documented hit and miss counts, and what retry timeout is documented?",
+  "answer_candidate": "The cache hit percentage derived from 800 hits and 200 misses in the observation window is 80%. The timeout budget is 250 ms for each attempt.",
+  "claims": [
+    {
+      "text": "The cache hit percentage derived from 800 hits and 200 misses in the observation window is 80%.",
+      "citations": [
+        {
+          "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
+          "document_id": "doc_396f50d2663f57ae4de9d506",
+          "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+          "page_index": 0
+        }
+      ]
+    },
+    {
+      "text": "The timeout budget is 250 ms for each attempt.",
+      "citations": [
+        {
+          "evidence_id": "ev_b72e4ccfc1dbdfbe12058bf1c7fcdee7",
+          "document_id": "doc_62011f65f1a9915d192ca10e",
+          "document_version": "sha256:6ee5240f9196b2f470a242eabcb88e8b21129efa51f6a7203a2e72f052933f0d",
+          "page_index": 1
+        }
+      ]
+    }
+  ],
+  "documents": [
+    {
+      "document_id": "doc_396f50d2663f57ae4de9d506",
+      "document_sha256": "03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d"
+    },
+    {
+      "document_id": "doc_62011f65f1a9915d192ca10e",
+      "document_sha256": "6ee5240f9196b2f470a242eabcb88e8b21129efa51f6a7203a2e72f052933f0d"
+    }
+  ],
+  "hashes": {
+    "src\\evidence_rag\\evidence-rag-agent\\SKILL.md": "fcc56b3c2154eef6ab2914e80f8676544677ddbd0c8d87ce1613687ba40d8df9",
+    "src\\evidence_rag\\evidence-rag-agent\\references\\tools.md": "be1bacb510fc80939d77b996d0062e9cf045ee73017568eb6916a0bb28c98b5e",
+    "docs\\agent_improvements.md": "e0f1fb403342fd797271ca87e1499c2d93784a2a5bfd2147374a5b1beec15911",
+    "src\\evidence_rag\\sdk.py": "7b0cbf99af3796527d4d81d95b095b84334e625f1d2d2c421289515f25ebe731",
+    "datasets\\fixtures\\cache-admission.pdf": "03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+    "datasets\\fixtures\\checksum-retry.pdf": "6ee5240f9196b2f470a242eabcb88e8b21129efa51f6a7203a2e72f052933f0d"
+  },
+  "calculation": {
+    "document": {
+      "document_id": "doc_396f50d2663f57ae4de9d506",
+      "document_sha256": "03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d"
+    },
+    "calculation": {
+      "version": "source-recipe-v1",
+      "status": "arithmetic_verified",
+      "steps": [
+        {
+          "operation": "convert",
+          "result": "800",
+          "unit": "count",
+          "conversion_factor": "1"
+        },
+        {
+          "operation": "convert",
+          "result": "200",
+          "unit": "count",
+          "conversion_factor": "1"
+        },
+        {
+          "operation": "add",
+          "result": "1000",
+          "unit": "count",
+          "conversion_factor": null
+        },
+        {
+          "operation": "percentage",
+          "result": "80",
+          "unit": "%",
+          "conversion_factor": null
+        }
+      ],
+      "sources": [
+        {
+          "selector": {
+            "kind": "text",
+            "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
+            "unit": "hits"
+          },
+          "value": "800",
+          "unit": "hits",
+          "document_id": "doc_396f50d2663f57ae4de9d506",
+          "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+          "page_index": 0,
+          "source_text": "The observation window recorded 800 hits and 200 misses."
+        },
+        {
+          "selector": {
+            "kind": "text",
+            "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
+            "unit": "misses"
+          },
+          "value": "200",
+          "unit": "misses",
+          "document_id": "doc_396f50d2663f57ae4de9d506",
+          "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+          "page_index": 0,
+          "source_text": "The observation window recorded 800 hits and 200 misses."
+        }
+      ],
+      "result": "80",
+      "unit": "%",
+      "matches_expected": true,
+      "claim_support": "not_assessed"
+    },
+    "anchors": [
+      {
+        "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
+        "document_id": "doc_396f50d2663f57ae4de9d506",
+        "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+        "page_index": 0,
+        "precision": "region",
+        "preview_asset_id": "asset:page:doc_396f50d2663f57ae4de9d506:03b7f68fb8582040f04b449d:0",
+        "source_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.22885101,
+          "x1": 0.51870902,
+          "y1": 0.2461995
+        },
+        "display_bbox": {
+          "x0": 0.08823529,
+          "y0": 0.22885101,
+          "x1": 0.51870902,
+          "y1": 0.2461995
+        },
+        "pixel_bbox": {
+          "x0": 107,
+          "y0": 362,
+          "x1": 635,
+          "y1": 390
+        }
+      }
+    ],
+    "content_trust": "untrusted_document_data"
+  },
+  "checks": [
+    {
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "verifier_unavailable",
+        "answer": null,
+        "claims": [
+          {
+            "text": "The cache hit percentage derived from 800 hits and 200 misses in the observation window is 80%.",
+            "citations": [
+              {
+                "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a",
+                "document_id": "doc_396f50d2663f57ae4de9d506",
+                "document_version": "sha256:03b7f68fb8582040f04b449d2fe55a9238d54fff21e3d65baa526c2fb7d86e6d",
+                "page_index": 0,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_396f50d2663f57ae4de9d506:03b7f68fb8582040f04b449d:0",
+                "semantic_support": null
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": null
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "diagnostics": [
+        {
+          "claim_index": 0,
+          "text": "The cache hit percentage derived from 800 hits and 200 misses in the observation window is 80%.",
+          "evidence_ids": [
+            "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a"
+          ],
+          "reason": "verifier_unavailable",
+          "next_action": "Run doctor; restore the verifier before rechecking."
+        }
+      ],
+      "max_additional_searches": 2,
+      "max_rechecks": 1,
+      "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+      "content_trust": "untrusted_document_data"
+    },
+    {
+      "result": {
+        "status": "insufficient_evidence",
+        "reason": "verifier_unavailable",
+        "answer": null,
+        "claims": [
+          {
+            "text": "The timeout budget is 250 ms for each attempt.",
+            "citations": [
+              {
+                "evidence_id": "ev_b72e4ccfc1dbdfbe12058bf1c7fcdee7",
+                "document_id": "doc_62011f65f1a9915d192ca10e",
+                "document_version": "sha256:6ee5240f9196b2f470a242eabcb88e8b21129efa51f6a7203a2e72f052933f0d",
+                "page_index": 1,
+                "precision": "region",
+                "preview_asset_id": "asset:page:doc_62011f65f1a9915d192ca10e:6ee5240f9196b2f470a242ea:1",
+                "semantic_support": null
+              }
+            ],
+            "citation_status": "valid",
+            "rule_support": "not_assessed",
+            "semantic_support": null
+          }
+        ],
+        "supplied_evidence_ids": [
+          "ev_b72e4ccfc1dbdfbe12058bf1c7fcdee7"
+        ],
+        "excluded_evidence_ids": [],
+        "policy_version": "grounding-v1",
+        "answer_source": null
+      },
+      "diagnostics": [
+        {
+          "claim_index": 0,
+          "text": "The timeout budget is 250 ms for each attempt.",
+          "evidence_ids": [
+            "ev_b72e4ccfc1dbdfbe12058bf1c7fcdee7"
+          ],
+          "reason": "verifier_unavailable",
+          "next_action": "Run doctor; restore the verifier before rechecking."
+        }
+      ],
+      "max_additional_searches": 2,
+      "max_rechecks": 1,
+      "notice": "Guidance describes observed signals; it does not infer missing source facts.",
+      "content_trust": "untrusted_document_data"
+    }
+  ],
+  "budgets": {
+    "initial_searches": 1,
+    "additional_searches": 1,
+    "additional_search_limit": 2,
+    "rechecks": 0,
+    "recheck_limit": 1
+  },
+  "limitations": [
+    "Arithmetic verification is not semantic support approval. Narrative answer must be reported according to actual checker outcomes.",
+    "No providers called and no models downloaded.",
+    "Only authorized PDFs and permitted workflow/docs/SDK source inspected."
+  ],
+  "operational_errors": [
+    {
+      "operation": "initial_signature_discovery",
+      "error_type": "AttributeError",
+      "error": "EvidenceRAG has no capabilities attribute; recovered by inspecting actual SDK signatures."
+    },
+    {
+      "operation": "source_signature_search",
+      "error_type": "CommandNotFound",
+      "error": "rg unavailable; used Get-Content and runtime SDK signatures."
+    },
+    {
+      "operation": "targeted_search_shell_launch",
+      "error_type": "CommandNotFound",
+      "error": "Python relative path failed when working directory was tmp/v04-final-forward; rerun from project root. No SDK search executed in failed launch."
+    }
+  ],
+  "status": "arithmetic_verified_narrative_withheld",
+  "verification": {
+    "arithmetic_status": "arithmetic_verified",
+    "matches_expected": true,
+    "claim_support": "not_assessed",
+    "citation_statuses": [
+      "valid",
+      "valid"
+    ],
+    "narrative_status": "insufficient_evidence",
+    "reason": "verifier_unavailable",
+    "recovery": "Stopped without recheck because verifier unavailable. Ran offline doctor; no model downloads or provider calls."
+  },
+  "doctor_after_check": {
+    "checks": [
+      {
+        "name": "pymupdf",
+        "status": "ok",
+        "detail": "1.28.2",
+        "repair": null
+      },
+      {
+        "name": "pydantic",
+        "status": "ok",
+        "detail": "2.14.1",
+        "repair": null
+      },
+      {
+        "name": "mcp",
+        "status": "warning",
+        "detail": "not installed",
+        "repair": "python -m pip install mcp==1.30.0"
+      },
+      {
+        "name": "fastembed",
+        "status": "ok",
+        "detail": "0.9.1",
+        "repair": null
+      },
+      {
+        "name": "onnxruntime",
+        "status": "ok",
+        "detail": "1.31.1",
+        "repair": null
+      },
+      {
+        "name": "artifact_storage",
+        "status": "ok",
+        "detail": "writable",
+        "repair": null
+      },
+      {
+        "name": "semantic_verifier",
+        "status": "warning",
+        "detail": "pinned files missing; natural-language support may be withheld",
+        "repair": "Follow docs/semantic_support.md and set EVIDENCERAG_SEMANTIC_VERIFIER=true."
+      },
+      {
+        "name": "ocr",
+        "status": "warning",
+        "detail": "optional OCR language data absent",
+        "repair": "Install Tesseract language data; set EVIDENCERAG_OCR_TESSDATA."
+      }
+    ],
+    "ready": true,
+    "network_calls": 0
+  },
+  "source_excerpts": [
+    {
+      "text": "The observation window recorded 800 hits and 200 misses.",
+      "evidence_id": "ev_6ad6ad372f5d19cc6464e3bdf3db7d6a"
+    },
+    {
+      "text": "The timeout budget is 250 ms for each attempt.",
+      "evidence_id": "ev_b72e4ccfc1dbdfbe12058bf1c7fcdee7"
+    }
+  ],
+  "record_scope": "Single development usability trial, not an accuracy comparison. Snapshot hashes are retained; Windows raw hashes may differ after LF normalization."
+}

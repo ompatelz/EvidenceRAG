@@ -28,6 +28,9 @@ class AppSettings(BaseSettings):
     openrouter_model: str | None = Field(default=None, pattern=r"^[\w.-]+/[\w.:-]+$")
     codex_executable: Path | None = None
     semantic_verifier: bool = False
+    ocr_enabled: bool = False
+    ocr_tessdata: Path | None = None
+    ocr_language: str = Field(default="eng", pattern=r"^[a-z]{3}$")
     abstention_policy: Literal["off", "grounding-v1"] = "off"
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, ge=1, le=1024 * 1024 * 1024)
     upload_chunk_bytes: int = Field(default=64 * 1024, ge=4096, le=1024 * 1024)
