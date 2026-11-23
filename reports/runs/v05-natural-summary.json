@@ -1,0 +1,259 @@
+{
+  "source_sha256": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+  "pages": 48,
+  "queries": 6,
+  "record": "reports/generated/natural-document.json",
+  "page_hits_at_5": {
+    "false": 6,
+    "true": 6,
+    "plain20": 6,
+    "headings20": 6,
+    "headings20_spread": 6
+  },
+  "query_results": [
+    {
+      "id": "versioning",
+      "pages": {
+        "false": [
+          2,
+          6,
+          19,
+          22,
+          23
+        ],
+        "true": [
+          2,
+          6,
+          19,
+          22,
+          23
+        ],
+        "plain20": [
+          2,
+          6,
+          19,
+          22,
+          23
+        ],
+        "headings20": [
+          2,
+          6,
+          19,
+          22,
+          23
+        ],
+        "headings20_spread": [
+          2,
+          6,
+          19,
+          22,
+          23
+        ]
+      }
+    },
+    {
+      "id": "voluntary",
+      "pages": {
+        "false": [
+          6,
+          2,
+          46,
+          37,
+          25
+        ],
+        "true": [
+          6,
+          2,
+          46,
+          25,
+          37
+        ],
+        "plain20": [
+          6,
+          2,
+          46,
+          37,
+          25
+        ],
+        "headings20": [
+          6,
+          2,
+          46,
+          25,
+          37
+        ],
+        "headings20_spread": [
+          6,
+          2,
+          46,
+          25,
+          37
+        ]
+      }
+    },
+    {
+      "id": "functions",
+      "pages": {
+        "false": [
+          7,
+          24,
+          24,
+          24,
+          26
+        ],
+        "true": [
+          24,
+          7,
+          24,
+          24,
+          26
+        ],
+        "plain20": [
+          7,
+          24,
+          24,
+          24,
+          26
+        ],
+        "headings20": [
+          24,
+          7,
+          24,
+          24,
+          26
+        ],
+        "headings20_spread": [
+          24,
+          7,
+          24,
+          26,
+          43
+        ]
+      }
+    },
+    {
+      "id": "security",
+      "pages": {
+        "false": [
+          34,
+          19,
+          20,
+          42,
+          3
+        ],
+        "true": [
+          34,
+          19,
+          20,
+          42,
+          42
+        ],
+        "plain20": [
+          34,
+          19,
+          20,
+          42,
+          3
+        ],
+        "headings20": [
+          34,
+          19,
+          20,
+          42,
+          42
+        ],
+        "headings20_spread": [
+          34,
+          19,
+          20,
+          42,
+          42
+        ]
+      }
+    },
+    {
+      "id": "safety",
+      "pages": {
+        "false": [
+          18,
+          23,
+          8,
+          18,
+          5
+        ],
+        "true": [
+          18,
+          23,
+          8,
+          18,
+          5
+        ],
+        "plain20": [
+          18,
+          23,
+          8,
+          18,
+          5
+        ],
+        "headings20": [
+          18,
+          23,
+          8,
+          18,
+          5
+        ],
+        "headings20_spread": [
+          18,
+          23,
+          8,
+          18,
+          5
+        ]
+      }
+    },
+    {
+      "id": "validity",
+      "pages": {
+        "false": [
+          17,
+          19,
+          11,
+          29,
+          19
+        ],
+        "true": [
+          17,
+          19,
+          11,
+          29,
+          19
+        ],
+        "plain20": [
+          17,
+          19,
+          11,
+          29,
+          19
+        ],
+        "headings20": [
+          17,
+          19,
+          11,
+          29,
+          19
+        ],
+        "headings20_spread": [
+          17,
+          19,
+          11,
+          29,
+          19
+        ]
+      }
+    }
+  ],
+  "label_status": "agent-audited development pages; human review pending",
+  "artifact_url": "https://github.com/ompatelz/EvidenceRAG/actions/runs/45205338592/artifacts/14833926075",
+  "pull_request_head": "a2c728a3e91de1f1b24fc25c4165302441ddf5c6",
+  "workflow_job_id": 137799394016
+}

@@ -60,6 +60,13 @@ when selecting an interface or preparing a draft payload.
   order to explain_check (or check_draft when explanations are unnecessary).
   Read each diagnostic's actual reason and next_action. The checker reconstructs a bounded pack; fetching a
   larger source does not bypass its truncation checks.
+- For single-document work through MCP or a long-lived SDK instance, prefer
+  start_recovery (SDK `rag.recovery.start`) for that initial check. Keep the original
+  question and session ID. A closed receipt is terminal: report its answered or
+  withheld outcome. An active session permits search_recovery for a missing fact
+  and one recheck_recovery after a concrete correction. Inspect recovery_status
+  after execution errors; failed search attempts still consume budget. Never
+  create a new question/session or restart the process to evade a limit.
 - Read both citation and support outcomes. A valid citation establishes location,
   not truth. A supported result remains a fallible model/rule judgment.
 - If withheld for missing evidence, retrieve the missing fact within the remaining
@@ -69,6 +76,8 @@ when selecting an interface or preparing a draft payload.
   one recheck total, shared by all claims and documents. Do not reset this budget
   after a tool error or a new document. Stop on exhausted budgets, contradictions,
   missing verifier or a still-withheld recheck. Run doctor for setup failures.
+  Session enforcement is per document/version/question within one process; retain
+  this shared task budget when a collection question involves multiple scopes.
 - For ratios, percentages, percent changes or multi-step computations, use
   calculate_recipe. Use only earlier step references and actual source leaves.
   Request conversions explicitly from its documented linear-unit allowlist.

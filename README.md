@@ -2,7 +2,7 @@
 
 **Answers you can trace back to the PDF.**
 
-[Download v0.4.0](https://github.com/ompatelz/EvidenceRAG/releases/tag/v0.4.0) ·
+[Download v0.5.0](https://github.com/ompatelz/EvidenceRAG/releases/tag/v0.5.0) ·
 [Install and connect an agent](docs/agent_integration.md) ·
 [Current status](docs/PROJECT_STATUS.md)
 
@@ -55,11 +55,12 @@ and evidence checks. Your agent supplies its own model and drafts.
 Source-backed [calculations](docs/source_calculations.md) now check arithmetic
 without silently approving a narrative claim.
 
-**New in v0.4.0:** [agent workflows](docs/agent_improvements.md) add connected
-context, per-claim recovery guidance, collection search/checks, setup diagnostics,
-multi-step calculations, explicit local OCR and visual page handoff. The inspector
-can open saved calculation receipts. Natural-document probes and matched agent
-comparison records support further evaluation; no general accuracy gain is claimed.
+**New in v0.5.0:** [bounded recovery sessions and retrieval traces](docs/recovery_sessions.md)
+keep the original question/version fixed, enforce attempt limits within a trusted
+engine process, and expose collection ranking/coverage. Optional page diversity
+can spread results across source pages. [Existing agent workflows](docs/agent_improvements.md)
+include setup diagnostics, calculations, OCR and visual handoff. No general
+accuracy improvement is claimed.
 
 ## Quickstart
 

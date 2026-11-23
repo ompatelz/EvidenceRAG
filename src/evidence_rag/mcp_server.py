@@ -4,23 +4,31 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from pydantic import ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from evidence_rag.answers import DraftAnswer
 from evidence_rag.calculations import CalculationError, CalculationRequest
 from evidence_rag.documents import IntakeError
 from evidence_rag.documents.storage import ArtifactNotFoundError, StorageError
 from evidence_rag.recipes import CalculationRecipe
+from evidence_rag.recovery import RecoveryError, RecoverySnapshot
 from evidence_rag.sdk import (
     CollectionDraftRequest,
     CollectionSearchRequest,
     DocumentRef,
     EvidenceRAG,
+    RetrievalResponse,
     SearchRequest,
 )
 
 if TYPE_CHECKING:
     from mcp.server.fastmcp import FastMCP
+
+
+class RecoverySearchResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    session: RecoverySnapshot
+    retrieval: RetrievalResponse
 
 
 def _safe(operation: Callable[[], Any]) -> dict[str, Any]:
@@ -30,6 +38,8 @@ def _safe(operation: Callable[[], Any]) -> dict[str, Any]:
     except IntakeError as exc:
         return {"error": exc.code, "message": exc.message}
     except CalculationError as exc:
+        return {"error": exc.code}
+    except RecoveryError as exc:
         return {"error": exc.code}
     except (ValueError, ValidationError, OSError, ArtifactNotFoundError, StorageError):
         return {"error": "invalid_request_or_artifact"}
@@ -87,6 +97,13 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
             "visual_handoff": "explicit-page-image-unverified",
             "ocr_enabled": engine.settings.ocr_enabled,
             "recovery_budget": {"additional_searches": 2, "rechecks": 1},
+            "recovery_sessions": {
+                "scope": "one document version and original question",
+                "ttl_seconds": 1800,
+                "maximum_sessions": 64,
+            },
+            "collection_candidate_limit": 50,
+            "collection_page_diversity": "optional-two-per-page-then-fill",
         }
 
     def ingest_pdf(relative_path: str) -> dict[str, Any]:
@@ -301,6 +318,63 @@ def create_server(engine: EvidenceRAG, documents_root: Path | None = None) -> "F
                 page_index,
             )
         )
+
+    def start_recovery(
+        document_id: str,
+        document_sha256: str,
+        question: str,
+        evidence_ids: list[str],
+        draft: DraftAnswer,
+    ) -> dict[str, Any]:
+        """Check the initial draft and start a bounded process-local recovery session.
+
+        Fixed document/version and original question; two extra BM25 searches and
+        one recheck. Repeating the same question/version returns the existing session,
+        not a fresh budget. Terminal outcomes close immediately. No provider calls.
+        """
+        return _safe(
+            lambda: engine.recovery.start(
+                DocumentRef(document_id=document_id, document_sha256=document_sha256),
+                question,
+                evidence_ids,
+                draft,
+            )
+        )
+
+    def recovery_status(session_id: str) -> dict[str, Any]:
+        """Read session counters, observed IDs and outcomes. Sessions expire after 30 minutes."""
+        return _safe(lambda: engine.recovery.status(session_id))
+
+    def search_recovery(session_id: str, query: str) -> dict[str, Any]:
+        """Consume one targeted search attempt within the original scope.
+
+        Failed execution consumes the attempt too. Returned IDs become available
+        for the single final recheck. Do not reset the session to retry wording.
+        """
+
+        def operation() -> RecoverySearchResponse:
+            session, retrieval = engine.recovery.search(session_id, query)
+            return RecoverySearchResponse(session=session, retrieval=retrieval)
+
+        return _safe(operation)
+
+    def recheck_recovery(
+        session_id: str,
+        evidence_ids: list[str],
+        draft: DraftAnswer,
+    ) -> dict[str, Any]:
+        """Consume the one recheck and close, using only session-observed IDs.
+
+        Original question/version cannot change. Errors also close the session.
+        The final receipt preserves answered/withheld status; support policy is unchanged.
+        """
+        return _safe(lambda: engine.recovery.recheck(session_id, evidence_ids, draft))
+
+    stateful = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False)
+    server.add_tool(start_recovery, annotations=stateful)
+    server.add_tool(recovery_status, annotations=read)
+    server.add_tool(search_recovery, annotations=stateful)
+    server.add_tool(recheck_recovery, annotations=stateful)
 
     server.add_tool(
         doctor,

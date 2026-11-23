@@ -67,6 +67,10 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
                 "explain_check",
                 "calculate_recipe",
                 "fetch_visual_page",
+                "start_recovery",
+                "search_recovery",
+                "recheck_recovery",
+                "recovery_status",
             }
             caps = await client.call_tool("capabilities", {})
             assert caps.structuredContent is not None
@@ -160,6 +164,45 @@ def test_protocol_discovery_ingestion_search_and_errors(tmp_path: Path) -> None:
             )
             assert collection.structuredContent is not None
             assert collection.structuredContent["pack"]["items"]
+            started = await client.call_tool(
+                "start_recovery",
+                {
+                    **document,
+                    "question": "calibration sampling recovery",
+                    "evidence_ids": [],
+                    "draft": {"status": "insufficient_evidence"},
+                },
+            )
+            assert started.structuredContent is not None
+            session_id = started.structuredContent["session_id"]
+            searched = await client.call_tool(
+                "search_recovery",
+                {
+                    "session_id": session_id,
+                    "query": "calibration sampling",
+                },
+            )
+            assert searched.structuredContent is not None
+            assert searched.structuredContent["session"]["budget"]["searches_used"] == 1
+            assert searched.structuredContent["retrieval"]["pack"]["items"]
+            final = await client.call_tool(
+                "recheck_recovery",
+                {
+                    "session_id": session_id,
+                    "evidence_ids": [],
+                    "draft": {"status": "insufficient_evidence"},
+                },
+            )
+            assert final.structuredContent is not None
+            assert final.structuredContent["status"] == "closed"
+            rejected = await client.call_tool(
+                "search_recovery",
+                {
+                    "session_id": session_id,
+                    "query": "one more search",
+                },
+            )
+            assert rejected.structuredContent == {"error": "recovery_session_closed"}
             source = await client.call_tool(
                 "fetch_evidence", {**document, "evidence_id": item["evidence_id"]}
             )

@@ -25,6 +25,8 @@ def main() -> None:
             "doctor.py",
             "recipes.py",
             "visual.py",
+            "recovery.py",
+            "retrieval/diversity.py",
             "eval/agent_trials.py",
             "cli.py",
             "mcp_server.py",

@@ -5,7 +5,9 @@ code: a Python SDK, JSON CLI, optional stdio MCP server, and bundled agent skill
 The web inspector remains available. The SDK and tools never invoke an answer
 provider: the calling agent supplies its own draft.
 
-[v0.4.0 workflow guide](agent_improvements.md) covers connected context, per-claim
+[v0.5.0 recovery and retrieval guide](recovery_sessions.md) covers engine-owned
+session budgets, event receipts, optional page diversity and coverage traces.
+[The broader workflow guide](agent_improvements.md) covers connected context, per-claim
 diagnostics, collection search/checks, recipe arithmetic, setup doctor, explicit
 OCR/visual handoff, index reuse and natural-document evaluation.
 
@@ -29,7 +31,7 @@ python -m pip install '.[dense]'
 ```
 
 Build distributable wheel and source archives with `uv build`. Install a wheel
-with `python -m pip install dist/evidence_rag-0.4.0-py3-none-any.whl`. The skill
+with `python -m pip install dist/evidence_rag-0.5.0-py3-none-any.whl`. The skill
 resources, inspector assets and license notices are included. This is a source
 and wheel installation workflow; no PyPI release has been published by this change.
 
@@ -153,6 +155,10 @@ the example uses the common mcpServers shape. No network MCP listener is started
 | check_collection | Independently check scoped drafts and surface observed contradictions |
 | calculate_recipe | Exact multi-step arithmetic, percentages and explicit unit conversions |
 | fetch_visual_page | Explicit bounded page-image handoff; no verified interpretation |
+| start_recovery | Check an initial draft and retain a fixed-scope bounded session |
+| search_recovery | Consume one targeted search attempt in that session |
+| recheck_recovery | Consume one final check and close the session |
+| recovery_status | Read session counters, observed IDs and event receipt |
 
 Omitting documents-root disables ingestion. Absolute paths, parent traversal,
 and symlinks resolving outside that root are rejected. Tools do not scan the
